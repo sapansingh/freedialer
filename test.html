@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>SIP.js WebRTC Phone</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sip.js/0.15.9/sip.min.js"></script>
+</head>
+<body>
+  <h2>SIP WebRTC Phone - 7001</h2>
+  <button id="connect">Connect</button>
+  <button id="call7000">Call 7000</button>
+  <button id="hangup">Hangup</button>
+  <p id="status">Not connected</p>
+  <audio id="remoteAudio" autoplay></audio>
+
+  <script>
+    // -----------------------------
+    // CONFIGURATION
+    // -----------------------------
+    const ASTERISK_IP = '192.168.29.72';  // e.g., 192.168.29.72 or public IP
+    const WS_PORT = 8088;                    // WebSocket transport port
+    const USERNAME = '7001';
+    const PASSWORD = '7001';
+    const TARGET = '6001';                   // Call target
+
+    const wsServer = `ws://${ASTERISK_IP}:${WS_PORT}`;
+
+    let ua;       // SIP User Agent
+    let session;  // Current call session
+
+    // -----------------------------
+    // SIP.js UA CONFIG
+    // -----------------------------
+    const config = {
+      uri: `sip:${USERNAME}@${ASTERISK_IP}/ws`,
+      wsServers: [wsServer],
+      authorizationUser: USERNAME,
+      password: PASSWORD,
+      traceSip: true,
+      register: true,
+      hackIpInContact: true,
+      sessionDescriptionHandlerFactoryOptions: {
+        constraints: { audio: true, video: false }
+      }
+    };
+
+    // -----------------------------
+    // CONNECT BUTTON
+    // -----------------------------
+    document.getElementById('connect').onclick = () => {
+      ua = new SIP.UA(config);
+
+      ua.on('registered', () => {
+        document.getElementById('status').innerText = `Registered as ${USERNAME}`;
+      });
+
+      ua.on('registrationFailed', e => {
+        document.getElementById('status').innerText = `Registration failed: ${e.cause}`;
+      });
+
+      ua.on('invite', incoming => {
+        session = incoming;
+        document.getElementById('status').innerText = 'Incoming call';
+        session.accept({ sessionDescriptionHandlerOptions: { constraints: { audio: true } } });
+        attachMedia(session);
+      });
+
+      document.getElementById('status').innerText = 'Connecting...';
+    };
+
+    // -----------------------------
+    // CALL BUTTON
+    // -----------------------------
+    document.getElementById('call7000').onclick = () => {
+      if (!ua) return alert('Connect first');
+
+      session = ua.invite(`sip:${TARGET}@${ASTERISK_IP}`, {
+        sessionDescriptionHandlerOptions: { constraints: { audio: true, video: false } }
+      });
+
+      attachMedia(session);
+      document.getElementById('status').innerText = `Calling ${TARGET}...`;
+    };
+
+    // -----------------------------
+    // HANGUP BUTTON
+    // -----------------------------
+    document.getElementById('hangup').onclick = () => {
+      if (session) session.terminate();
+      document.getElementById('status').innerText = 'Call ended';
+    };
+
+    // -----------------------------
+    // ATTACH REMOTE AUDIO
+    // -----------------------------
+    function attachMedia(sess) {
+      sess.on('accepted', () => {
+        const pc = sess.sessionDescriptionHandler.peerConnection;
+        const remoteAudio = document.getElementById('remoteAudio');
+        const stream = new MediaStream();
+        pc.getReceivers().forEach(r => {
+          if (r.track) stream.addTrack(r.track);
+        });
+        remoteAudio.srcObject = stream;
+        document.getElementById('status').innerText = 'Call connected';
+      });
+
+      sess.on('terminated', () => {
+        document.getElementById('status').innerText = 'Call ended';
+      });
+    }
+  </script>
+</body>
+</html>
