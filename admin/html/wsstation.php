@@ -181,18 +181,6 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
-        .pagination .page-link {
-            border-radius: 6px;
-            margin: 0 3px;
-            border: 1px solid #e0e0e0;
-            color: #3498db;
-        }
-        
-        .pagination .page-item.active .page-link {
-            background-color: #3498db;
-            border-color: #3498db;
-        }
-        
         .badge-webrtc-enabled {
             background-color: #2ecc71;
         }
@@ -213,18 +201,41 @@
             background-color: #3498db;
             border-color: #3498db;
         }
+        
+        .notification-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .notification-success { color: #28a745; }
+        .notification-warning { color: #ffc107; }
+        .notification-danger { color: #dc3545; }
+        .notification-info { color: #17a2b8; }
+        
+        .range-validation {
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        
+        .range-validation.valid {
+            color: #28a745;
+        }
+        
+        .range-validation.invalid {
+            color: #dc3545;
+        }
     </style>
 </head>
 <body>
-    <!-- Toast Container -->
-    <div class="toast-container"></div>
-
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner-border text-light" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
     </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
 
     <div class="container-fluid py-4">
         <!-- Header Section -->
@@ -235,9 +246,14 @@
                     <p class="mb-0 opacity-75">Manage WebRTC channels and monitor their status</p>
                 </div>
                 <div class="col-md-4 text-end">
-                    <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#channelModal">
-                        <i class="fas fa-plus me-1"></i> Add New Channel
-                    </button>
+                    <div class="btn-group">
+                        <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#channelModal">
+                            <i class="fas fa-plus me-1"></i> Add Channel
+                        </button>
+                        <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#generateModal">
+                            <i class="fas fa-bolt me-1"></i> Auto Generate
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -291,6 +307,8 @@
                         <option value="">Station Status</option>
                         <option value="logged_in">Logged In</option>
                         <option value="logged_out">Logged Out</option>
+                        <option value="on_call">On Call</option>
+                        <option value="paused">Paused</option>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -365,23 +383,6 @@
                             </div>
                         </div>
                         
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="username" class="form-label">Username</label>
-                                    <input type="text" class="form-control" id="username" name="username" maxlength="50" placeholder="e.g., user1001">
-                                    <div class="form-text">Authentication username</div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="password" class="form-label">Password</label>
-                                    <input type="password" class="form-control" id="password" name="password" maxlength="50" placeholder="Enter password">
-                                    <div class="form-text">Authentication password</div>
-                                </div>
-                            </div>
-                        </div>
-                        
                         <div class="section-title">Configuration</div>
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -444,11 +445,124 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Auto-generated credentials:</strong> Username and password will be automatically generated based on the extension (e.g., user1001, pass1001)
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-primary-custom" onclick="saveChannel()">Save Channel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate Multiple Channels Modal -->
+    <div class="modal fade" id="generateModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-bolt me-2"></i>Auto Generate Channels</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="generateForm">
+                        <div class="section-title">Extension Range</div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="start_extension" class="form-label required-field">Start Extension</label>
+                                    <input type="number" class="form-control" id="start_extension" name="start_extension" required min="1000" max="9999" placeholder="e.g., 1000">
+                                    <div class="form-text">Starting extension number</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="end_extension" class="form-label required-field">End Extension</label>
+                                    <input type="number" class="form-control" id="end_extension" name="end_extension" required min="1000" max="9999" placeholder="e.g., 1010">
+                                    <div class="form-text">Ending extension number</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Range Validation Display -->
+                        <div id="rangeValidation" class="alert alert-info d-none">
+                            <div id="rangePreview"></div>
+                            <div id="rangeStatus" class="range-validation mt-1"></div>
+                        </div>
+                        
+                        <div class="section-title">Server Configuration</div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="generate_server_ip" class="form-label required-field">Server IP</label>
+                                    <input type="text" class="form-control" id="generate_server_ip" name="server_ip" required maxlength="20" placeholder="e.g., 192.168.1.100">
+                                    <div class="form-text">Server IP address for all channels</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="context" class="form-label">Context</label>
+                                    <input type="text" class="form-control" id="generate_context" name="context" maxlength="50" placeholder="e.g., default" value="default">
+                                    <div class="form-text">Dialplan context for all channels</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="section-title">Channel Settings</div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="generate_transport" class="form-label">Transport</label>
+                                    <select class="form-select" id="generate_transport" name="transport">
+                                        <option value="udp" selected>UDP</option>
+                                        <option value="tcp">TCP</option>
+                                        <option value="tls">TLS</option>
+                                        <option value="ws">WebSocket</option>
+                                    </select>
+                                    <div class="form-text">Transport protocol for all channels</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="generate_transport_type" class="form-label">Transport Type</label>
+                                    <input type="text" class="form-control" id="generate_transport_type" name="transport_type" maxlength="50" placeholder="e.g., webrtc" value="webrtc">
+                                    <div class="form-text">Transport type for all channels</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="generate_webrtc" name="webrtc" checked>
+                                    <label class="form-check-label" for="generate_webrtc">WebRTC Enabled</label>
+                                    <div class="form-text">Enable WebRTC for all channels</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="generate_direct_media" name="direct_media">
+                                    <label class="form-check-label" for="generate_direct_media">Direct Media</label>
+                                    <div class="form-text">Enable direct media for all channels</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Auto-generated credentials:</strong> Usernames and passwords will be automatically generated based on extensions (e.g., user1001, pass1001)
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="generateButton" onclick="generateChannels()" disabled>
+                        <i class="fas fa-bolt me-1"></i> Generate Channels
+                    </button>
                 </div>
             </div>
         </div>
@@ -472,6 +586,51 @@
         </div>
     </div>
 
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <i class="fas fa-exclamation-triangle notification-warning notification-icon"></i>
+                    <h6 class="mb-2">Confirm Delete</h6>
+                    <p class="small text-muted mb-3">Are you sure you want to delete this channel?</p>
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger btn-sm" id="confirmDeleteBtn">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <i class="fas fa-check-circle notification-success notification-icon"></i>
+                    <h6 class="mb-2">Success</h6>
+                    <p class="small text-muted mb-3" id="successMessage">Operation completed successfully</p>
+                    <button type="button" class="btn btn-success btn-sm" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="modal fade" id="errorModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <i class="fas fa-times-circle notification-danger notification-icon"></i>
+                    <h6 class="mb-2">Error</h6>
+                    <p class="small text-muted mb-3" id="errorMessage">An error occurred</p>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap & jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
@@ -481,10 +640,12 @@
 
     <script>
         // API Configuration
-        const API_BASE_URL = '../api/webrtc_channels/'; // Adjust this to your API endpoint
+        const API_BASE_URL = '../api/';
 
         // Initialize DataTable
         let channelsTable;
+        let currentDeleteId = null;
+
         $(document).ready(function() {
             channelsTable = $('#channelsTable').DataTable({
                 pageLength: 10,
@@ -508,12 +669,16 @@
                     { data: 'username' },
                     { data: 'server_ip' },
                     { 
-                        data: 'webrtc',
-                        render: function(data, type, row) {
-                            return data === 1 || data === true
-                                ? '<span class="badge badge-webrtc-enabled status-badge"><i class="fas fa-check-circle me-1"></i>Enabled</span>' 
-                                : '<span class="badge badge-webrtc-disabled status-badge"><i class="fas fa-times-circle me-1"></i>Disabled</span>';
-                        }
+              
+    data: 'webrtc',
+    render: function(data, type, row) {
+        // Convert to boolean - any truthy value will be considered enabled
+        const isEnabled = Boolean(Number(data));
+        return isEnabled
+            ? '<span class="badge badge-webrtc-enabled status-badge"><i class="fas fa-check-circle me-1"></i>Enabled</span>' 
+            : '<span class="badge badge-webrtc-disabled status-badge"><i class="fas fa-times-circle me-1"></i>Disabled</span>';
+    }
+
                     },
                     { data: 'transport' },
                     { 
@@ -552,7 +717,7 @@
                                 <button class="btn btn-outline-info btn-action" onclick="viewChannel(${data})" title="View">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                <button class="btn btn-outline-danger btn-action" onclick="deleteChannel(${data})" title="Delete">
+                                <button class="btn btn-outline-danger btn-action" onclick="showDeleteConfirm(${data})" title="Delete">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             `;
@@ -564,95 +729,121 @@
 
             // Load initial data
             loadChannels();
+
+            // Delete confirmation handler
+            $('#confirmDeleteBtn').click(function() {
+                if (currentDeleteId) {
+                    deleteChannel(currentDeleteId);
+                }
+            });
+
+            // Extension range validation
+            $('#start_extension, #end_extension').on('input', validateExtensionRange);
         });
 
-        // Show/Hide loading overlay
         function showLoading(show) {
             document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+        }
+
+        async function validateExtensionRange() {
+            const start = $('#start_extension').val();
+            const end = $('#end_extension').val();
+            const validationDiv = $('#rangeValidation');
+            const rangePreview = $('#rangePreview');
+            const rangeStatus = $('#rangeStatus');
+            const generateButton = $('#generateButton');
+
+            if (!start || !end) {
+                validationDiv.addClass('d-none');
+                generateButton.prop('disabled', true);
+                return;
+            }
+
+            if (parseInt(start) > parseInt(end)) {
+                validationDiv.removeClass('d-none').removeClass('alert-info alert-success alert-warning').addClass('alert-warning');
+                rangePreview.html('<i class="fas fa-exclamation-triangle me-2"></i><strong>Range:</strong> ' + start + ' to ' + end);
+                rangeStatus.html('<span class="range-validation invalid">Start extension must be less than or equal to end extension</span>');
+                generateButton.prop('disabled', true);
+                return;
+            }
+
+            const totalExtensions = (parseInt(end) - parseInt(start)) + 1;
+            
+            if (totalExtensions > 100) {
+                validationDiv.removeClass('d-none').removeClass('alert-info alert-success alert-warning').addClass('alert-warning');
+                rangePreview.html('<i class="fas fa-exclamation-triangle me-2"></i><strong>Range:</strong> ' + start + ' to ' + end);
+                rangeStatus.html('<span class="range-validation invalid">Cannot generate more than 100 channels at once</span>');
+                generateButton.prop('disabled', true);
+                return;
+            }
+
+            // Show loading state
+            validationDiv.removeClass('d-none').removeClass('alert-info alert-success alert-warning').addClass('alert-info');
+            rangePreview.html('<i class="fas fa-spinner fa-spin me-2"></i><strong>Range:</strong> ' + start + ' to ' + end);
+            rangeStatus.html('<span class="range-validation">Checking extension availability...</span>');
+
+            try {
+                const response = await fetch(API_BASE_URL + 'webrtc_channels.php?action=checkExtensionRange', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        start_extension: start,
+                        end_extension: end
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    
+                    if (data.can_generate) {
+                        validationDiv.removeClass('alert-info alert-warning').addClass('alert-success');
+                        rangePreview.html('<i class="fas fa-check-circle me-2"></i><strong>Range:</strong> ' + start + ' to ' + end);
+                        
+                        let statusText = `<span class="range-validation valid">Ready to generate ${data.available_extensions} channels`;
+                        if (data.existing_extensions.length > 0) {
+                            statusText += ` (${data.existing_extensions.length} extensions already exist)`;
+                        }
+                        statusText += '</span>';
+                        
+                        rangeStatus.html(statusText);
+                        generateButton.prop('disabled', false);
+                    } else {
+                        validationDiv.removeClass('alert-info alert-success').addClass('alert-warning');
+                        rangePreview.html('<i class="fas fa-exclamation-triangle me-2"></i><strong>Range:</strong> ' + start + ' to ' + end);
+                        rangeStatus.html('<span class="range-validation invalid">All extensions in this range already exist</span>');
+                        generateButton.prop('disabled', true);
+                    }
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('Error validating extension range:', error);
+                validationDiv.removeClass('alert-info alert-success').addClass('alert-warning');
+                rangePreview.html('<i class="fas fa-exclamation-triangle me-2"></i><strong>Range:</strong> ' + start + ' to ' + end);
+                rangeStatus.html('<span class="range-validation invalid">Error checking extension availability</span>');
+                generateButton.prop('disabled', true);
+            }
         }
 
         // API Functions
         async function loadChannels() {
             showLoading(true);
             try {
-                // In a real implementation, this would fetch from your API
-                // For demo purposes, we'll use mock data
-                const mockData = {
-                    success: true,
-                    data: [
-                        {
-                            id: 1,
-                            server_ip: '192.168.1.100',
-                            extension: '1001',
-                            username: 'user1001',
-                            password: 'pass1001',
-                            context: 'default',
-                            transport: 'udp',
-                            transport_type: 'webrtc',
-                            webrtc: 1,
-                            direct_media: 0,
-                            station_status: 'logged_in',
-                            created_at: '2023-06-15 10:30:00'
-                        },
-                        {
-                            id: 2,
-                            server_ip: '192.168.1.101',
-                            extension: '1002',
-                            username: 'user1002',
-                            password: 'pass1002',
-                            context: 'default',
-                            transport: 'tcp',
-                            transport_type: 'webrtc',
-                            webrtc: 1,
-                            direct_media: 1,
-                            station_status: 'logged_out',
-                            created_at: '2023-06-16 14:45:00'
-                        },
-                        {
-                            id: 3,
-                            server_ip: '192.168.1.102',
-                            extension: '1003',
-                            username: 'user1003',
-                            password: 'pass1003',
-                            context: 'internal',
-                            transport: 'ws',
-                            transport_type: 'webrtc',
-                            webrtc: 0,
-                            direct_media: 0,
-                            station_status: 'on_call',
-                            created_at: '2023-06-17 09:15:00'
-                        },
-                        {
-                            id: 4,
-                            server_ip: '192.168.1.103',
-                            extension: '1004',
-                            username: 'user1004',
-                            password: 'pass1004',
-                            context: 'default',
-                            transport: 'tls',
-                            transport_type: 'webrtc',
-                            webrtc: 1,
-                            direct_media: 1,
-                            station_status: 'paused',
-                            created_at: '2023-06-18 16:20:00'
-                        }
-                    ]
-                };
+                const response = await fetch(API_BASE_URL + 'webrtc_channels.php?action=getAll');
+                const result = await response.json();
                 
-                // Simulate API delay
-                setTimeout(() => {
-                    if (mockData.success) {
-                        channelsTable.clear().rows.add(mockData.data).draw();
-                        updateStatistics(mockData.data);
-                    } else {
-                        showNotification('Failed to load channels', 'danger');
-                    }
-                    showLoading(false);
-                }, 800);
-                
+                if (result.success) {
+                    channelsTable.clear().rows.add(result.data).draw();
+                    updateStatistics(result.data);
+                } else {
+                    showErrorModal('Error loading channels: ' + result.message);
+                }
             } catch (error) {
                 console.error('Error loading channels:', error);
-                showNotification('Error loading channels. Please check console.', 'danger');
+                showErrorModal('Failed to load channels. Please check console.');
+            } finally {
                 showLoading(false);
             }
         }
@@ -660,43 +851,21 @@
         async function getChannel(id) {
             showLoading(true);
             try {
-                // In a real implementation, this would fetch from your API
-                // For demo purposes, we'll use mock data
-                const mockData = {
-                    success: true,
-                    data: {
-                        id: id,
-                        server_ip: '192.168.1.' + (100 + id),
-                        extension: '100' + id,
-                        username: 'user100' + id,
-                        password: 'pass100' + id,
-                        context: 'default',
-                        transport: id % 2 === 0 ? 'tcp' : 'udp',
-                        transport_type: 'webrtc',
-                        webrtc: id % 2 === 0 ? 0 : 1,
-                        direct_media: id % 3 === 0 ? 1 : 0,
-                        station_status: id % 2 === 0 ? 'logged_out' : 'logged_in',
-                        created_at: '2023-06-15 10:30:00'
-                    }
-                };
+                const response = await fetch(API_BASE_URL + 'webrtc_channels.php?action=get&id=' + id);
+                const result = await response.json();
                 
-                // Simulate API delay
-                return new Promise(resolve => {
-                    setTimeout(() => {
-                        showLoading(false);
-                        if (mockData.success) {
-                            resolve(mockData.data);
-                        } else {
-                            showNotification('Failed to load channel', 'danger');
-                            resolve(null);
-                        }
-                    }, 500);
-                });
+                if (result.success) {
+                    return result.data;
+                } else {
+                    showErrorModal('Failed to load channel: ' + result.message);
+                    return null;
+                }
             } catch (error) {
                 console.error('Error loading channel:', error);
-                showNotification('Error loading channel. Please check console.', 'danger');
-                showLoading(false);
+                showErrorModal('Failed to load channel. Please check console.');
                 return null;
+            } finally {
+                showLoading(false);
             }
         }
 
@@ -710,67 +879,104 @@
             
             // Validation
             if (!data.extension.trim()) {
-                alert('Please enter an extension');
+                showErrorModal('Please enter an extension');
                 return;
             }
 
             showLoading(true);
             try {
-                // In a real implementation, this would send to your API
-                // For demo purposes, we'll simulate a successful response
-                const mockResponse = {
-                    success: true,
-                    message: `Channel ${data.id ? 'updated' : 'created'} successfully!`
-                };
+                const action = data.id ? 'update' : 'create';
+                const response = await fetch(API_BASE_URL + 'webrtc_channels.php?action=' + action, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
                 
-                // Simulate API delay
-                setTimeout(() => {
-                    showLoading(false);
-                    if (mockResponse.success) {
-                        showNotification(mockResponse.message, 'success');
-                        loadChannels();
-                        
-                        // Close modal
-                        bootstrap.Modal.getInstance(document.getElementById('channelModal')).hide();
-                    } else {
-                        showNotification('Failed to save channel', 'danger');
-                    }
-                }, 800);
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccessModal(result.message);
+                    loadChannels();
+                    $('#channelModal').modal('hide');
+                } else {
+                    showErrorModal(result.message);
+                }
             } catch (error) {
                 console.error('Error saving channel:', error);
-                showNotification('Error saving channel. Please check console.', 'danger');
+                showErrorModal('Failed to save channel');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function generateChannels() {
+            const formData = new FormData(document.getElementById('generateForm'));
+            const data = Object.fromEntries(formData);
+            
+            // Convert checkbox values to proper boolean
+            data.webrtc = document.getElementById('generate_webrtc').checked ? 1 : 0;
+            data.direct_media = document.getElementById('generate_direct_media').checked ? 1 : 0;
+            
+            // Validation
+            if (!data.start_extension || !data.end_extension || !data.server_ip) {
+                showErrorModal('Please fill all required fields');
+                return;
+            }
+
+            if (parseInt(data.start_extension) > parseInt(data.end_extension)) {
+                showErrorModal('Start extension must be less than or equal to end extension');
+                return;
+            }
+
+            showLoading(true);
+            try {
+                const response = await fetch(API_BASE_URL + 'webrtc_channels.php?action=generateMultiple', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccessModal(result.message);
+                    loadChannels();
+                    $('#generateModal').modal('hide');
+                } else {
+                    showErrorModal(result.message);
+                }
+            } catch (error) {
+                console.error('Error generating channels:', error);
+                showErrorModal('Failed to generate channels');
+            } finally {
                 showLoading(false);
             }
         }
 
         async function deleteChannel(id) {
-            if (!confirm('Are you sure you want to delete channel #' + id + '?')) {
-                return;
-            }
-
             showLoading(true);
             try {
-                // In a real implementation, this would send to your API
-                // For demo purposes, we'll simulate a successful response
-                const mockResponse = {
-                    success: true,
-                    message: 'Channel deleted successfully!'
-                };
+                const response = await fetch(API_BASE_URL + 'webrtc_channels.php?action=delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: id })
+                });
                 
-                // Simulate API delay
-                setTimeout(() => {
-                    showLoading(false);
-                    if (mockResponse.success) {
-                        showNotification(mockResponse.message, 'success');
-                        loadChannels();
-                    } else {
-                        showNotification('Failed to delete channel', 'danger');
-                    }
-                }, 800);
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccessModal(result.message);
+                    loadChannels();
+                    $('#deleteModal').modal('hide');
+                } else {
+                    showErrorModal(result.message);
+                }
             } catch (error) {
                 console.error('Error deleting channel:', error);
-                showNotification('Error deleting channel. Please check console.', 'danger');
+                showErrorModal('Failed to delete channel');
+            } finally {
                 showLoading(false);
+                currentDeleteId = null;
             }
         }
 
@@ -806,79 +1012,61 @@
             const detailsHtml = `
                 <div class="row">
                     <div class="col-12 mb-3">
-                        <h6 class="text-muted">Channel Information</h6>
+                        <h6 class="text-primary">Channel Information</h6>
                     </div>
-                    <div class="col-md-6 mb-2">
-                        <strong>Channel ID:</strong>
+                    <div class="col-md-6 mb-3">
+                        <strong class="d-block text-muted small">Channel ID</strong>
+                        <span>${channel.id}</span>
                     </div>
-                    <div class="col-md-6 mb-2">
-                        ${channel.id}
+                    <div class="col-md-6 mb-3">
+                        <strong class="d-block text-muted small">Extension</strong>
+                        <span class="badge bg-primary">${channel.extension}</span>
                     </div>
-                    <div class="col-md-6 mb-2">
-                        <strong>Extension:</strong>
+                    <div class="col-md-6 mb-3">
+                        <strong class="d-block text-muted small">Username</strong>
+                        <span>${channel.username || 'N/A'}</span>
                     </div>
-                    <div class="col-md-6 mb-2">
-                        ${channel.extension}
+                    <div class="col-md-6 mb-3">
+                        <strong class="d-block text-muted small">Password</strong>
+                        <span class="text-muted">••••••••</span>
                     </div>
-                    <div class="col-md-6 mb-2">
-                        <strong>Username:</strong>
+                    <div class="col-md-6 mb-3">
+                        <strong class="d-block text-muted small">Server IP</strong>
+                        <code>${channel.server_ip || 'N/A'}</code>
                     </div>
-                    <div class="col-md-6 mb-2">
-                        ${channel.username || 'N/A'}
+                    <div class="col-md-6 mb-3">
+                        <strong class="d-block text-muted small">Context</strong>
+                        <span>${channel.context || 'N/A'}</span>
                     </div>
-                    <div class="col-md-6 mb-2">
-                        <strong>Server IP:</strong>
+                    <div class="col-md-6 mb-3">
+                        <strong class="d-block text-muted small">Transport</strong>
+                        <span class="badge bg-info">${channel.transport || 'N/A'}</span>
                     </div>
-                    <div class="col-md-6 mb-2">
-                        ${channel.server_ip || 'N/A'}
+                    <div class="col-md-6 mb-3">
+                        <strong class="d-block text-muted small">Transport Type</strong>
+                        <span>${channel.transport_type || 'N/A'}</span>
                     </div>
-                    <div class="col-md-6 mb-2">
-                        <strong>Context:</strong>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        ${channel.context || 'N/A'}
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <strong>Transport:</strong>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        ${channel.transport || 'N/A'}
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <strong>Transport Type:</strong>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        ${channel.transport_type || 'N/A'}
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <strong>WebRTC:</strong>
-                    </div>
-                    <div class="col-md-6 mb-2">
+                    <div class="col-md-6 mb-3">
+                        <strong class="d-block text-muted small">WebRTC</strong>
                         ${channel.webrtc == 1 
                             ? '<span class="badge badge-webrtc-enabled">Enabled</span>' 
                             : '<span class="badge badge-webrtc-disabled">Disabled</span>'}
                     </div>
-                    <div class="col-md-6 mb-2">
-                        <strong>Direct Media:</strong>
-                    </div>
-                    <div class="col-md-6 mb-2">
+                    <div class="col-md-6 mb-3">
+                        <strong class="d-block text-muted small">Direct Media</strong>
                         ${channel.direct_media == 1 
                             ? '<span class="badge bg-success">Enabled</span>' 
                             : '<span class="badge bg-secondary">Disabled</span>'}
                     </div>
-                    <div class="col-md-6 mb-2">
-                        <strong>Station Status:</strong>
-                    </div>
-                    <div class="col-md-6 mb-2">
+                    <div class="col-md-6 mb-3">
+                        <strong class="d-block text-muted small">Station Status</strong>
                         ${channel.station_status 
                             ? `<span class="badge badge-${channel.station_status === 'logged_in' ? 'logged-in' : 'logged-out'}">${channel.station_status.replace('_', ' ').toUpperCase()}</span>` 
                             : 'N/A'}
                     </div>
-                    <div class="col-md-6 mb-2">
-                        <strong>Created At:</strong>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        ${channel.created_at ? new Date(channel.created_at).toLocaleString() : 'N/A'}
+                    <div class="col-md-6 mb-3">
+                        <strong class="d-block text-muted small">Created At</strong>
+                        <span>${channel.created_at ? new Date(channel.created_at).toLocaleString() : 'N/A'}</span>
                     </div>
                 </div>
             `;
@@ -888,6 +1076,11 @@
 
             // Show modal
             new bootstrap.Modal(document.getElementById('viewModal')).show();
+        }
+
+        function showDeleteConfirm(id) {
+            currentDeleteId = id;
+            $('#deleteModal').modal('show');
         }
 
         function updateStatistics(channels) {
@@ -930,41 +1123,28 @@
             channelsTable.search('').columns().search('').draw();
         }
 
-        function showNotification(message, type = 'info') {
-            const toastContainer = document.querySelector('.toast-container');
-            
-            // Create toast
-            const toast = document.createElement('div');
-            toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : type === 'danger' ? 'danger' : 'primary'} border-0`;
-            toast.setAttribute('role', 'alert');
-            toast.setAttribute('aria-live', 'assertive');
-            toast.setAttribute('aria-atomic', 'true');
-            
-            toast.innerHTML = `
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'danger' ? 'fa-exclamation-circle' : 'fa-info-circle'} me-2"></i>
-                        ${message}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                </div>
-            `;
-            
-            toastContainer.appendChild(toast);
-            const bsToast = new bootstrap.Toast(toast);
-            bsToast.show();
-            
-            // Remove after hide
-            toast.addEventListener('hidden.bs.toast', () => {
-                toast.remove();
-            });
+        // Modal Functions
+        function showSuccessModal(message) {
+            $('#successMessage').text(message);
+            $('#successModal').modal('show');
         }
 
-        // Reset form when modal is hidden
-        document.getElementById('channelModal').addEventListener('hidden.bs.modal', function() {
+        function showErrorModal(message) {
+            $('#errorMessage').text(message);
+            $('#errorModal').modal('show');
+        }
+
+        // Reset form when modal closes
+        $('#channelModal').on('hidden.bs.modal', function() {
             document.getElementById('channelForm').reset();
-            document.getElementById('id').value = '';
-            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus me-2"></i>Add New WebRTC Channel';
+            $('#id').val('');
+            $('#modalTitle').innerHTML = '<i class="fas fa-plus me-2"></i>Add New WebRTC Channel';
+        });
+
+        $('#generateModal').on('hidden.bs.modal', function() {
+            document.getElementById('generateForm').reset();
+            $('#rangeValidation').addClass('d-none');
+            $('#generateButton').prop('disabled', true);
         });
     </script>
 </body>

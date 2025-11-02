@@ -14,12 +14,12 @@
             <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="collapse" href="#userManagementSubmenu" role="button" aria-expanded="false">
                     <i class="fas fa-users"></i>
-                    <span>User Management</span>
+                    <span>Live Status</span>
                     <i class="fas fa-chevron-down ms-auto submenu-toggle"></i>
                 </a>
                 <div class="collapse" id="userManagementSubmenu">
                     <div class="submenu">
-                        <a href="#users-list" class="nav-link" data-content="users">User List</a>
+                        <a href="#users-list" class="nav-link" data-content="processlive">Process live</a>
                         <a href="#users-roles" class="nav-link" data-content="roles">Roles & Permissions</a>
                         <a href="#users-teams" class="nav-link" data-content="teams">Teams</a>
                     </div>
@@ -73,11 +73,10 @@
                               <h4>ACD and Queue</h4>
                                <a href="#system-health" class="nav-link" data-content="usermanage">Users</a>
                         <a href="#system-config" class="nav-link" data-content="proceesmanagement">Process</a>
-                         <a href="#system-config" class="nav-link" data-content="Queues">Queues</a>
-                          <a href="#system-logs" class="nav-link" data-content="Breaks">Breaks</a>
+                         <a href="#system-config" class="nav-link" data-content="QueueManagement">Queue Management</a>
+                          <a href="#system-logs" class="nav-link" data-content="breakmanagement">Breaks</a>
                         <a href="#system-logs" class="nav-link" data-content="Dispositions">Dispositions</a>
-                         <a href="#system-logs" class="nav-link" data-content="Sub_Disposition"> Sub Disposition</a>
-                          <a href="#system-logs" class="nav-link" data-content="Sub-Sub_Disposition">Sub-Sub Disposition</a>
+                      
                          
                     </div>
                 </div>

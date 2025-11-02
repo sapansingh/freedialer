@@ -1,18 +1,18 @@
 <?php
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
 // Database configuration
-include ('../../../config/config.php');
+include('../../config/config.php');
 
 // Create connection
-$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+$conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
 
 // Check connection
-if ($conn->connect_error) {
-    die(json_encode(['success' => false, 'message' => 'Database connection failed: ' . $conn->connect_error]));
+if (!$conn) {
+    die(json_encode(['success' => false, 'message' => 'Database connection failed: ' . mysqli_connect_error()]));
 }
 
 // Handle preflight request
@@ -41,6 +41,9 @@ try {
         case 'delete':
             deleteServer($conn);
             break;
+        case 'getStats':
+            getServerStats($conn);
+            break;
         default:
             echo json_encode(['success' => false, 'message' => 'Invalid action']);
     }
@@ -48,20 +51,27 @@ try {
     echo json_encode(['success' => false, 'message' => 'Server error: ' . $e->getMessage()]);
 }
 
-$conn->close();
+mysqli_close($conn);
 
 function getAllServers($conn) {
-    $sql = "SELECT * FROM servers ORDER BY server_id DESC";
-    $result = $conn->query($sql);
+    $sql = "SELECT 
+                server_id, server_description, server_ip, active, telnet_host, 
+                telnet_port, user_manager, secret_manager, update_manager, 
+                listen_manager, send_manager, sys_perf_log, vd_server_logs, 
+                agi_output, voice_web_port, db_web_port
+            FROM servers 
+            ORDER BY server_id DESC";
+    
+    $result = mysqli_query($conn, $sql);
     
     if ($result) {
         $servers = [];
-        while ($row = $result->fetch_assoc()) {
+        while ($row = mysqli_fetch_assoc($result)) {
             $servers[] = $row;
         }
         echo json_encode(['success' => true, 'data' => $servers]);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Error fetching servers: ' . $conn->error]);
+        echo json_encode(['success' => false, 'message' => 'Error fetching servers: ' . mysqli_error($conn)]);
     }
 }
 
@@ -71,12 +81,19 @@ function getServer($conn, $id) {
         return;
     }
 
-    $id = (int)$id; // Prevent SQL injection
-    $sql = "SELECT * FROM servers WHERE server_id = $id";
-    $result = $conn->query($sql);
+    $id = (int)$id;
+    $sql = "SELECT 
+                server_id, server_description, server_ip, active, telnet_host, 
+                telnet_port, user_manager, secret_manager, update_manager, 
+                listen_manager, send_manager, sys_perf_log, vd_server_logs, 
+                agi_output, voice_web_port, db_web_port
+            FROM servers 
+            WHERE server_id = $id";
     
-    if ($result && $result->num_rows > 0) {
-        $server = $result->fetch_assoc();
+    $result = mysqli_query($conn, $sql);
+    
+    if ($result && mysqli_num_rows($result) > 0) {
+        $server = mysqli_fetch_assoc($result);
         echo json_encode(['success' => true, 'data' => $server]);
     } else {
         echo json_encode(['success' => false, 'message' => 'Server not found']);
@@ -86,35 +103,46 @@ function getServer($conn, $id) {
 function createServer($conn) {
     $input = json_decode(file_get_contents('php://input'), true);
     
-    // Validate required fields
-    if (empty($input['server_description']) || empty($input['server_ip'])) {
-        echo json_encode(['success' => false, 'message' => 'Server description and IP are required']);
-        return;
+    $required = ['server_description', 'server_ip', 'active'];
+    foreach ($required as $field) {
+        if (empty($input[$field])) {
+            echo json_encode(['success' => false, 'message' => "Field '$field' is required"]);
+            return;
+        }
     }
 
-    // Escape inputs
-    foreach ($input as $key => $val) {
-        $input[$key] = $conn->real_escape_string($val);
-    }
+    $server_description = mysqli_real_escape_string($conn, $input['server_description']);
+    $server_ip = mysqli_real_escape_string($conn, $input['server_ip']);
+    $active = mysqli_real_escape_string($conn, $input['active']);
+    $telnet_host = mysqli_real_escape_string($conn, $input['telnet_host'] ?? 'localhost');
+    $telnet_port = (int)($input['telnet_port'] ?? 5038);
+    $user_manager = mysqli_real_escape_string($conn, $input['user_manager'] ?? 'convox');
+    $secret_manager = mysqli_real_escape_string($conn, $input['secret_manager'] ?? 'convox');
+    $update_manager = mysqli_real_escape_string($conn, $input['update_manager'] ?? 'updateconvox');
+    $listen_manager = mysqli_real_escape_string($conn, $input['listen_manager'] ?? 'listenconvox');
+    $send_manager = mysqli_real_escape_string($conn, $input['send_manager'] ?? 'sendconvox');
+    $sys_perf_log = mysqli_real_escape_string($conn, $input['sys_perf_log'] ?? 'N');
+    $vd_server_logs = mysqli_real_escape_string($conn, $input['vd_server_logs'] ?? 'N');
+    $agi_output = mysqli_real_escape_string($conn, $input['agi_output'] ?? 'FILE');
+    $voice_web_port = (int)($input['voice_web_port'] ?? 0);
+    $db_web_port = (int)($input['db_web_port'] ?? 0);
 
     $sql = "INSERT INTO servers (
-        server_description, server_ip, active, telnet_host, telnet_port,
-        user_manager, secret_manager, update_manager, listen_manager, send_manager,
-        sys_perf_log, vd_server_logs, agi_output, voice_web_port, db_web_port
-    ) VALUES (
-        '{$input['server_description']}', '{$input['server_ip']}', '{$input['active']}',
-        '{$input['telnet_host']}', '{$input['telnet_port']}',
-        '{$input['user_manager']}', '{$input['secret_manager']}',
-        '{$input['update_manager']}', '{$input['listen_manager']}',
-        '{$input['send_manager'] }', '{$input['sys_perf_log']}',
-        '{$input['vd_server_logs']}', '{$input['agi_output']}',
-        '{$input['voice_web_port']}', '{$input['db_web_port']}'
-    )";
+                server_description, server_ip, active, telnet_host, telnet_port, 
+                user_manager, secret_manager, update_manager, listen_manager, 
+                send_manager, sys_perf_log, vd_server_logs, agi_output, 
+                voice_web_port, db_web_port
+            ) VALUES (
+                '$server_description', '$server_ip', '$active', '$telnet_host', $telnet_port,
+                '$user_manager', '$secret_manager', '$update_manager', '$listen_manager',
+                '$send_manager', '$sys_perf_log', '$vd_server_logs', '$agi_output',
+                $voice_web_port, $db_web_port
+            )";
 
-    if ($conn->query($sql)) {
+    if (mysqli_query($conn, $sql)) {
         echo json_encode(['success' => true, 'message' => 'Server created successfully']);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Error creating server: ' . $conn->error]);
+        echo json_encode(['success' => false, 'message' => 'Error creating server: ' . mysqli_error($conn)]);
     }
 }
 
@@ -126,37 +154,53 @@ function updateServer($conn) {
         return;
     }
 
-    if (empty($input['server_description']) || empty($input['server_ip'])) {
-        echo json_encode(['success' => false, 'message' => 'Server description and IP are required']);
-        return;
+    $required = ['server_description', 'server_ip', 'active'];
+    foreach ($required as $field) {
+        if (empty($input[$field])) {
+            echo json_encode(['success' => false, 'message' => "Field '$field' is required"]);
+            return;
+        }
     }
 
-    foreach ($input as $key => $val) {
-        $input[$key] = $conn->real_escape_string($val);
-    }
+    $server_id = (int)$input['server_id'];
+    $server_description = mysqli_real_escape_string($conn, $input['server_description']);
+    $server_ip = mysqli_real_escape_string($conn, $input['server_ip']);
+    $active = mysqli_real_escape_string($conn, $input['active']);
+    $telnet_host = mysqli_real_escape_string($conn, $input['telnet_host'] ?? 'localhost');
+    $telnet_port = (int)($input['telnet_port'] ?? 5038);
+    $user_manager = mysqli_real_escape_string($conn, $input['user_manager'] ?? 'convox');
+    $secret_manager = mysqli_real_escape_string($conn, $input['secret_manager'] ?? 'convox');
+    $update_manager = mysqli_real_escape_string($conn, $input['update_manager'] ?? 'updateconvox');
+    $listen_manager = mysqli_real_escape_string($conn, $input['listen_manager'] ?? 'listenconvox');
+    $send_manager = mysqli_real_escape_string($conn, $input['send_manager'] ?? 'sendconvox');
+    $sys_perf_log = mysqli_real_escape_string($conn, $input['sys_perf_log'] ?? 'N');
+    $vd_server_logs = mysqli_real_escape_string($conn, $input['vd_server_logs'] ?? 'N');
+    $agi_output = mysqli_real_escape_string($conn, $input['agi_output'] ?? 'FILE');
+    $voice_web_port = (int)($input['voice_web_port'] ?? 0);
+    $db_web_port = (int)($input['db_web_port'] ?? 0);
 
     $sql = "UPDATE servers SET
-        server_description = '{$input['server_description']}',
-        server_ip = '{$input['server_ip']}',
-        active = '{$input['active']}',
-        telnet_host = '{$input['telnet_host']}',
-        telnet_port = '{$input['telnet_port']}',
-        user_manager = '{$input['user_manager'] }',
-        secret_manager = '{$input['secret_manager']}',
-        update_manager = '{$input['update_manager'] }',
-        listen_manager = '{$input['listen_manager']}',
-        send_manager = '{$input['send_manager']}',
-        sys_perf_log = '{$input['sys_perf_log']}',
-        vd_server_logs = '{$input['vd_server_logs']}',
-        agi_output = '{$input['agi_output'] }',
-        voice_web_port = '{$input['voice_web_port'] }',
-        db_web_port = '{$input['db_web_port'] }'
-        WHERE server_id = '{$input['server_id']}'";
+                server_description = '$server_description',
+                server_ip = '$server_ip',
+                active = '$active',
+                telnet_host = '$telnet_host',
+                telnet_port = $telnet_port,
+                user_manager = '$user_manager',
+                secret_manager = '$secret_manager',
+                update_manager = '$update_manager',
+                listen_manager = '$listen_manager',
+                send_manager = '$send_manager',
+                sys_perf_log = '$sys_perf_log',
+                vd_server_logs = '$vd_server_logs',
+                agi_output = '$agi_output',
+                voice_web_port = $voice_web_port,
+                db_web_port = $db_web_port
+            WHERE server_id = $server_id";
 
-    if ($conn->query($sql)) {
+    if (mysqli_query($conn, $sql)) {
         echo json_encode(['success' => true, 'message' => 'Server updated successfully']);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Error updating server: ' . $conn->error]);
+        echo json_encode(['success' => false, 'message' => 'Error updating server: ' . mysqli_error($conn)]);
     }
 }
 
@@ -168,13 +212,31 @@ function deleteServer($conn) {
         return;
     }
 
-    $id = (int)$input['server_id'];
-    $sql = "DELETE FROM servers WHERE server_id = $id";
+    $server_id = (int)$input['server_id'];
+    $sql = "DELETE FROM servers WHERE server_id = $server_id";
 
-    if ($conn->query($sql)) {
+    if (mysqli_query($conn, $sql)) {
         echo json_encode(['success' => true, 'message' => 'Server deleted successfully']);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Error deleting server: ' . $conn->error]);
+        echo json_encode(['success' => false, 'message' => 'Error deleting server: ' . mysqli_error($conn)]);
     }
+}
+
+function getServerStats($conn) {
+    $stats = [];
+    
+    $result = mysqli_query($conn, "SELECT COUNT(*) as total FROM servers");
+    $row = mysqli_fetch_assoc($result);
+    $stats['totalServers'] = $row['total'];
+
+    $result = mysqli_query($conn, "SELECT COUNT(*) as active FROM servers WHERE active = 'Y'");
+    $row = mysqli_fetch_assoc($result);
+    $stats['activeServers'] = $row['active'];
+
+    $result = mysqli_query($conn, "SELECT COUNT(*) as inactive FROM servers WHERE active = 'N'");
+    $row = mysqli_fetch_assoc($result);
+    $stats['inactiveServers'] = $row['inactive'];
+
+    echo json_encode(['success' => true, 'data' => $stats]);
 }
 ?>

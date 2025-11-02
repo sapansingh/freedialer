@@ -394,6 +394,37 @@
             right: 0;
             background: var(--success-color);
         }
+        
+        .delete-modal-content {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .delete-modal-header {
+            background: linear-gradient(135deg, #f72585, #b5179e);
+            color: white;
+            padding: 25px 30px;
+        }
+        
+        .delete-modal-body {
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .delete-icon {
+            font-size: 4rem;
+            color: #f72585;
+            margin-bottom: 20px;
+        }
+        
+        .delete-modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
     </style>
 </head>
 <body>
@@ -819,6 +850,32 @@
         </div>
     </div>
 
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content delete-modal-content">
+                <div class="delete-modal-header">
+                    <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Deletion</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="delete-modal-body">
+                    <div class="delete-icon">
+                        <i class="fas fa-trash-alt"></i>
+                    </div>
+                    <h4 class="mb-3">Delete Trunk</h4>
+                    <p>Are you sure you want to delete the trunk <strong id="trunkToDeleteName">[Trunk Name]</strong>?</p>
+                    <p class="text-danger"><small>This action cannot be undone. All configuration associated with this trunk will be permanently removed.</small></p>
+                </div>
+                <div class="delete-modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                        <i class="fas fa-trash me-1"></i> Delete Trunk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap & jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
@@ -889,6 +946,9 @@
                 channels: 1
             }
         ];
+
+        // Global variable to track trunk to delete
+        let trunkToDelete = null;
 
         // Initialize DataTable
         let trunksTable;
@@ -979,6 +1039,18 @@
             
             // Initialize trunk type configuration
             toggleTrunkConfig();
+            
+            // Set up delete confirmation handler
+            document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+                if (!trunkToDelete) return;
+                
+                // Close the confirmation modal
+                bootstrap.Modal.getInstance(document.getElementById('deleteConfirmationModal')).hide();
+                
+                // Proceed with deletion
+                performDeleteTrunk(trunkToDelete);
+                trunkToDelete = null;
+            });
         });
 
         // Show/Hide loading overlay
@@ -1195,11 +1267,20 @@
             }
         }
 
-        async function deleteTrunk(id) {
-            if (!confirm('Are you sure you want to delete trunk #' + id + '?')) {
-                return;
-            }
+        // Enhanced delete function with confirmation modal
+        function deleteTrunk(id) {
+            const trunk = sampleTrunks.find(t => t.trunk_id == id);
+            if (!trunk) return;
+            
+            trunkToDelete = id;
+            document.getElementById('trunkToDeleteName').textContent = trunk.trunk_name;
+            
+            const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
+            deleteModal.show();
+        }
 
+        // Perform the actual deletion
+        async function performDeleteTrunk(id) {
             showLoading(true);
             try {
                 // In a real application, you would send to your API
@@ -1216,17 +1297,18 @@
                 const index = sampleTrunks.findIndex(t => t.trunk_id == id);
                 let result;
                 if (index !== -1) {
+                    const trunkName = sampleTrunks[index].trunk_name;
                     sampleTrunks.splice(index, 1);
                     result = { success: true, message: 'Trunk deleted successfully' };
+                    
+                    showNotification(`Trunk "${trunkName}" deleted successfully!`, 'success');
                 } else {
                     result = { success: false, message: 'Trunk not found' };
+                    showNotification('Failed to delete trunk: ' + result.message, 'danger');
                 }
                 
                 if (result.success) {
-                    showNotification('Trunk deleted successfully!', 'success');
                     loadTrunks();
-                } else {
-                    showNotification('Failed to delete trunk: ' + result.message, 'danger');
                 }
             } catch (error) {
                 console.error('Error deleting trunk:', error);

@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Management - Agent Details</title>
+    <title>User Management System</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
-    <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
     <style>
         :root {
             --primary-color: #4361ee;
@@ -21,171 +19,291 @@
             --warning-color: #f72585;
             --danger-color: #e63946;
             --light-bg: #f8f9fa;
-            --dark-bg: #212529;
-            --glass-bg: rgba(255, 255, 255, 0.95);
-            --glass-border: rgba(255, 255, 255, 0.2);
+            --dark-color: #212529;
         }
         
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            background-color: #f5f7fb;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding-bottom: 2rem;
+            font-size: 0.875rem;
+            padding: 1rem;
         }
         
+        .container-fluid {
+            padding: 0;
+        }
+        
+        /* Header */
+        .page-header {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .page-header h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .page-header p {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-bottom: 0;
+        }
+        
+        /* Statistics Cards */
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 1rem;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            transition: transform 0.2s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin: 0 auto 0.75rem;
+            font-size: 1.2rem;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        /* Glass Card */
         .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--glass-border);
-            padding: 30px;
-            margin-bottom: 25px;
-            transition: all 0.3s ease;
-            position: relative;
+            background: white;
+            border-radius: 10px;
+            padding: 1.25rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Search and Filters */
+        .search-box .input-group-text {
+            background: white;
+            border-right: none;
+        }
+        
+        .search-box .form-control {
+            border-left: none;
+        }
+        
+        .filter-section label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: #495057;
+        }
+        
+        /* Table */
+        #usersTable th {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #6c757d;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 0.75rem;
+        }
+        
+        #usersTable td {
+            font-size: 0.8rem;
+            vertical-align: middle;
+            padding: 0.75rem;
+        }
+        
+        .table-responsive {
+            border-radius: 10px;
             overflow: hidden;
         }
         
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--success-color));
-        }
-        
-        .glass-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-        
-        .page-header {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 25px 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--glass-border);
-        }
-        
-        .nav-tabs {
-            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-            margin-bottom: 25px;
-        }
-        
-        .nav-tabs .nav-link {
-            border: none;
-            padding: 12px 25px;
-            font-weight: 600;
-            color: #6c757d;
-            border-radius: 10px 10px 0 0;
-            margin-right: 5px;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-tabs .nav-link.active {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        /* User Avatar */
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary-color);
             color: white;
-            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
-        }
-        
-        .nav-tabs .nav-link:hover:not(.active) {
-            background: rgba(67, 97, 238, 0.1);
-            color: var(--primary-color);
-        }
-        
-        .form-section {
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        }
-        
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid rgba(67, 97, 238, 0.2);
             display: flex;
             align-items: center;
-        }
-        
-        .section-title i {
-            margin-right: 10px;
-            font-size: 1.3rem;
-        }
-        
-        .form-label {
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 8px;
-        }
-        
-        .form-control, .form-select {
-            border-radius: 10px;
-            padding: 12px 15px;
-            border: 1px solid #e1e5e9;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-        
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
-        }
-        
-        .required-field::after {
-            content: ' *';
-            color: var(--warning-color);
-        }
-        
-        .btn {
-            border-radius: 10px;
-            padding: 12px 25px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
-        }
-        
-        .btn-action {
-            padding: 8px 12px;
-            border-radius: 8px;
-            margin: 0 3px;
-            transition: all 0.2s ease;
-        }
-        
-        .btn-action:hover {
-            transform: scale(1.1);
-        }
-        
-        .status-badge {
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-        
-        .user-type-badge {
-            padding: 6px 12px;
-            border-radius: 15px;
+            justify-content: center;
             font-size: 0.8rem;
             font-weight: 600;
         }
         
+        /* Badges */
+        .badge {
+            font-size: 0.7rem;
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+        }
+        
+        /* Action Buttons */
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            border-radius: 6px;
+        }
+        
+        .btn-action {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 2px;
+        }
+        
+        /* Modal */
+        .modal-header {
+            padding: 1rem 1.25rem;
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .modal-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .modal-body {
+            padding: 1.25rem;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.25rem;
+        }
+        
+        /* Tabs */
+        .nav-tabs {
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 1.25rem;
+        }
+        
+        .nav-tabs .nav-link {
+            font-size: 0.8rem;
+            padding: 0.6rem 1rem;
+            border: none;
+            color: #6c757d;
+            font-weight: 500;
+            border-radius: 0;
+        }
+        
+        .nav-tabs .nav-link.active {
+            background: none;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        /* Form Elements */
+        .form-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: #495057;
+        }
+        
+        .form-control, .form-select {
+            font-size: 0.8rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+        }
+        
+        .form-text {
+            font-size: 0.7rem;
+        }
+        
+        .required-field::after {
+            content: " *";
+            color: var(--danger-color);
+        }
+        
+        /* Form Sections */
+        .form-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        /* Permission Grid */
+        .permission-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+        
+        .permission-item {
+            background: #f8f9fa;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .form-check-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        /* User Profile Preview */
+        .user-profile-preview {
+            text-align: center;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            color: white;
+            margin-bottom: 1rem;
+        }
+        
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.75rem;
+            font-size: 1.2rem;
+            border: 2px solid white;
+        }
+        
+        /* Loading Overlay */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -194,225 +312,127 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.7);
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             z-index: 9999;
             display: none;
         }
         
-        .stat-card {
-            text-align: center;
-            padding: 25px 20px;
-            border-radius: 15px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--glass-border);
-            transition: all 0.3s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-        }
-        
-        .stat-icon {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            font-size: 1.8rem;
-            color: white;
-        }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            font-size: 0.9rem;
-            color: #6c757d;
-            font-weight: 600;
-        }
-        
+        /* Toast Container */
         .toast-container {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 1rem;
+            right: 1rem;
             z-index: 9999;
         }
         
-        .search-box {
-            position: relative;
-        }
-        
-        .search-box .input-group-text {
-            background: white;
-            border-right: none;
-            border-radius: 10px 0 0 10px;
-        }
-        
-        .search-box .form-control {
-            border-left: none;
-            border-radius: 0 10px 10px 0;
-        }
-        
-        .filter-section {
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 10px;
-            padding: 15px;
-        }
-        
-        .table-responsive {
-            border-radius: 15px;
-            overflow: hidden;
-        }
-        
-        .table {
-            margin-bottom: 0;
-        }
-        
-        .table thead th {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border: none;
-            padding: 15px 12px;
-            font-weight: 600;
-        }
-        
-        .table tbody td {
-            padding: 12px;
-            vertical-align: middle;
-            border-color: #f1f3f4;
-        }
-        
-        .table-hover tbody tr:hover {
-            background-color: rgba(67, 97, 238, 0.05);
-        }
-        
-        .user-avatar {
-            width: 50px;
-            height: 50px;
+        /* Confirmation Modal */
+        .confirmation-modal .modal-icon {
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-color), var(--success-color));
+            background: #f8d7da;
+            color: var(--danger-color);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
         }
         
-        .permission-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .permission-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 4px solid var(--primary-color);
-        }
-        
-        .permission-item .form-check {
-            margin-bottom: 0;
-        }
-        
-        .call-mode-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 5px;
-        }
-        
-        .call-mode-process { background: var(--success-color); }
-        .call-mode-inbound { background: var(--info-color); }
-        .call-mode-outbound { background: var(--warning-color); }
-        
-        @media (max-width: 768px) {
-            .glass-card {
-                padding: 20px;
-            }
-            
-            .btn-action {
-                margin-bottom: 5px;
-                display: block;
-                width: 100%;
-            }
-            
-            .table-responsive {
-                font-size: 0.85rem;
-            }
-            
-            .permission-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .select2-container--default .select2-selection--single {
-            border-radius: 10px;
-            padding: 10px;
-            border: 1px solid #e1e5e9;
-            height: auto;
-        }
-        
-        .select2-container--default .select2-selection--multiple {
-            border-radius: 10px;
-            border: 1px solid #e1e5e9;
-        }
-        
-        .user-profile-preview {
-            text-align: center;
-            padding: 20px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        /* Queue Management */
+        .queue-management {
+            border: 2px solid #6BCBCA;
             border-radius: 15px;
-            color: white;
-            margin-bottom: 20px;
+            padding: 1rem;
+            background-color: #f8f9fa;
         }
         
-        .user-profile-preview .avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            font-size: 2rem;
-            border: 3px solid white;
-        }
-        
-        .feature-toggle {
+        .queue-select-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border-left: 4px solid var(--primary-color);
+            margin-bottom: 1rem;
         }
         
-        .feature-toggle label {
-            margin-bottom: 0;
-            font-weight: 600;
+        .queue-select {
+            width: 150px;
+            height: 120px;
+            border-radius: 10px;
+            border: 1px solid #ced4da;
+            padding: 0.25rem;
+        }
+        
+        .queue-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .queue-position-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .queue-search {
+            margin-bottom: 1rem;
+        }
+        
+        .queue-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding: 0.5rem;
+            background-color: #e9ecef;
+            border-radius: 6px;
+        }
+        
+        /* Process Badge */
+        .process-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .permission-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-action {
+                margin-bottom: 0.25rem;
+            }
+            
+            .stat-card {
+                margin-bottom: 1rem;
+            }
+            
+            .queue-select-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .queue-controls {
+                flex-direction: row;
+            }
+            
+            .queue-position-controls {
+                flex-direction: row;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
-        <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;">
+        <div class="spinner-border text-light" role="status" style="width: 2rem; height: 2rem;">
             <span class="visually-hidden">Loading...</span>
         </div>
     </div>
@@ -420,23 +440,23 @@
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <div class="container-fluid py-4">
+    <div class="container-fluid">
         <!-- Header -->
         <div class="page-header">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+            <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h1 class="h3 mb-1"><i class="fas fa-users-cog me-2 text-primary"></i>User Management</h1>
                     <p class="text-muted mb-0">Manage agents, supervisors, and administrators</p>
                 </div>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal">
-                    <i class="fas fa-user-plus me-1"></i> Add New User
+                <button class="btn btn-primary btn-sm" id="addUserBtn">
+                    <i class="fas fa-user-plus me-1"></i> Add User
                 </button>
             </div>
         </div>
 
         <!-- Statistics Cards -->
-        <div class="row mb-4">
-            <div class="col-md-3">
+        <div class="row mb-3">
+            <div class="col-md-3 col-6 mb-2">
                 <div class="stat-card">
                     <div class="stat-icon" style="background: linear-gradient(135deg, #4361ee, #3a0ca3);">
                         <i class="fas fa-users"></i>
@@ -445,7 +465,7 @@
                     <div class="stat-label">Total Users</div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-6 mb-2">
                 <div class="stat-card">
                     <div class="stat-icon" style="background: linear-gradient(135deg, #4cc9f0, #4895ef);">
                         <i class="fas fa-headset"></i>
@@ -454,7 +474,7 @@
                     <div class="stat-label">Active Agents</div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-6 mb-2">
                 <div class="stat-card">
                     <div class="stat-icon" style="background: linear-gradient(135deg, #f72585, #b5179e);">
                         <i class="fas fa-user-shield"></i>
@@ -463,7 +483,7 @@
                     <div class="stat-label">Supervisors</div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-6 mb-2">
                 <div class="stat-card">
                     <div class="stat-icon" style="background: linear-gradient(135deg, #7209b7, #560bad);">
                         <i class="fas fa-user-tie"></i>
@@ -476,10 +496,10 @@
 
         <!-- Search and Filters -->
         <div class="glass-card">
-            <div class="row g-3 align-items-center">
+            <div class="row g-2 align-items-center">
                 <div class="col-md-4">
                     <div class="search-box">
-                        <div class="input-group">
+                        <div class="input-group input-group-sm">
                             <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
                             <input type="text" id="searchInput" class="form-control border-start-0" placeholder="Search users...">
                         </div>
@@ -487,7 +507,7 @@
                 </div>
                 <div class="col-md-3">
                     <div class="filter-section">
-                        <label class="form-label small fw-bold">Status Filter</label>
+                        <label class="form-label">Status</label>
                         <select id="statusFilter" class="form-select form-select-sm">
                             <option value="">All Status</option>
                             <option value="Y">Active</option>
@@ -497,7 +517,7 @@
                 </div>
                 <div class="col-md-3">
                     <div class="filter-section">
-                        <label class="form-label small fw-bold">User Type</label>
+                        <label class="form-label">User Type</label>
                         <select id="typeFilter" class="form-select form-select-sm">
                             <option value="">All Types</option>
                             <option value="ADMIN">Administrator</option>
@@ -509,7 +529,7 @@
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <button class="btn btn-outline-secondary w-100 mt-4" onclick="resetFilters()">
+                    <button class="btn btn-outline-secondary btn-sm w-100 mt-3" id="resetFiltersBtn">
                         <i class="fas fa-redo me-1"></i> Reset
                     </button>
                 </div>
@@ -520,17 +540,15 @@
         <div class="glass-card">
             <div class="table-responsive">
                 <table id="usersTable" class="table table-sm table-hover w-100">
-                    <thead class="table-light">
+                    <thead>
                         <tr>
                             <th>ID</th>
                             <th>User</th>
                             <th>Agent ID</th>
-                            <th>Extension</th>
-                            <th>User Type</th>
+                            <th>Type</th>
+                            <th>Process</th>
                             <th>Status</th>
                             <th>Call Mode</th>
-                            <th>Groups</th>
-                            <th>Phone</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -544,9 +562,9 @@
 
     <!-- User Modal Form -->
     <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
+                <div class="modal-header">
                     <h5 class="modal-title" id="modalTitle"><i class="fas fa-user-plus me-2"></i>Add New User</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
@@ -554,7 +572,7 @@
                     <ul class="nav nav-tabs" id="userTabs" role="tablist">
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic" type="button" role="tab">
-                                <i class="fas fa-user me-1"></i> Basic Info
+                                <i class="fas fa-user me-1"></i> Basic
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
@@ -564,17 +582,17 @@
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="call-settings-tab" data-bs-toggle="tab" data-bs-target="#call-settings" type="button" role="tab">
-                                <i class="fas fa-phone me-1"></i> Call Settings
+                                <i class="fas fa-phone me-1"></i> Call
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="advanced-tab" data-bs-toggle="tab" data-bs-target="#advanced" type="button" role="tab">
-                                <i class="fas fa-cogs me-1"></i> Advanced
+                            <button class="nav-link" id="queues-tab" data-bs-toggle="tab" data-bs-target="#queues" type="button" role="tab">
+                                <i class="fas fa-list me-1"></i> Queues
                             </button>
                         </li>
                     </ul>
                     
-                    <div class="tab-content mt-4" id="userTabsContent">
+                    <div class="tab-content mt-3" id="userTabsContent">
                         <div class="tab-pane fade show active" id="basic" role="tabpanel">
                             <form id="userForm">
                                 <input type="hidden" id="sno" name="sno">
@@ -585,81 +603,61 @@
                                             <div class="section-title">
                                                 <i class="fas fa-id-card"></i> User Identification
                                             </div>
-                                            <div class="row g-3">
+                                            <div class="row g-2">
                                                 <div class="col-md-6">
-                                                    <div class="form-group">
+                                                    <div class="mb-2">
                                                         <label for="agent_id" class="form-label required-field">Agent ID</label>
-                                                        <input type="text" class="form-control" id="agent_id" name="agent_id" required maxlength="15" placeholder="e.g., AG001">
-                                                        <small class="form-text text-muted">Unique identifier for the agent</small>
+                                                        <input type="text" class="form-control form-control-sm" id="agent_id" name="agent_id" required maxlength="15" placeholder="e.g., AG001">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <div class="form-group">
+                                                    <div class="mb-2">
                                                         <label for="agent_name" class="form-label required-field">Full Name</label>
-                                                        <input type="text" class="form-control" id="agent_name" name="agent_name" required maxlength="50" placeholder="e.g., John Smith">
-                                                        <small class="form-text text-muted">Agent's full name</small>
+                                                        <input type="text" class="form-control form-control-sm" id="agent_name" name="agent_name" required maxlength="50" placeholder="e.g., John Smith">
                                                     </div>
                                                 </div>
                                             </div>
                                             
-                                            <div class="row g-3 mt-2">
+                                            <div class="row g-2">
                                                 <div class="col-md-6">
-                                                    <div class="form-group">
+                                                    <div class="mb-2">
                                                         <label for="password" class="form-label required-field">Password</label>
-                                                        <input type="password" class="form-control" id="password" name="password" required maxlength="20" placeholder="Enter password">
-                                                        <small class="form-text text-muted">Login password</small>
+                                                        <input type="password" class="form-control form-control-sm" id="password" name="password" required maxlength="20" placeholder="Enter password">
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="extension" class="form-label required-field">Extension</label>
-                                                        <input type="text" class="form-control" id="extension" name="extension" required maxlength="10" placeholder="e.g., 1001">
-                                                        <small class="form-text text-muted">Phone extension number</small>
+                                                <!-- <div class="col-md-6">
+                                                    <div class="mb-2">
+                                                        <label for="extension" class="form-label">Extension</label>
+                                                        <input type="text" class="form-control form-control-sm" id="extension" name="extension" maxlength="10" placeholder="e.g., 1001">
                                                     </div>
-                                                </div>
+                                                </div> -->
                                             </div>
                                         </div>
                                         
                                         <div class="form-section">
                                             <div class="section-title">
-                                                <i class="fas fa-users"></i> Group & Access
+                                                <i class="fas fa-users"></i> Access
                                             </div>
-                                            <div class="row g-3">
+                                            <div class="row g-2">
                                                 <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="groups" class="form-label">Groups</label>
-                                                        <input type="text" class="form-control" id="groups" name="groups" maxlength="20" placeholder="e.g., Sales, Support">
-                                                        <small class="form-text text-muted">User groups</small>
+                                                    <div class="mb-2">
+                                                        <label for="process" class="form-label">Process</label>
+                                                        <select class="form-select form-select-sm" id="process" name="process">
+                                                            <option value="">Select a Process</option>
+                                                            <!-- Processes will be populated by JavaScript -->
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <div class="form-group">
+                                                    <div class="mb-2">
                                                         <label for="user_type" class="form-label required-field">User Type</label>
-                                                        <select class="form-select" id="user_type" name="user_type" required onchange="togglePermissions()">
+                                                        <select class="form-select form-select-sm" id="user_type" name="user_type" required onchange="togglePermissions()">
                                                             <option value="AGENT">Agent</option>
                                                             <option value="SUPERVISOR">Supervisor</option>
                                                             <option value="ADMIN">Administrator</option>
                                                             <option value="MIS">MIS</option>
                                                             <option value="SUPPORT">Support</option>
                                                         </select>
-                                                        <small class="form-text text-muted">User role and permissions level</small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="row g-3 mt-2">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="process" class="form-label">Process</label>
-                                                        <textarea class="form-control" id="process" name="process" rows="3" placeholder="Process description"></textarea>
-                                                        <small class="form-text text-muted">Assigned process or campaign</small>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="assigned_queues" class="form-label">Assigned Queues</label>
-                                                        <textarea class="form-control" id="assigned_queues" name="assigned_queues" rows="3" placeholder="Queue names"></textarea>
-                                                        <small class="form-text text-muted">Call queues assigned to this user</small>
                                                     </div>
                                                 </div>
                                             </div>
@@ -671,7 +669,7 @@
                                             <div class="avatar" id="userAvatar">
                                                 <i class="fas fa-user"></i>
                                             </div>
-                                            <h5 id="previewName">User Name</h5>
+                                            <h6 id="previewName">User Name</h6>
                                             <div class="badge bg-light text-dark mb-2" id="previewType">AGENT</div>
                                             <div class="small">
                                                 <div>ID: <span id="previewId">AG001</span></div>
@@ -684,25 +682,12 @@
                                             <div class="section-title">
                                                 <i class="fas fa-server"></i> System Settings
                                             </div>
-                                            <div class="form-group">
-                                                <label for="server_ip" class="form-label">Server IP</label>
-                                                <input type="text" class="form-control" id="server_ip" name="server_ip" maxlength="20" placeholder="e.g., 192.168.1.100">
-                                                <small class="form-text text-muted">Assigned server IP address</small>
-                                            </div>
-                                            
-                                            <div class="form-group">
-                                                <label for="call_priority" class="form-label">Call Priority</label>
-                                                <input type="number" class="form-control" id="call_priority" name="call_priority" value="0" min="0" max="100">
-                                                <small class="form-text text-muted">Call handling priority (0-100)</small>
-                                            </div>
-                                            
-                                            <div class="form-group">
+                                            <div class="mb-2">
                                                 <label for="active" class="form-label required-field">Status</label>
-                                                <select class="form-select" id="active" name="active" required>
+                                                <select class="form-select form-select-sm" id="active" name="active" required>
                                                     <option value="Y">Active</option>
                                                     <option value="N">Inactive</option>
                                                 </select>
-                                                <small class="form-text text-muted">User account status</small>
                                             </div>
                                         </div>
                                     </div>
@@ -722,7 +707,6 @@
                                             <input class="form-check-input" type="checkbox" id="allow_manual_dial" name="allow_manual_dial" value="Y">
                                             <label class="form-check-label" for="allow_manual_dial">Manual Dial</label>
                                         </div>
-                                        <small class="text-muted">Allow manual number dialing</small>
                                     </div>
                                     
                                     <div class="permission-item">
@@ -730,7 +714,6 @@
                                             <input class="form-check-input" type="checkbox" id="allow_transfer" name="allow_transfer" value="Y">
                                             <label class="form-check-label" for="allow_transfer">Call Transfer</label>
                                         </div>
-                                        <small class="text-muted">Allow call transfer to other agents</small>
                                     </div>
                                     
                                     <div class="permission-item">
@@ -738,7 +721,6 @@
                                             <input class="form-check-input" type="checkbox" id="click_to_call" name="click_to_call" value="Y" checked>
                                             <label class="form-check-label" for="click_to_call">Click to Call</label>
                                         </div>
-                                        <small class="text-muted">Enable click-to-call functionality</small>
                                     </div>
                                     
                                     <div class="permission-item">
@@ -746,71 +728,6 @@
                                             <input class="form-check-input" type="checkbox" id="edit_record" name="edit_record" value="Y" checked>
                                             <label class="form-check-label" for="edit_record">Edit Records</label>
                                         </div>
-                                        <small class="text-muted">Allow editing call records</small>
-                                    </div>
-                                    
-                                    <div class="permission-item">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="manual_outbound" name="manual_outbound" value="Y">
-                                            <label class="form-check-label" for="manual_outbound">Manual Outbound</label>
-                                        </div>
-                                        <small class="text-muted">Allow manual outbound calls</small>
-                                    </div>
-                                    
-                                    <div class="permission-item">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="show_recent_calls" name="show_recent_calls" value="Y" checked>
-                                            <label class="form-check-label" for="show_recent_calls">Recent Calls</label>
-                                        </div>
-                                        <small class="text-muted">Show recent call history</small>
-                                    </div>
-                                    
-                                    <div class="permission-item">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="allow_offline_crm" name="allow_offline_crm" value="Y">
-                                            <label class="form-check-label" for="allow_offline_crm">Offline CRM</label>
-                                        </div>
-                                        <small class="text-muted">Allow offline CRM access</small>
-                                    </div>
-                                    
-                                    <div class="permission-item">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="allow_remotelogin" name="allow_remotelogin" value="Y">
-                                            <label class="form-check-label" for="allow_remotelogin">Remote Login</label>
-                                        </div>
-                                        <small class="text-muted">Allow remote system login</small>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="form-section">
-                                <div class="section-title">
-                                    <i class="fas fa-phone"></i> Callback Permissions
-                                </div>
-                                
-                                <div class="permission-grid">
-                                    <div class="permission-item">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="agent_only_callbacks" name="agent_only_callbacks" value="Y" checked>
-                                            <label class="form-check-label" for="agent_only_callbacks">Agent Callbacks</label>
-                                        </div>
-                                        <small class="text-muted">Allow agent-only callbacks</small>
-                                    </div>
-                                    
-                                    <div class="permission-item">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="allow_anyone_callbacks" name="allow_anyone_callbacks" value="Y">
-                                            <label class="form-check-label" for="allow_anyone_callbacks">Anyone Callbacks</label>
-                                        </div>
-                                        <small class="text-muted">Allow callbacks by anyone</small>
-                                    </div>
-                                    
-                                    <div class="permission-item">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="allow_auto_callbacks" name="allow_auto_callbacks" value="Y">
-                                            <label class="form-check-label" for="allow_auto_callbacks">Auto Callbacks</label>
-                                        </div>
-                                        <small class="text-muted">Allow automatic callbacks</small>
                                     </div>
                                 </div>
                             </div>
@@ -819,77 +736,138 @@
                         <div class="tab-pane fade" id="call-settings" role="tabpanel">
                             <div class="form-section">
                                 <div class="section-title">
-                                    <i class="fas fa-sliders-h"></i> Call Handling Settings
+                                    <i class="fas fa-sliders-h"></i> Call Settings
                                 </div>
                                 
-                                <div class="row g-3">
+                                <div class="row g-2">
                                     <div class="col-md-6">
-                                        <div class="form-group">
+                                        <div class="mb-2">
                                             <label for="call_mode" class="form-label required-field">Call Mode</label>
-                                            <select class="form-select" id="call_mode" name="call_mode" required>
+                                            <select class="form-select form-select-sm" id="call_mode" name="call_mode" required>
                                                 <option value="processmode">Process Mode</option>
                                                 <option value="inbound">Inbound</option>
                                                 <option value="outbound">Outbound</option>
                                             </select>
-                                            <small class="form-text text-muted">Primary call handling mode</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="call_allowed" class="form-label">Call Types Allowed</label>
-                                            <select class="form-select" id="call_allowed" name="call_allowed">
+                                        <div class="mb-2">
+                                            <label for="call_allowed" class="form-label">Call Types</label>
+                                            <select class="form-select form-select-sm" id="call_allowed" name="call_allowed">
                                                 <option value="Local">Local Only</option>
                                                 <option value="STD">STD</option>
                                                 <option value="All">All Calls</option>
                                             </select>
-                                            <small class="form-text text-muted">Types of calls allowed</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="row g-3 mt-3">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="phone_number" class="form-label">Phone Number</label>
-                                            <input type="text" class="form-control" id="phone_number" name="phone_number" maxlength="50" placeholder="e.g., +1-555-0123">
-                                            <small class="form-text text-muted">User's phone number</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="remote_server_ip" class="form-label">Remote Server IP</label>
-                                            <input type="text" class="form-control" id="remote_server_ip" name="remote_server_ip" maxlength="20" placeholder="e.g., 192.168.1.200">
-                                            <small class="form-text text-muted">Remote server for login</small>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="tab-pane fade" id="advanced" role="tabpanel">
+                        <div class="tab-pane fade" id="queues" role="tabpanel">
                             <div class="form-section">
                                 <div class="section-title">
-                                    <i class="fas fa-code"></i> Custom Access Settings
+                                    <i class="fas fa-list"></i> Queue Assignment
                                 </div>
                                 
-                                <div class="row g-3">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="user_access" class="form-label">Custom Access Rules</label>
-                                            <textarea class="form-control" id="user_access" name="user_access" rows="8" placeholder="Enter custom access rules in JSON or key-value format..."></textarea>
-                                            <small class="form-text text-muted">Custom access permissions and restrictions</small>
+                                <div class="alert alert-info" role="alert">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Select a process first to load available queues for assignment.
+                                </div>
+                                
+                                <div class="queue-management">
+                                    <div class="queue-search">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                            <input type="text" id="queueSearch" class="form-control" placeholder="Search queues..." onkeyup="filterQueues()">
                                         </div>
                                     </div>
+                                    
+                                    <div class="queue-select-container">
+                                        <div>
+                                            <label class="form-label">Available Queues</label>
+                                            <select multiple class="queue-select" id="queue_from">
+                                                <!-- Queues will be populated by JavaScript -->
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="queue-controls">
+                                            <button type="button" class="btn btn-primary btn-sm" onclick="moveRight()">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-primary btn-sm" onclick="moveLeft()">
+                                                <i class="fas fa-chevron-left"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="moveAllRight()">
+                                                <i class="fas fa-angle-double-right"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="moveAllLeft()">
+                                                <i class="fas fa-angle-double-left"></i>
+                                            </button>
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="form-label">Selected Queues</label>
+                                            <select multiple class="queue-select" id="selected_queues">
+                                                <!-- Selected queues will be populated by JavaScript -->
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="queue-position-controls">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="moveTop()">
+                                                <i class="fas fa-angle-double-up"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="moveUp()">
+                                                <i class="fas fa-chevron-up"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="moveDown()">
+                                                <i class="fas fa-chevron-down"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="moveBottom()">
+                                                <i class="fas fa-angle-double-down"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="queue-info">
+                                        <div>
+                                            <span id="selectedCount">0</span> queues selected
+                                        </div>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="clearAll()">
+                                            <i class="fas fa-trash me-1"></i> Clear All
+                                        </button>
+                                    </div>
+                                    
+                                    <input type="hidden" id="assigned_queues" name="assigned_queues">
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="saveUser()">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="saveUserBtn">
                         <i class="fas fa-save me-1"></i> Save User
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade confirmation-modal" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <div class="modal-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h6 class="mb-2">Confirm Delete</h6>
+                    <p class="text-muted mb-3 small" id="deleteConfirmText">Are you sure you want to delete this user?</p>
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger btn-sm" id="confirmDeleteBtn">Delete</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -901,637 +879,624 @@
     <!-- DataTables -->
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
-    <!-- Select2 -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+    
     <script>
-        // API Configuration
-        const API_BASE_URL = 'api/users/'; // Adjust this to your API endpoint
+        const API_BASE_URL = '../api/'; // Adjust to your API path
+        const PROCESS_API_URL = '../api/indiapi/Process_list.php';
+        const QUEUES_API_URL = '../api/indiapi/Queues_list.php';
         
-        // Sample data for demonstration
-        let sampleUsers = [
-            {
-                sno: 1,
-                agent_id: 'AG001',
-                agent_name: 'John Smith',
-                password: 'password123',
-                extension: '1001',
-                groups: 'Sales',
-                user_access: '{"reports": true, "export": true}',
-                user_type: 'AGENT',
-                process: 'Sales Campaign',
-                active: 'Y',
-                call_priority: 5,
-                server_ip: '192.168.1.100',
-                assigned_queues: 'sales, support',
-                call_mode: 'outbound',
-                allow_manual_dial: 'N',
-                agent_only_callbacks: 'Y',
-                allow_anyone_callbacks: 'N',
-                allow_auto_callbacks: 'N',
-                show_recent_calls: 'Y',
-                click_to_call: 'Y',
-                edit_record: 'Y',
-                manual_outbound: 'N',
-                call_allowed: 'Local',
-                allow_transfer: 'N',
-                entry_date: '2024-01-15 10:30:00',
-                allow_offline_crm: 'N',
-                allow_remotelogin: 'N',
-                phone_number: '+1-555-0101',
-                remote_server_ip: ''
-            },
-            {
-                sno: 2,
-                agent_id: 'SUP001',
-                agent_name: 'Sarah Johnson',
-                password: 'admin123',
-                extension: '2001',
-                groups: 'Management',
-                user_access: '{"reports": true, "monitor": true, "export": true}',
-                user_type: 'SUPERVISOR',
-                process: 'Team Management',
-                active: 'Y',
-                call_priority: 10,
-                server_ip: '192.168.1.100',
-                assigned_queues: 'sales, support, billing',
-                call_mode: 'inbound',
-                allow_manual_dial: 'Y',
-                agent_only_callbacks: 'Y',
-                allow_anyone_callbacks: 'Y',
-                allow_auto_callbacks: 'Y',
-                show_recent_calls: 'Y',
-                click_to_call: 'Y',
-                edit_record: 'Y',
-                manual_outbound: 'Y',
-                call_allowed: 'All',
-                allow_transfer: 'Y',
-                entry_date: '2024-01-10 09:15:00',
-                allow_offline_crm: 'Y',
-                allow_remotelogin: 'Y',
-                phone_number: '+1-555-0102',
-                remote_server_ip: '192.168.1.200'
-            },
-            {
-                sno: 3,
-                agent_id: 'ADM001',
-                agent_name: 'Michael Brown',
-                password: 'securepass',
-                extension: '3001',
-                groups: 'IT',
-                user_access: '{"all": true}',
-                user_type: 'ADMIN',
-                process: 'System Administration',
-                active: 'Y',
-                call_priority: 15,
-                server_ip: '192.168.1.100',
-                assigned_queues: 'all',
-                call_mode: 'processmode',
-                allow_manual_dial: 'Y',
-                agent_only_callbacks: 'Y',
-                allow_anyone_callbacks: 'Y',
-                allow_auto_callbacks: 'Y',
-                show_recent_calls: 'Y',
-                click_to_call: 'Y',
-                edit_record: 'Y',
-                manual_outbound: 'Y',
-                call_allowed: 'All',
-                allow_transfer: 'Y',
-                entry_date: '2024-01-05 08:00:00',
-                allow_offline_crm: 'Y',
-                allow_remotelogin: 'Y',
-                phone_number: '+1-555-0103',
-                remote_server_ip: '192.168.1.200'
-            }
-        ];
-
-        // Initialize DataTable
+        let currentEditingId = null;
+        let usersData = [];
         let usersTable;
+        let processes = [];
+        let queues = [];
+
+        // Initialize DataTable and event listeners
         $(document).ready(function() {
-            // Initialize Select2
-            $('.form-select').select2({
-                width: '100%',
-                theme: 'bootstrap-5'
-            });
-            
+            // Initialize DataTable
             usersTable = $('#usersTable').DataTable({
                 pageLength: 10,
-                responsive: true,
-                dom: '<"row"<"col-md-6"l><"col-md-6"f>>rt<"row"<"col-md-6"i><"col-md-6"p>>',
+                lengthMenu: [10, 25, 50],
+                order: [[0, 'desc']],
                 language: {
-                    search: "_INPUT_",
-                    searchPlaceholder: "Search users..."
+                    search: "",
+                    searchPlaceholder: "Search users...",
+                    lengthMenu: "_MENU_"
                 },
-                columns: [
-                    { data: 'sno' },
-                    { 
-                        data: null,
-                        render: function(data, type, row) {
-                            const initials = row.agent_name.split(' ').map(n => n[0]).join('').toUpperCase();
-                            return `
-                                <div class="d-flex align-items-center">
-                                    <div class="user-avatar me-3">${initials}</div>
-                                    <div>
-                                        <div class="fw-bold">${row.agent_name}</div>
-                                        <small class="text-muted">${row.groups || 'No Group'}</small>
-                                    </div>
-                                </div>
-                            `;
-                        }
-                    },
-                    { data: 'agent_id' },
-                    { data: 'extension' },
-                    { 
-                        data: 'user_type',
-                        render: function(data, type, row) {
-                            let badgeClass = 'bg-primary';
-                            if (data === 'SUPERVISOR') badgeClass = 'bg-warning';
-                            if (data === 'ADMIN') badgeClass = 'bg-danger';
-                            if (data === 'MIS') badgeClass = 'bg-info';
-                            if (data === 'SUPPORT') badgeClass = 'bg-secondary';
-                            
-                            return `<span class="user-type-badge ${badgeClass}">${data}</span>`;
-                        }
-                    },
-                    { 
-                        data: 'active',
-                        render: function(data, type, row) {
-                            return data === 'Y' 
-                                ? '<span class="status-badge bg-success">Active</span>' 
-                                : '<span class="status-badge bg-danger">Inactive</span>';
-                        }
-                    },
-                    { 
-                        data: 'call_mode',
-                        render: function(data, type, row) {
-                            let modeClass = 'call-mode-process';
-                            let modeText = 'Process';
-                            if (data === 'inbound') {
-                                modeClass = 'call-mode-inbound';
-                                modeText = 'Inbound';
-                            } else if (data === 'outbound') {
-                                modeClass = 'call-mode-outbound';
-                                modeText = 'Outbound';
-                            }
-                            
-                            return `<span><span class="${modeClass}"></span>${modeText}</span>`;
-                        }
-                    },
-                    { data: 'groups' },
-                    { data: 'phone_number' },
-                    {
-                        data: 'sno',
-                        render: function(data, type, row) {
-                            return `
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-outline-primary btn-action" onclick="editUser(${data})" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-outline-info btn-action" onclick="viewUser(${data})" title="View">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-outline-warning btn-action" onclick="resetPassword(${data})" title="Reset Password">
-                                        <i class="fas fa-key"></i>
-                                    </button>
-                                    <button class="btn btn-outline-danger btn-action" onclick="deleteUser(${data})" title="Delete">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            `;
-                        },
-                        orderable: false
-                    }
-                ]
+                initComplete: function() {
+                    $('.dataTables_length select').addClass('form-select form-select-sm');
+                    $('.dataTables_filter input').addClass('form-control form-control-sm');
+                }
             });
 
+            // Add event listeners
+            document.getElementById('addUserBtn').addEventListener('click', openAddModal);
+            document.getElementById('resetFiltersBtn').addEventListener('click', resetFilters);
+            document.getElementById('saveUserBtn').addEventListener('click', saveUser);
+            document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+                if (currentEditingId) {
+                    deleteUser(currentEditingId);
+                }
+            });
+
+            // Update preview when form fields change
+            $('#agent_id, #agent_name, #extension, #user_type, #active').on('input change', updatePreview);
+            
+            // Process change event
+            document.getElementById('process').addEventListener('change', loadQueuesForProcess);
+            
             // Load initial data
             loadUsers();
-            
-            // Initialize form event listeners
-            initializeFormListeners();
+            loadProcesses();
         });
 
-        // Initialize form event listeners for real-time updates
-        function initializeFormListeners() {
-            // Update preview when form fields change
-            $('#agent_name, #agent_id, #extension, #user_type, #active').on('input change', function() {
-                updateUserPreview();
-            });
+        // Load users from API
+        async function loadUsers() {
+            showLoading(true);
             
-            // Toggle permissions based on user type
-            $('#user_type').on('change', function() {
-                togglePermissions();
+            try {
+                const response = await fetch(API_BASE_URL + 'users.php?action=getAll');
+                const result = await response.json();
+                
+                if (result.success) {
+                    usersData = result.data;
+                    populateUsersTable(usersData);
+                    updateStatistics(usersData);
+                } else {
+                    showToast('Error loading users: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+                showToast('Failed to load users. Please check console.', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Load processes from API
+        async function loadProcesses() {
+            try {
+                const response = await fetch(PROCESS_API_URL);
+                const result = await response.json();
+                
+                if (result.success) {
+                    processes = result.data;
+                    populateProcessDropdown();
+                    showToast(`Loaded ${result.count} processes successfully`, 'success');
+                } else {
+                    showToast('Error loading processes: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error loading processes:', error);
+                // Use mock data for demonstration
+                processes = [];
+                populateProcessDropdown();
+                showToast('Using demo process data', 'info');
+            }
+        }
+
+        // Populate process dropdown
+        function populateProcessDropdown() {
+            const processSelect = document.getElementById('process');
+            processSelect.innerHTML = '<option value="">Select a Process</option>';
+            
+            processes.forEach(process => {
+                const option = document.createElement('option');
+                option.value = process;
+                option.textContent = process;
+                processSelect.appendChild(option);
             });
         }
 
-        // Toggle permissions based on user type
+        // Load queues for selected process
+        async function loadQueuesForProcess() {
+            const processSelect = document.getElementById('process');
+            const selectedProcess = processSelect.value;
+            const queueFrom = document.getElementById('queue_from');
+            const selectedQueues = document.getElementById('selected_queues');
+            
+            // Clear existing queues
+            queueFrom.innerHTML = '';
+            selectedQueues.innerHTML = '';
+            document.getElementById('assigned_queues').value = '';
+            document.getElementById('selectedCount').textContent = '0';
+            document.getElementById('queueSearch').value = '';
+            
+            if (!selectedProcess) {
+                return;
+            }
+            
+            showLoading(true);
+            
+            try {
+                const response = await fetch(QUEUES_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ process_name: selectedProcess })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    queues = result.data;
+                    // Populate available queues
+                    queues.forEach(queue => {
+                        const option = document.createElement('option');
+                        option.value = queue.queue_name;
+                        option.textContent = queue.queue_name;
+                        queueFrom.appendChild(option);
+                    });
+                    showToast(`Loaded queues for ${selectedProcess}`, 'success');
+                } else {
+                    showToast('Error loading queues: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error loading queues:', error);
+                // Use mock queue data for demonstration
+                const mockQueues = [
+                    { queue_name: `${selectedProcess}_Queue1` },
+                    { queue_name: `${selectedProcess}_Queue2` },
+                    { queue_name: `${selectedProcess}_Queue3` },
+                    { queue_name: `${selectedProcess}_Queue4` }
+                ];
+                queues = mockQueues;
+                
+                mockQueues.forEach(queue => {
+                    const option = document.createElement('option');
+                    option.value = queue.queue_name;
+                    option.textContent = queue.queue_name;
+                    queueFrom.appendChild(option);
+                });
+                showToast('Using demo queue data', 'info');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Queue movement functions
+        function moveRight() {
+            const fromSelect = document.getElementById('queue_from');
+            const toSelect = document.getElementById('selected_queues');
+            
+            for (let i = 0; i < fromSelect.options.length; i++) {
+                if (fromSelect.options[i].selected) {
+                    toSelect.appendChild(fromSelect.options[i]);
+                    i--; // Adjust index after removal
+                }
+            }
+            updateAssignedQueues();
+        }
+
+        function moveLeft() {
+            const fromSelect = document.getElementById('selected_queues');
+            const toSelect = document.getElementById('queue_from');
+            
+            for (let i = 0; i < fromSelect.options.length; i++) {
+                if (fromSelect.options[i].selected) {
+                    toSelect.appendChild(fromSelect.options[i]);
+                    i--; // Adjust index after removal
+                }
+            }
+            updateAssignedQueues();
+        }
+
+        function moveAllRight() {
+            const fromSelect = document.getElementById('queue_from');
+            const toSelect = document.getElementById('selected_queues');
+            
+            while (fromSelect.options.length > 0) {
+                toSelect.appendChild(fromSelect.options[0]);
+            }
+            updateAssignedQueues();
+        }
+
+        function moveAllLeft() {
+            const fromSelect = document.getElementById('selected_queues');
+            const toSelect = document.getElementById('queue_from');
+            
+            while (fromSelect.options.length > 0) {
+                toSelect.appendChild(fromSelect.options[0]);
+            }
+            updateAssignedQueues();
+        }
+
+        function moveTop() {
+            const select = document.getElementById('selected_queues');
+            for (let i = 0; i < select.options.length; i++) {
+                if (select.options[i].selected) {
+                    select.insertBefore(select.options[i], select.firstChild);
+                }
+            }
+            updateAssignedQueues();
+        }
+
+        function moveUp() {
+            const select = document.getElementById('selected_queues');
+            for (let i = 1; i < select.options.length; i++) {
+                if (select.options[i].selected && !select.options[i-1].selected) {
+                    select.insertBefore(select.options[i], select.options[i-1]);
+                }
+            }
+            updateAssignedQueues();
+        }
+
+        function moveDown() {
+            const select = document.getElementById('selected_queues');
+            for (let i = select.options.length - 2; i >= 0; i--) {
+                if (select.options[i].selected && !select.options[i+1].selected) {
+                    select.insertBefore(select.options[i+1], select.options[i]);
+                }
+            }
+            updateAssignedQueues();
+        }
+
+        function moveBottom() {
+            const select = document.getElementById('selected_queues');
+            for (let i = 0; i < select.options.length - 1; i++) {
+                if (select.options[i].selected) {
+                    select.appendChild(select.options[i]);
+                    i--; // Adjust index after removal
+                }
+            }
+            updateAssignedQueues();
+        }
+
+        function clearAll() {
+            const fromSelect = document.getElementById('selected_queues');
+            const toSelect = document.getElementById('queue_from');
+            
+            while (fromSelect.options.length > 0) {
+                toSelect.appendChild(fromSelect.options[0]);
+            }
+            updateAssignedQueues();
+        }
+
+        function filterQueues() {
+            const input = document.getElementById('queueSearch');
+            const filter = input.value.toLowerCase();
+            const select = document.getElementById('queue_from');
+            
+            for (let i = 0; i < select.options.length; i++) {
+                const option = select.options[i];
+                const text = option.text.toLowerCase();
+                option.style.display = text.includes(filter) ? '' : 'none';
+            }
+        }
+
+        function updateAssignedQueues() {
+            const selectedQueues = document.getElementById('selected_queues');
+            const queues = [];
+            for (let i = 0; i < selectedQueues.options.length; i++) {
+                queues.push(selectedQueues.options[i].value);
+            }
+            document.getElementById('assigned_queues').value = queues.join(', ');
+            document.getElementById('selectedCount').textContent = queues.length;
+        }
+
+        // Populate users table
+        function populateUsersTable(users) {
+            const table = $('#usersTable').DataTable();
+            table.clear();
+            
+            users.forEach(user => {
+                const statusBadge = user.active === 'Y' ? 
+                    '<span class="badge bg-success">Active</span>' : 
+                    '<span class="badge bg-danger">Inactive</span>';
+                
+                const userTypeBadge = user.user_type === 'AGENT' ? 'bg-primary' : 
+                                    user.user_type === 'SUPERVISOR' ? 'bg-warning' : 
+                                    user.user_type === 'ADMIN' ? 'bg-danger' : 'bg-info';
+                
+                const initials = user.agent_name.split(' ').map(n => n[0]).join('').toUpperCase();
+                const processBadge = user.process ? `<span class="process-badge">${user.process}</span>` : '<span class="badge bg-secondary">No Process</span>';
+                
+                table.row.add([
+                    user.sno,
+                    `<div class="d-flex align-items-center">
+                        <div class="user-avatar me-2">${initials}</div>
+                        <div>${user.agent_name}</div>
+                    </div>`,
+                    user.agent_id,
+                    `<span class="badge ${userTypeBadge}">${user.user_type}</span>`,
+                    processBadge,
+                    statusBadge,
+                    user.call_mode,
+                    `<div class="btn-group">
+                        <button class="btn btn-outline-primary btn-action" onclick="editUser(${user.sno})" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-outline-danger btn-action" onclick="confirmDelete(${user.sno}, '${user.agent_name}')" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>`
+                ]).draw(false);
+            });
+        }
+
+        // Update statistics
+        function updateStatistics(users) {
+            $('#totalUsers').text(users.length);
+            $('#activeAgents').text(users.filter(u => u.active === 'Y' && u.user_type === 'AGENT').length);
+            $('#supervisors').text(users.filter(u => u.user_type === 'SUPERVISOR').length);
+            $('#admins').text(users.filter(u => u.user_type === 'ADMIN').length);
+        }
+
+        // Open add modal
+        function openAddModal() {
+            currentEditingId = null;
+            $('#modalTitle').html('<i class="fas fa-user-plus me-2"></i>Add New User');
+            $('#userForm')[0].reset();
+            $('#sno').val('');
+            
+            // Reset queues
+            document.getElementById('process').value = '';
+            document.getElementById('queue_from').innerHTML = '';
+            document.getElementById('selected_queues').innerHTML = '';
+            document.getElementById('assigned_queues').value = '';
+            document.getElementById('selectedCount').textContent = '0';
+            document.getElementById('queueSearch').value = '';
+            
+            updatePreview();
+            togglePermissions();
+            
+            // Show the modal using Bootstrap
+            const userModal = new bootstrap.Modal(document.getElementById('userModal'));
+            userModal.show();
+        }
+
+        // Edit user
+        async function editUser(userId) {
+            showLoading(true);
+            
+            try {
+                const response = await fetch(API_BASE_URL + 'users.php?action=get&id=' + userId);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const user = result.data;
+                    currentEditingId = userId;
+                    $('#modalTitle').html('<i class="fas fa-edit me-2"></i>Edit User');
+                    
+                    // Fill form with user data
+                    $('#sno').val(user.sno);
+                    $('#agent_id').val(user.agent_id);
+                    $('#agent_name').val(user.agent_name);
+                    $('#password').val(user.password);
+                    $('#extension').val(user.extension);
+                    $('#user_type').val(user.user_type);
+                    $('#active').val(user.active);
+                    $('#call_mode').val(user.call_mode);
+                    $('#call_allowed').val(user.call_allowed);
+
+                    // Set process
+                    if (user.process) {
+                        $('#process').val(user.process);
+                        await loadQueuesForProcess();
+                        
+                        // Set selected queues after a short delay to allow queues to load
+                        setTimeout(() => {
+                            if (user.assigned_queues) {
+                                const assignedQueues = user.assigned_queues.split(',').map(q => q.trim());
+                                const queueFrom = document.getElementById('queue_from');
+                                const selectedQueues = document.getElementById('selected_queues');
+                                
+                                // Move assigned queues to selected side
+                                for (let i = 0; i < queueFrom.options.length; i++) {
+                                    const option = queueFrom.options[i];
+                                    if (assignedQueues.includes(option.value)) {
+                                        selectedQueues.appendChild(option);
+                                        i--; // Adjust index after removal
+                                    }
+                                }
+                                updateAssignedQueues();
+                            }
+                        }, 500);
+                    }
+
+                    // Set permission checkboxes
+                    $('#allow_manual_dial').prop('checked', user.allow_manual_dial === 'Y');
+                    $('#allow_transfer').prop('checked', user.allow_transfer === 'Y');
+                    $('#click_to_call').prop('checked', user.click_to_call === 'Y');
+                    $('#edit_record').prop('checked', user.edit_record === 'Y');
+
+                    updatePreview();
+                    
+                    // Show the modal using Bootstrap
+                    const userModal = new bootstrap.Modal(document.getElementById('userModal'));
+                    userModal.show();
+                } else {
+                    showToast('Error loading user: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error loading user:', error);
+                showToast('Failed to load user. Please check console.', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Confirm delete
+        function confirmDelete(userId, userName) {
+            $('#deleteConfirmText').text(`Delete user "${userName}"? This action cannot be undone.`);
+            $('#confirmDeleteBtn').off('click').on('click', function() {
+                deleteUser(userId);
+            });
+            
+            // Show the modal using Bootstrap
+            const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+            deleteModal.show();
+        }
+
+        // Delete user
+        async function deleteUser(userId) {
+            $('#deleteConfirmModal').modal('hide');
+            showLoading(true);
+
+            try {
+                const response = await fetch(API_BASE_URL + 'users.php?action=delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ sno: userId })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('User deleted successfully!', 'success');
+                    loadUsers(); // Reload the user list
+                } else {
+                    showToast('Error deleting user: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                showToast('Failed to delete user. Please check console.', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Save user
+        async function saveUser() {
+            const formData = new FormData(document.getElementById('userForm'));
+            const data = Object.fromEntries(formData.entries());
+
+            // Get selected queues
+            const selectedQueues = document.getElementById('selected_queues');
+            const queues = [];
+            for (let i = 0; i < selectedQueues.options.length; i++) {
+                queues.push(selectedQueues.options[i].value);
+            }
+            data.assigned_queues = queues.join(', ');
+
+            // Get process value
+            data.process = document.getElementById('process').value;
+
+            // Get checkbox values
+            data.allow_manual_dial = $('#allow_manual_dial').is(':checked') ? 'Y' : 'N';
+            data.allow_transfer = $('#allow_transfer').is(':checked') ? 'Y' : 'N';
+            data.click_to_call = $('#click_to_call').is(':checked') ? 'Y' : 'N';
+            data.edit_record = $('#edit_record').is(':checked') ? 'Y' : 'N';
+
+            showLoading(true);
+
+            try {
+                const action = currentEditingId ? 'update' : 'create';
+                const response = await fetch(API_BASE_URL + 'users.php?action=' + action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast(result.message, 'success');
+                    loadUsers(); // Reload the user list
+                    
+                    // Hide the modal using Bootstrap
+                    const userModal = bootstrap.Modal.getInstance(document.getElementById('userModal'));
+                    userModal.hide();
+                } else {
+                    showToast('Error saving user: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error saving user:', error);
+                showToast('Failed to save user. Please check console.', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Function to update user preview
+        function updatePreview() {
+            const agentId = $('#agent_id').val() || 'AG001';
+            const agentName = $('#agent_name').val() || 'User Name';
+            const extension = $('#extension').val() || '1001';
+            const userType = $('#user_type').val() || 'AGENT';
+            const status = $('#active').val() === 'Y' ? 'Active' : 'Inactive';
+            const statusClass = $('#active').val() === 'Y' ? 'bg-success' : 'bg-danger';
+
+            // Update preview elements
+            $('#previewId').text(agentId);
+            $('#previewName').text(agentName);
+            $('#previewExt').text(extension);
+            $('#previewType').text(userType);
+            $('#previewStatus').text(status).removeClass('bg-success bg-danger').addClass(statusClass);
+            
+            // Update avatar with initials
+            const initials = agentName.split(' ').map(n => n[0]).join('').toUpperCase();
+            $('#userAvatar').html(initials || '<i class="fas fa-user"></i>');
+        }
+
+        // Function to toggle permissions based on user type
         function togglePermissions() {
             const userType = $('#user_type').val();
             
-            // Enable/disable permissions based on user type
-            if (userType === 'ADMIN') {
-                // Admins get all permissions
-                $('.form-check-input').prop('checked', true).prop('disabled', false);
-            } else if (userType === 'SUPERVISOR') {
-                // Supervisors get most permissions
-                $('.form-check-input').prop('checked', true).prop('disabled', false);
-                $('#manual_outbound').prop('checked', false);
-            } else if (userType === 'AGENT') {
-                // Agents get limited permissions
-                $('.form-check-input').prop('checked', false).prop('disabled', false);
-                $('#click_to_call, #edit_record, #show_recent_calls, #agent_only_callbacks').prop('checked', true);
-            } else {
-                // Other types - enable all but uncheck by default
-                $('.form-check-input').prop('checked', false).prop('disabled', false);
+            // Reset all permissions to default
+            $('.form-check-input').prop('checked', false);
+            $('#click_to_call, #edit_record').prop('checked', true);
+            
+            // Set permissions based on user type
+            switch(userType) {
+                case 'ADMIN':
+                    $('.form-check-input').prop('checked', true);
+                    break;
+                case 'SUPERVISOR':
+                    $('.form-check-input').prop('checked', true);
+                    break;
+                // AGENT has default permissions
             }
         }
 
-        // Update user preview
-        function updateUserPreview() {
-            const name = $('#agent_name').val() || 'User Name';
-            const id = $('#agent_id').val() || 'AG001';
-            const ext = $('#extension').val() || '1001';
-            const type = $('#user_type').val() || 'AGENT';
-            const status = $('#active').val() === 'Y' ? 'Active' : 'Inactive';
-            const statusClass = $('#active').val() === 'Y' ? 'bg-success' : 'bg-danger';
+        // Function to reset filters
+        function resetFilters() {
+            $('#searchInput').val('');
+            $('#statusFilter').val('');
+            $('#typeFilter').val('');
             
-            // Update avatar with initials
-            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
-            $('#userAvatar').html(initials || '<i class="fas fa-user"></i>');
+            // Reset DataTable search and filters
+            const table = $('#usersTable').DataTable();
+            table.search('').columns().search('').draw();
+        }
+
+        // Function to show toast messages
+        function showToast(message, type = 'info') {
+            const toastContainer = $('#toastContainer');
+            const toastId = 'toast-' + Date.now();
             
-            // Update preview text
-            $('#previewName').text(name);
-            $('#previewId').text(id);
-            $('#previewExt').text(ext);
-            $('#previewType').text(type);
-            $('#previewStatus').text(status).removeClass('bg-success bg-danger').addClass(statusClass);
+            const toastHtml = `
+                <div id="${toastId}" class="toast align-items-center text-white bg-${type === 'error' ? 'danger' : type} border-0" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            
+            toastContainer.append(toastHtml);
+            const toastElement = $('#' + toastId);
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+            
+            // Remove toast from DOM after it's hidden
+            toastElement.on('hidden.bs.toast', function() {
+                $(this).remove();
+            });
         }
 
         // Show/Hide loading overlay
         function showLoading(show) {
             document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
         }
-
-        // API Functions
-        async function loadUsers() {
-            showLoading(true);
-            try {
-                // In a real application, you would fetch from your API
-                // const response = await fetch(`${API_BASE_URL}users.php?action=getAll`);
-                // const result = await response.json();
-                
-                // For demonstration, we're using sample data
-                const result = { success: true, data: sampleUsers };
-                
-                if (result.success) {
-                    usersTable.clear().rows.add(result.data).draw();
-                    updateStatistics(result.data);
-                } else {
-                    showNotification('Failed to load users: ' + result.message, 'danger');
-                }
-            } catch (error) {
-                console.error('Error loading users:', error);
-                showNotification('Error loading users. Please check console.', 'danger');
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        async function getUser(id) {
-            showLoading(true);
-            try {
-                // In a real application, you would fetch from your API
-                // const response = await fetch(`${API_BASE_URL}users.php?action=get&id=${id}`);
-                // const result = await response.json();
-                
-                // For demonstration, we're using sample data
-                const user = sampleUsers.find(u => u.sno == id);
-                const result = { success: !!user, data: user };
-                
-                if (result.success) {
-                    return result.data;
-                } else {
-                    showNotification('Failed to load user: ' + result.message, 'danger');
-                    return null;
-                }
-            } catch (error) {
-                console.error('Error loading user:', error);
-                showNotification('Error loading user. Please check console.', 'danger');
-                return null;
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        async function saveUser() {
-            const formData = new FormData(document.getElementById('userForm'));
-            const data = Object.fromEntries(formData);
-            
-            // Add checkbox values
-            $('.form-check-input').each(function() {
-                data[this.name] = this.checked ? 'Y' : 'N';
-            });
-            
-            // Validation
-            if (!data.agent_id.trim()) {
-                alert('Please enter an Agent ID');
-                return;
-            }
-            
-            if (!data.agent_name.trim()) {
-                alert('Please enter a full name');
-                return;
-            }
-            
-            if (!data.password.trim()) {
-                alert('Please enter a password');
-                return;
-            }
-            
-            if (!data.extension.trim()) {
-                alert('Please enter an extension');
-                return;
-            }
-
-            showLoading(true);
-            try {
-                const action = data.sno ? 'update' : 'create';
-                
-                // In a real application, you would send to your API
-                // const response = await fetch(`${API_BASE_URL}users.php?action=${action}`, {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'application/json'
-                //     },
-                //     body: JSON.stringify(data)
-                // });
-                // const result = await response.json();
-                
-                // For demonstration, we're simulating API response
-                let result;
-                if (action === 'create') {
-                    const newId = Math.max(...sampleUsers.map(u => u.sno)) + 1;
-                    data.sno = newId;
-                    data.entry_date = new Date().toISOString().slice(0, 19).replace('T', ' ');
-                    sampleUsers.push(data);
-                    result = { success: true, message: 'User created successfully' };
-                } else {
-                    const index = sampleUsers.findIndex(u => u.sno == data.sno);
-                    if (index !== -1) {
-                        sampleUsers[index] = data;
-                        result = { success: true, message: 'User updated successfully' };
-                    } else {
-                        result = { success: false, message: 'User not found' };
-                    }
-                }
-                
-                if (result.success) {
-                    showNotification(`User ${data.sno ? 'updated' : 'created'} successfully!`, 'success');
-                    loadUsers();
-                    
-                    // Close modal
-                    bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
-                } else {
-                    showNotification('Failed to save user: ' + result.message, 'danger');
-                }
-            } catch (error) {
-                console.error('Error saving user:', error);
-                showNotification('Error saving user. Please check console.', 'danger');
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        async function deleteUser(id) {
-            if (!confirm('Are you sure you want to delete this user?')) {
-                return;
-            }
-
-            showLoading(true);
-            try {
-                // In a real application, you would send to your API
-                // const response = await fetch(`${API_BASE_URL}users.php?action=delete`, {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'application/json'
-                //     },
-                //     body: JSON.stringify({ sno: id })
-                // });
-                // const result = await response.json();
-                
-                // For demonstration, we're simulating API response
-                const index = sampleUsers.findIndex(u => u.sno == id);
-                let result;
-                if (index !== -1) {
-                    sampleUsers.splice(index, 1);
-                    result = { success: true, message: 'User deleted successfully' };
-                } else {
-                    result = { success: false, message: 'User not found' };
-                }
-                
-                if (result.success) {
-                    showNotification('User deleted successfully!', 'success');
-                    loadUsers();
-                } else {
-                    showNotification('Failed to delete user: ' + result.message, 'danger');
-                }
-            } catch (error) {
-                console.error('Error deleting user:', error);
-                showNotification('Error deleting user. Please check console.', 'danger');
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        // UI Functions
-        async function editUser(id) {
-            const user = await getUser(id);
-            if (!user) return;
-
-            // Populate form
-            Object.keys(user).forEach(key => {
-                const element = document.getElementById(key);
-                if (element) {
-                    if (element.type === 'checkbox') {
-                        element.checked = user[key] === 'Y';
-                    } else {
-                        element.value = user[key];
-                    }
-                }
-            });
-
-            // Update modal title
-            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit me-2"></i>Edit User';
-            
-            // Update permissions and preview
-            togglePermissions();
-            updateUserPreview();
-
-            // Show modal and activate first tab
-            const modal = new bootstrap.Modal(document.getElementById('userModal'));
-            modal.show();
-            const firstTab = new bootstrap.Tab(document.getElementById('basic-tab'));
-            firstTab.show();
-        }
-
-        async function viewUser(id) {
-            const user = await getUser(id);
-            if (!user) return;
-
-            // Create a detailed view modal
-            let detailsHtml = `
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6 class="text-primary mb-3">Basic Information</h6>
-                        <p><strong>Agent ID:</strong> ${user.agent_id}</p>
-                        <p><strong>Name:</strong> ${user.agent_name}</p>
-                        <p><strong>Extension:</strong> ${user.extension}</p>
-                        <p><strong>User Type:</strong> <span class="badge bg-primary">${user.user_type}</span></p>
-                        <p><strong>Status:</strong> <span class="badge ${user.active === 'Y' ? 'bg-success' : 'bg-danger'}">${user.active === 'Y' ? 'Active' : 'Inactive'}</span></p>
-                        <p><strong>Groups:</strong> ${user.groups || 'None'}</p>
-                    </div>
-                    <div class="col-md-6">
-                        <h6 class="text-primary mb-3">Call Settings</h6>
-                        <p><strong>Call Mode:</strong> ${user.call_mode}</p>
-                        <p><strong>Call Priority:</strong> ${user.call_priority}</p>
-                        <p><strong>Call Types:</strong> ${user.call_allowed}</p>
-                        <p><strong>Phone:</strong> ${user.phone_number || 'Not set'}</p>
-                        <p><strong>Process:</strong> ${user.process || 'Not set'}</p>
-                        <p><strong>Queues:</strong> ${user.assigned_queues || 'Not set'}</p>
-                    </div>
-                </div>
-                <div class="row mt-3">
-                    <div class="col-12">
-                        <h6 class="text-primary mb-3">Permissions</h6>
-                        <div class="d-flex flex-wrap gap-2">
-                            ${user.allow_manual_dial === 'Y' ? '<span class="badge bg-success">Manual Dial</span>' : ''}
-                            ${user.allow_transfer === 'Y' ? '<span class="badge bg-success">Call Transfer</span>' : ''}
-                            ${user.click_to_call === 'Y' ? '<span class="badge bg-success">Click to Call</span>' : ''}
-                            ${user.edit_record === 'Y' ? '<span class="badge bg-success">Edit Records</span>' : ''}
-                            ${user.manual_outbound === 'Y' ? '<span class="badge bg-success">Manual Outbound</span>' : ''}
-                            ${user.allow_offline_crm === 'Y' ? '<span class="badge bg-success">Offline CRM</span>' : ''}
-                            ${user.allow_remotelogin === 'Y' ? '<span class="badge bg-success">Remote Login</span>' : ''}
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            const viewModal = `
-                <div class="modal fade" id="viewModal" tabindex="-1">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header bg-info text-white">
-                                <h5 class="modal-title">User Details - ${user.agent_name}</h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                ${detailsHtml}
-                            </div>
-                            <div class="modal-footer">
-                                <button class="btn btn-primary" onclick="editUser(${user.sno}); bootstrap.Modal.getInstance(document.getElementById('viewModal')).hide();">
-                                    <i class="fas fa-edit me-2"></i>Edit User
-                                </button>
-                                <button class="btn btn-warning" onclick="resetPassword(${user.sno})">
-                                    <i class="fas fa-key me-2"></i>Reset Password
-                                </button>
-                                <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                                    <i class="fas fa-times me-2"></i>Close
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            // Remove existing modal if any
-            const existingModal = document.getElementById('viewModal');
-            if (existingModal) existingModal.remove();
-
-            // Add modal to DOM and show it
-            document.body.insertAdjacentHTML('beforeend', viewModal);
-            new bootstrap.Modal(document.getElementById('viewModal')).show();
-        }
-
-        function resetPassword(id) {
-            if (confirm('Are you sure you want to reset this user\'s password?')) {
-                showLoading(true);
-                // Simulate password reset
-                setTimeout(() => {
-                    showLoading(false);
-                    showNotification('Password reset successfully! New password sent to user.', 'success');
-                }, 1500);
-            }
-        }
-
-        function updateStatistics(users) {
-            const total = users.length;
-            const active = users.filter(u => u.active === 'Y').length;
-            const supervisors = users.filter(u => u.user_type === 'SUPERVISOR').length;
-            const admins = users.filter(u => u.user_type === 'ADMIN').length;
-            
-            document.getElementById('totalUsers').textContent = total;
-            document.getElementById('activeAgents').textContent = active;
-            document.getElementById('supervisors').textContent = supervisors;
-            document.getElementById('admins').textContent = admins;
-        }
-
-        // Search functionality
-        $('#searchInput').on('keyup', function() {
-            usersTable.search(this.value).draw();
-        });
-
-        // Filter by status
-        $('#statusFilter').on('change', function() {
-            usersTable.column(5).search(this.value).draw();
-        });
-
-        // Filter by type
-        $('#typeFilter').on('change', function() {
-            usersTable.column(4).search(this.value).draw();
-        });
-
-        function resetFilters() {
-            $('#searchInput').val('');
-            $('#statusFilter').val('');
-            $('#typeFilter').val('');
-            usersTable.search('').columns().search('').draw();
-        }
-
-        function showNotification(message, type = 'info') {
-            // Create toast notification
-            const toast = document.createElement('div');
-            toast.className = `toast align-items-center text-bg-${type === 'success' ? 'success' : type === 'danger' ? 'danger' : 'primary'} border-0`;
-            toast.setAttribute('role', 'alert');
-            toast.setAttribute('aria-live', 'assertive');
-            toast.setAttribute('aria-atomic', 'true');
-            toast.innerHTML = `
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'danger' ? 'fa-exclamation-circle' : 'fa-info-circle'} me-2"></i>
-                        ${message}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-            `;
-            
-            document.getElementById('toastContainer').appendChild(toast);
-            const bsToast = new bootstrap.Toast(toast);
-            bsToast.show();
-            
-            // Remove after hide
-            toast.addEventListener('hidden.bs.toast', () => {
-                toast.remove();
-            });
-        }
-
-        // Reset form when modal is hidden
-        document.getElementById('userModal').addEventListener('hidden.bs.modal', function() {
-            document.getElementById('userForm').reset();
-            document.getElementById('sno').value = '';
-            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-user-plus me-2"></i>Add New User';
-            togglePermissions();
-            updateUserPreview();
-        });
     </script>
 </body>
 </html>

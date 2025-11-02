@@ -73,6 +73,10 @@
             z-index: 9999;
             display: none;
         }
+        .delete-icon {
+            color: #dc3545;
+            font-size: 3rem;
+        }
     </style>
 </head>
 <body>
@@ -340,6 +344,29 @@
         </div>
     </div>
 
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="delete-icon mb-3">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h5 class="modal-title mb-3">Confirm Delete</h5>
+                    <p class="text-muted">Are you sure you want to delete server <strong id="deleteServerId">#0</strong>?</p>
+                    <p class="text-muted small">This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete Server</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap & jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
@@ -349,10 +376,13 @@
 
     <script>
         // API Configuration
-        const API_BASE_URL = '../api/server/'; // Adjust this to your API endpoint
+        const API_BASE_URL = '../api/'; // Adjust this to your API endpoint
+
+        // Global variables
+        let serversTable;
+        let currentDeleteId = null;
 
         // Initialize DataTable
-        let serversTable;
         $(document).ready(function() {
             serversTable = $('#serversTable').DataTable({
                 pageLength: 10,
@@ -393,7 +423,7 @@
                                 <button class="btn btn-outline-info btn-action" onclick="viewServer(${data})" title="View">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                <button class="btn btn-outline-danger btn-action" onclick="deleteServer(${data})" title="Delete">
+                                <button class="btn btn-outline-danger btn-action" onclick="showDeleteConfirm(${data})" title="Delete">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             `;
@@ -405,6 +435,13 @@
 
             // Load initial data
             loadServers();
+
+            // Setup delete confirmation handler
+            document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+                if (currentDeleteId) {
+                    deleteServer(currentDeleteId);
+                }
+            });
         });
 
         // Show/Hide loading overlay
@@ -500,10 +537,6 @@
         }
 
         async function deleteServer(id) {
-            if (!confirm('Are you sure you want to delete server #' + id + '?')) {
-                return;
-            }
-
             showLoading(true);
             try {
                 const response = await fetch(`${API_BASE_URL}servers.php?action=delete`, {
@@ -527,6 +560,9 @@
                 showNotification('Error deleting server. Please check console.', 'danger');
             } finally {
                 showLoading(false);
+                // Close modal and reset
+                bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
+                currentDeleteId = null;
             }
         }
 
@@ -586,6 +622,12 @@
             // Add modal to DOM and show it
             document.body.insertAdjacentHTML('beforeend', viewModal);
             new bootstrap.Modal(document.getElementById('viewModal')).show();
+        }
+
+        function showDeleteConfirm(id) {
+            currentDeleteId = id;
+            document.getElementById('deleteServerId').textContent = '#' + id;
+            new bootstrap.Modal(document.getElementById('deleteConfirmModal')).show();
         }
 
         function updateStatistics(servers) {
@@ -663,6 +705,11 @@
             document.getElementById('serverForm').reset();
             document.getElementById('server_id').value = '';
             document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus me-2"></i>Add New Server';
+        });
+
+        // Reset delete confirmation when modal is hidden
+        document.getElementById('deleteConfirmModal').addEventListener('hidden.bs.modal', function() {
+            currentDeleteId = null;
         });
     </script>
 </body>
