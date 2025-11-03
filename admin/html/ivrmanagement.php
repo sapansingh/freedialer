@@ -3,255 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IVRS Management</title>
+    <title>IVR Management System</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
     <style>
         :root {
-            --primary-color: #e74c3c;
-            --success-color: #27ae60;
-            --warning-color: #f39c12;
-            --danger-color: #c0392b;
-            --info-color: #3498db;
-            --light-bg: #f5f7fb;
+            --primary-color: #0272a7;
+            --secondary-color: #6BCBCA;
+            --light-bg: #f8f9fa;
         }
         
         body {
             background-color: var(--light-bg);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 0.875rem;
-            padding: 1rem;
         }
         
-        .container-fluid {
-            padding: 0;
-        }
-        
-        /* Header */
         .page-header {
             background: white;
-            border-radius: 10px;
+            border-radius: 8px;
             padding: 1rem 1.5rem;
             margin-bottom: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             border-left: 4px solid var(--primary-color);
         }
         
-        .page-header h1 {
-            font-size: 1.4rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-        
-        .page-header p {
-            font-size: 0.8rem;
-            color: #6c757d;
-            margin-bottom: 0;
-        }
-        
-        /* Statistics Cards */
-        .stat-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            margin-bottom: 1rem;
-            text-align: center;
-            border-left: 4px solid var(--primary-color);
-            transition: transform 0.2s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-2px);
-        }
-        
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            margin: 0 auto 0.75rem;
-            font-size: 1.2rem;
-        }
-        
-        .stat-number {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-        
-        .stat-label {
-            font-size: 0.75rem;
-            color: #6c757d;
-            font-weight: 500;
-        }
-        
-        /* Glass Card */
-        .glass-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1.25rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             margin-bottom: 1.5rem;
         }
         
-        /* Search and Filters */
-        .search-box .input-group-text {
-            background: white;
-            border-right: none;
-        }
-        
-        .search-box .form-control {
-            border-left: none;
-        }
-        
-        .filter-section label {
-            font-size: 0.75rem;
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 8px 8px 0 0 !important;
+            padding: 0.75rem 1rem;
             font-weight: 600;
-            margin-bottom: 0.25rem;
+        }
+        
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
             color: #495057;
-        }
-        
-        /* Table */
-        #ivrsTable th {
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: #6c757d;
-            background: #f8f9fa;
             border-bottom: 1px solid #dee2e6;
-            padding: 0.75rem;
         }
         
-        #ivrsTable td {
-            font-size: 0.8rem;
-            vertical-align: middle;
-            padding: 0.75rem;
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
         }
         
-        .table-responsive {
-            border-radius: 10px;
-            overflow: hidden;
+        .btn-primary:hover {
+            background-color: #025a87;
+            border-color: #025a87;
         }
         
-        /* Badges */
-        .badge {
-            font-size: 0.7rem;
-            font-weight: 500;
-            padding: 0.35em 0.65em;
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
         }
         
-        /* Action Buttons */
-        .btn-sm {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
-            border-radius: 6px;
-        }
-        
-        .btn-action {
-            width: 32px;
-            height: 32px;
-            padding: 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 2px;
-        }
-        
-        /* Modal */
-        .modal-header {
-            padding: 1rem 1.25rem;
-            background: var(--primary-color);
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
             color: white;
         }
         
-        .modal-title {
-            font-size: 1rem;
-            font-weight: 600;
-        }
-        
-        .modal-body {
-            padding: 1.25rem;
-        }
-        
-        .modal-footer {
-            padding: 1rem 1.25rem;
-        }
-        
-        /* Tabs */
-        .nav-tabs {
-            border-bottom: 1px solid #dee2e6;
-            margin-bottom: 1.25rem;
-        }
-        
-        .nav-tabs .nav-link {
-            font-size: 0.8rem;
-            padding: 0.6rem 1rem;
-            border: none;
-            color: #6c757d;
-            font-weight: 500;
-            border-radius: 0;
-        }
-        
-        .nav-tabs .nav-link.active {
-            background: none;
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
-        }
-        
-        /* Form Elements */
-        .form-label {
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 0.4rem;
-            color: #495057;
-        }
-        
-        .form-control, .form-select {
-            font-size: 0.8rem;
-            padding: 0.5rem 0.75rem;
-            border-radius: 6px;
-            border: 1px solid #ced4da;
-        }
-        
-        .form-text {
-            font-size: 0.7rem;
+        .modal-header {
+            background-color: var(--primary-color);
+            color: white;
         }
         
         .required-field::after {
             content: " *";
-            color: var(--danger-color);
+            color: #dc3545;
         }
         
-        /* Form Sections */
         .form-section {
             margin-bottom: 1.5rem;
-        }
-        
-        .section-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--primary-color);
-            padding-bottom: 0.5rem;
+            padding-bottom: 1rem;
             border-bottom: 1px solid #e9ecef;
         }
         
-        /* Loading Overlay */
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .dtmf-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -259,7 +113,6 @@
             display: none;
         }
         
-        /* Toast Container */
         .toast-container {
             position: fixed;
             top: 1rem;
@@ -267,49 +120,19 @@
             z-index: 9999;
         }
         
-        /* Confirmation Modal */
-        .confirmation-modal .modal-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: #f8d7da;
-            color: var(--danger-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            margin: 0 auto 0.75rem;
+        .status-badge {
+            font-size: 0.75rem;
         }
         
-        /* Queue Transfer Items */
-        .queue-transfer-item {
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
-            background-color: #f8f9fa;
-        }
-        
-        .digit-input {
-            max-width: 60px;
-        }
-        
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-            .btn-action {
-                margin-bottom: 0.25rem;
-            }
-            
-            .stat-card {
-                margin-bottom: 1rem;
-            }
+        .action-buttons {
+            white-space: nowrap;
         }
     </style>
 </head>
 <body>
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
-        <div class="spinner-border text-light" role="status" style="width: 2rem; height: 2rem;">
+        <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;">
             <span class="visually-hidden">Loading...</span>
         </div>
     </div>
@@ -317,238 +140,147 @@
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <div class="container-fluid">
+    <div class="container-fluid py-3">
         <!-- Header -->
         <div class="page-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h1 class="h3 mb-1"><i class="fas fa-phone-volume me-2 text-primary"></i>IVRS Management</h1>
+                    <h1 class="h3 mb-1"><i class="fas fa-phone-volume me-2"></i>IVR Management System</h1>
                     <p class="text-muted mb-0">Manage Interactive Voice Response Systems</p>
                 </div>
-                <button class="btn btn-primary btn-sm" onclick="openAddModal()">
-                    <i class="fas fa-plus me-1"></i> Add IVRS
+                <button class="btn btn-primary" onclick="openAddModal()">
+                    <i class="fas fa-plus me-1"></i> Add IVR
                 </button>
             </div>
         </div>
 
-        <!-- Statistics Cards -->
-        <div class="row mb-3">
-            <div class="col-md-3 col-6 mb-2">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
-                        <i class="fas fa-phone-volume"></i>
+        <!-- IVR List -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>IVR Systems</span>
+                <div class="d-flex">
+                    <div class="input-group input-group-sm me-2" style="width: 250px;">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" placeholder="Search IVR..." id="searchInput">
                     </div>
-                    <div class="stat-number text-primary" id="totalIvr">0</div>
-                    <div class="stat-label">Total IVRS</div>
+                    <!-- Removed status filter since status column is removed -->
                 </div>
             </div>
-            <div class="col-md-3 col-6 mb-2">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #27ae60, #229954);">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="stat-number text-success" id="activeIvr">0</div>
-                    <div class="stat-label">Active</div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="ivrTable">
+                        <thead>
+                            <tr>
+                                <th width="5%">ID</th>
+                                <th width="25%">IVR Name</th>
+                                <th width="30%">Description</th>
+                                <th width="15%">Voice File</th>
+                                <th width="10%">Wait Seconds</th>
+                                <th width="15%">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ivrTableBody">
+                            <!-- IVR data will be populated here -->
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-            <div class="col-md-3 col-6 mb-2">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #f39c12, #e67e22);">
-                        <i class="fas fa-pause-circle"></i>
-                    </div>
-                    <div class="stat-number text-warning" id="inactiveIvr">0</div>
-                    <div class="stat-label">Inactive</div>
-                </div>
-            </div>
-            <div class="col-md-3 col-6 mb-2">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #3498db, #2980b9);">
-                        <i class="fas fa-exchange-alt"></i>
-                    </div>
-                    <div class="stat-number text-info" id="queueTransfers">0</div>
-                    <div class="stat-label">Transfers</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Search and Filters -->
-        <div class="glass-card">
-            <div class="row g-2 align-items-center">
-                <div class="col-md-4">
-                    <div class="search-box">
-                        <div class="input-group input-group-sm">
-                            <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
-                            <input type="text" id="searchInput" class="form-control border-start-0" placeholder="Search IVRS...">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="filter-section">
-                        <label class="form-label">Status</label>
-                        <select id="statusFilter" class="form-select form-select-sm">
-                            <option value="">All Status</option>
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="filter-section">
-                        <label class="form-label">Type</label>
-                        <select id="typeFilter" class="form-select form-select-sm">
-                            <option value="">All Types</option>
-                            <option value="main">Main Menu</option>
-                            <option value="sub">Sub Menu</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-outline-secondary btn-sm w-100 mt-3" onclick="resetFilters()">
-                        <i class="fas fa-redo me-1"></i> Reset
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- DataTable -->
-        <div class="glass-card">
-            <div class="table-responsive">
-                <table id="ivrsTable" class="table table-sm table-hover w-100">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>IVRS Name</th>
-                            <th>Description</th>
-                            <th>Voice File</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Data will be populated by JavaScript -->
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>
 
-    <!-- IVR Modal Form -->
+    <!-- Add/Edit IVR Modal -->
     <div class="modal fade" id="ivrModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle"><i class="fas fa-plus me-2"></i>Add New IVRS</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title" id="modalTitle"><i class="fas fa-plus me-2"></i>Add New IVR</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <ul class="nav nav-tabs" id="ivrTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic" type="button" role="tab">
-                                <i class="fas fa-info-circle me-1"></i> Basic
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="queue-tab" data-bs-toggle="tab" data-bs-target="#queue" type="button" role="tab">
-                                <i class="fas fa-exchange-alt me-1"></i> Transfers
-                            </button>
-                        </li>
-                    </ul>
-                    
-                    <div class="tab-content mt-3" id="ivrTabsContent">
-                        <div class="tab-pane fade show active" id="basic" role="tabpanel">
-                            <form id="ivrForm">
-                                <input type="hidden" id="sno" name="sno">
-                                
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <div class="form-section">
-                                            <div class="section-title">
-                                                <i class="fas fa-signature"></i> IVRS Info
-                                            </div>
-                                            <div class="row g-2">
-                                                <div class="col-md-6">
-                                                    <div class="mb-2">
-                                                        <label for="ivr_name" class="form-label required-field">IVRS Name</label>
-                                                        <input type="text" class="form-control form-control-sm" id="ivr_name" name="ivr_name" required placeholder="e.g., emri_ivr">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-2">
-                                                        <label for="ivr_description" class="form-label required-field">Description</label>
-                                                        <input type="text" class="form-control form-control-sm" id="ivr_description" name="ivr_description" required placeholder="e.g., Emergency IVR System">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="form-section">
-                                            <div class="section-title">
-                                                <i class="fas fa-sliders-h"></i> Configuration
-                                            </div>
-                                            <div class="row g-2">
-                                                <div class="col-md-6">
-                                                    <div class="mb-2">
-                                                        <label for="voice_file" class="form-label required-field">Voice File</label>
-                                                        <select class="form-select form-select-sm" id="voice_file" name="voice_file" required>
-                                                            <option value="">Select Voice File</option>
-                                                            <option value="welcome_message">Welcome Message</option>
-                                                            <option value="main_menu">Main Menu</option>
-                                                            <option value="thank_you">Thank You</option>
-                                                            <option value="newivesystem">New IVE System</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-2">
-                                                        <label for="ivr_status" class="form-label required-field">Status</label>
-                                                        <select class="form-select form-select-sm" id="ivr_status" name="ivr_status" required>
-                                                            <option value="active">Active</option>
-                                                            <option value="inactive">Inactive</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-md-4">
-                                        <div class="small">
-                                            <div><strong>Name:</strong> <span id="previewName">-</span></div>
-                                            <div><strong>Description:</strong> <span id="previewDescription">-</span></div>
-                                            <div><strong>Voice File:</strong> <span id="previewVoiceFile">-</span></div>
-                                            <div><strong>Status:</strong> <span id="previewStatus" class="badge bg-secondary">Inactive</span></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
+                    <form id="ivrForm">
+                        <input type="hidden" name="mode" value="SAVE">
+                        <input type="hidden" name="user_sel_menu" value="IVRS">
+                        <input type="hidden" id="ivr_id" name="ivr_id" value="">
                         
-                        <!-- Queue Transfer Settings Tab -->
-                        <div class="tab-pane fade" id="queue" role="tabpanel">
-                            <div class="form-section">
-                                <div class="section-title">
-                                    <i class="fas fa-exchange-alt"></i> Queue Transfers
+                        <div class="form-section">
+                            <div class="section-title">Basic Information</div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="ivr_name" class="form-label required-field">IVR Name</label>
+                                        <input type="text" class="form-control" id="ivr_name" name="ivr_name" maxlength="50" required>
+                                        <div class="form-text text-danger" id="ivr_name_error"></div>
+                                    </div>
                                 </div>
-                                <p class="text-muted mb-3 small">Configure digit-based queue transfers</p>
-                                
-                                <div id="queueTransfersContainer">
-                                    <!-- Queue transfer items will be added here dynamically -->
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="ivr_description" class="form-label">Description</label>
+                                        <input type="text" class="form-control" id="ivr_description" name="ivr_description" maxlength="50">
+                                    </div>
                                 </div>
-                                
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="addQueueTransfer()">
-                                        <i class="fas fa-plus me-1"></i> Add Transfer
-                                    </button>
-                                    <span class="text-muted small">Max 10 transfers</span>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="voice_file" class="form-label required-field">Voice File</label>
+                                        <select class="form-select" id="voice_file" name="voice_file" required>
+                                            <option value="">Select Voice File</option>
+                                            <!-- Voice files will be populated dynamically -->
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="seconds_to_wait" class="form-label required-field">Wait Seconds</label>
+                                        <input type="number" class="form-control" id="seconds_to_wait" name="seconds_to_wait" min="0" max="60" value="10" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="repeats" class="form-label">Repeats</label>
+                                        <input type="number" class="form-control" id="repeats" name="repeats" min="0" max="10" value="0">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="direct_call" class="form-label">Direct Call</label>
+                                        <select class="form-select" id="direct_call" name="direct_call">
+                                            <option value="no">No</option>
+                                            <option value="yes">Yes</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        
+                        <div class="form-section">
+                            <div class="section-title">DTMF Options Configuration</div>
+                            <p class="text-muted mb-3">Configure actions for each DTMF input</p>
+                            
+                            <div class="table-responsive">
+                                <table class="table table-bordered dtmf-table">
+                                    <thead>
+                                        <tr>
+                                            <th width="10%" class="text-center">DTMF</th>
+                                            <th width="40%" class="text-center">Action</th>
+                                            <th width="40%" class="text-center">Parameter</th>
+                                            <th width="10%" class="text-center">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dtmfOptionsBody">
+                                        <!-- DTMF options will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary btn-sm" onclick="saveIvr()">
-                        <i class="fas fa-save me-1"></i> Save IVRS
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveIvr()">
+                        <i class="fas fa-save me-1"></i> Save IVR
                     </button>
                 </div>
             </div>
@@ -556,19 +288,20 @@
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <div class="modal fade confirmation-modal" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-sm">
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-body text-center py-4">
-                    <div class="modal-icon">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <h6 class="mb-2">Confirm Delete</h6>
-                    <p class="text-muted mb-3 small" id="deleteConfirmText">Are you sure you want to delete this IVRS?</p>
-                    <div class="d-flex gap-2 justify-content-center">
-                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-danger btn-sm" id="confirmDeleteBtn">Delete</button>
-                    </div>
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete the IVR <strong id="deleteIvrName"></strong>?</p>
+                    <p class="text-muted">This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
                 </div>
             </div>
         </div>
@@ -577,340 +310,702 @@
     <!-- Bootstrap & jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- DataTables -->
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+   <script>
+
+// API Base URL - Updated to use relative path
+const API_BASE_URL = '../api/ivr_api.php';
+
+// Global data stores (only for IVRs, others loaded in real-time)
+let currentEditingId = null;
+let ivrsData = [];
+
+// Initialize page
+$(document).ready(function() {
+    loadInitialData();
     
-    <script>
-        let currentEditingId = null;
-        let ivrsData = [];
-        let ivrsTable;
-        let queueTransferCount = 0;
+    // Add event listeners for search and filter
+    $('#searchInput').on('keyup', filterIvrs);
+});
 
-        // Initialize DataTable
-        $(document).ready(function() {
-            ivrsTable = $('#ivrsTable').DataTable({
-                pageLength: 10,
-                lengthMenu: [10, 25, 50],
-                order: [[0, 'desc']],
-                language: {
-                    search: "",
-                    searchPlaceholder: "Search IVRS...",
-                    lengthMenu: "_MENU_"
-                },
-                initComplete: function() {
-                    $('.dataTables_length select').addClass('form-select form-select-sm');
-                    $('.dataTables_filter input').addClass('form-control form-control-sm');
-                }
-            });
+// Load all initial data
+async function loadInitialData() {
+    showLoading(true);
+    try {
+        await loadIvrs();
+    } catch (error) {
+        showToast('Failed to load initial data: ' + error.message, 'error');
+    } finally {
+        showLoading(false);
+    }
+}
 
-            // Update preview when form fields change
-            $('#ivr_name, #ivr_description, #voice_file, #ivr_status').on('input change', updatePreview);
-            
-            // Load initial data
-            loadIvrs();
-            
-            // Add initial queue transfer
-            addQueueTransfer();
-        });
-
-        // Load IVRS from API
-        function loadIvrs() {
-            showLoading(true);
-            
-            // Simulate API call
-            setTimeout(() => {
-                // Sample data
-                ivrsData = [
-                    {
-                        sno: 1,
-                        ivr_name: 'emri_ivr',
-                        ivr_description: 'Emergency IVR System',
-                        voice_file: 'newivesystem',
-                        ivr_status: 'active',
-                        queue_transfers: 4
-                    },
-                    {
-                        sno: 2,
-                        ivr_name: 'sales_ivr',
-                        ivr_description: 'Sales Department IVR',
-                        voice_file: 'welcome_message',
-                        ivr_status: 'active',
-                        queue_transfers: 3
-                    },
-                    {
-                        sno: 3,
-                        ivr_name: 'support_ivr',
-                        ivr_description: 'Customer Support IVR',
-                        voice_file: 'main_menu',
-                        ivr_status: 'inactive',
-                        queue_transfers: 5
-                    }
-                ];
-
-                populateIvrsTable(ivrsData);
-                updateStatistics(ivrsData);
-                showLoading(false);
-            }, 1000);
+// API Service Functions
+const apiService = {
+    // Get all IVRs
+    async getIvrs() {
+        try {
+            const response = await fetch(`${API_BASE_URL}?action=ivrs`);
+            if (!response.ok) throw new Error('Failed to fetch IVRs');
+            const result = await response.json();
+            if (!result.success) throw new Error(result.message || 'API error');
+            return result;
+        } catch (error) {
+            console.error('Error fetching IVRs:', error);
+            throw error;
         }
+    },
 
-        // Populate IVRS table
-        function populateIvrsTable(ivrs) {
-            const table = $('#ivrsTable').DataTable();
-            table.clear();
-            
-            ivrs.forEach(ivr => {
-                const statusBadge = ivr.ivr_status === 'active' ? 
-                    '<span class="badge bg-success">Active</span>' : 
-                    '<span class="badge bg-secondary">Inactive</span>';
-                
-                table.row.add([
-                    ivr.sno,
-                    `<div class="fw-bold">${ivr.ivr_name}</div>`,
-                    ivr.ivr_description,
-                    `<span class="badge bg-info">${ivr.voice_file}</span>`,
-                    statusBadge,
-                    `<div class="btn-group">
-                        <button class="btn btn-outline-primary btn-action" onclick="editIvr(${ivr.sno})" title="Edit">
+    // Get single IVR by ID with its options
+    async getIvr(id) {
+        try {
+            const response = await fetch(`${API_BASE_URL}?action=ivrs&id=${id}`);
+            if (!response.ok) throw new Error('Failed to fetch IVR');
+            const result = await response.json();
+            if (!result.success) throw new Error(result.message || 'API error');
+            return result;
+        } catch (error) {
+            console.error('Error fetching IVR:', error);
+            throw error;
+        }
+    },
+
+    // Get all processes
+    async getProcesses() {
+        try {
+            const response = await fetch(`${API_BASE_URL}?action=processes`);
+            if (!response.ok) throw new Error('Failed to fetch processes');
+            const result = await response.json();
+            if (!result.success) throw new Error(result.message || 'API error');
+            return result;
+        } catch (error) {
+            console.error('Error fetching processes:', error);
+            throw error;
+        }
+    },
+
+    // Get all queues
+    async getQueues() {
+        try {
+            const response = await fetch(`${API_BASE_URL}?action=queues`);
+            if (!response.ok) throw new Error('Failed to fetch queues');
+            const result = await response.json();
+            if (!result.success) throw new Error(result.message || 'API error');
+            return result;
+        } catch (error) {
+            console.error('Error fetching queues:', error);
+            throw error;
+        }
+    },
+
+    // Get all voice files
+    async getVoiceFiles() {
+        try {
+            const response = await fetch(`${API_BASE_URL}?action=voicefiles`);
+            if (!response.ok) throw new Error('Failed to fetch voice files');
+            const result = await response.json();
+            if (!result.success) throw new Error(result.message || 'API error');
+            return result;
+        } catch (error) {
+            console.error('Error fetching voice files:', error);
+            throw error;
+        }
+    },
+
+    // Get IVRs for dropdown (for transfer to IVR option)
+    async getIvrsForDropdown() {
+        try {
+            const response = await fetch(`${API_BASE_URL}?action=ivrs_dropdown`);
+            if (!response.ok) throw new Error('Failed to fetch IVRs for dropdown');
+            const result = await response.json();
+            if (!result.success) throw new Error(result.message || 'API error');
+            return result;
+        } catch (error) {
+            console.error('Error fetching IVRs for dropdown:', error);
+            throw error;
+        }
+    },
+
+    // Create new IVR with options
+    async createIvr(ivrData) {
+        try {
+            const response = await fetch(`${API_BASE_URL}?action=ivrs`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(ivrData)
+            });
+            if (!response.ok) throw new Error('Failed to create IVR');
+            const result = await response.json();
+            if (!result.success) throw new Error(result.message || 'API error');
+            return result;
+        } catch (error) {
+            console.error('Error creating IVR:', error);
+            throw error;
+        }
+    },
+
+    // Update existing IVR
+    async updateIvr(id, ivrData) {
+        try {
+            const response = await fetch(`${API_BASE_URL}?action=ivrs&id=${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(ivrData)
+            });
+            if (!response.ok) throw new Error('Failed to update IVR');
+            const result = await response.json();
+            if (!result.success) throw new Error(result.message || 'API error');
+            return result;
+        } catch (error) {
+            console.error('Error updating IVR:', error);
+            throw error;
+        }
+    },
+
+    // Delete IVR
+    async deleteIvr(id) {
+        try {
+            const response = await fetch(`${API_BASE_URL}?action=ivrs&id=${id}`, {
+                method: 'DELETE'
+            });
+            if (!response.ok) throw new Error('Failed to delete IVR');
+            const result = await response.json();
+            if (!result.success) throw new Error(result.message || 'API error');
+            return result;
+        } catch (error) {
+            console.error('Error deleting IVR:', error);
+            throw error;
+        }
+    },
+
+    // Test IVR
+    async testIvr(id) {
+        try {
+            const response = await fetch(`${API_BASE_URL}?action=ivrs&id=${id}&test=true`, {
+                method: 'POST'
+            });
+            if (!response.ok) throw new Error('Failed to test IVR');
+            const result = await response.json();
+            if (!result.success) throw new Error(result.message || 'API error');
+            return result;
+        } catch (error) {
+            console.error('Error testing IVR:', error);
+            throw error;
+        }
+    }
+};
+
+// Load IVRs from API
+async function loadIvrs() {
+    try {
+        const result = await apiService.getIvrs();
+        ivrsData = result.data || [];
+        populateIvrsTable(ivrsData);
+        
+        // Also load voice files for the main form dropdown
+        await loadVoiceFilesForForm();
+    } catch (error) {
+        throw error;
+    }
+}
+
+// Load voice files for main form dropdown
+async function loadVoiceFilesForForm() {
+    try {
+        const result = await apiService.getVoiceFiles();
+        populateVoiceFilesDropdown(result.data || []);
+    } catch (error) {
+        console.error('Error loading voice files for form:', error);
+    }
+}
+
+// Populate voice files dropdown in main form
+function populateVoiceFilesDropdown(voiceFiles = []) {
+    const select = $('#voice_file');
+    select.empty().append('<option value="">Select Voice File</option>');
+    
+    voiceFiles.forEach(file => {
+        select.append(`<option value="${file.id}">${file.name}</option>`);
+    });
+}
+
+// Populate IVRs table
+function populateIvrsTable(ivrs) {
+    const tbody = $('#ivrTableBody');
+    tbody.empty();
+    
+    if (ivrs.length === 0) {
+        tbody.append('<tr><td colspan="6" class="text-center py-4 text-muted">No IVRs found</td></tr>');
+        return;
+    }
+    
+    ivrs.forEach(ivr => {
+        const voiceFileText = getVoiceFileName(ivr.voice_file);
+        
+        const row = `
+            <tr>
+                <td>${ivr.ivr_id}</td>
+                <td><strong>${ivr.ivr_name}</strong></td>
+                <td>${ivr.ivr_description || ''}</td>
+                <td>${voiceFileText}</td>
+                <td>${ivr.seconds_to_wait}</td>
+                <td>
+                    <div class="btn-group btn-group-sm action-buttons">
+                        <button class="btn btn-outline-primary" onclick="editIvr(${ivr.ivr_id})" title="Edit">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="btn btn-outline-success btn-action" onclick="testIvr(${ivr.sno})" title="Test">
+                        <button class="btn btn-outline-success" onclick="testIvr(${ivr.ivr_id})" title="Test">
                             <i class="fas fa-play"></i>
                         </button>
-                        <button class="btn btn-outline-danger btn-action" onclick="confirmDelete(${ivr.sno}, '${ivr.ivr_name}')" title="Delete">
+                        <button class="btn btn-outline-danger" onclick="confirmDelete(${ivr.ivr_id}, '${ivr.ivr_name}')" title="Delete">
                             <i class="fas fa-trash"></i>
                         </button>
-                    </div>`
-                ]).draw(false);
-            });
-        }
+                    </div>
+                </td>
+            </tr>
+        `;
+        tbody.append(row);
+    });
+}
 
-        // Update statistics
-        function updateStatistics(ivrs) {
-            $('#totalIvr').text(ivrs.length);
-            $('#activeIvr').text(ivrs.filter(i => i.ivr_status === 'active').length);
-            $('#inactiveIvr').text(ivrs.filter(i => i.ivr_status === 'inactive').length);
-            $('#queueTransfers').text(ivrs.reduce((sum, ivr) => sum + (ivr.queue_transfers || 0), 0));
-        }
+// Get voice file name by ID (for display in table)
+function getVoiceFileName(id) {
+    // This will be updated when we load voice files for the form
+    return `File ${id}`; // Placeholder, will be updated with real data
+}
 
-        // Open add modal
-        function openAddModal() {
-            currentEditingId = null;
-            $('#modalTitle').html('<i class="fas fa-plus me-2"></i>Add New IVRS');
-            $('#ivrForm')[0].reset();
-            $('#sno').val('');
-            updatePreview();
-            $('#ivrModal').modal('show');
-        }
+// Filter IVRs based on search
+function filterIvrs() {
+    const searchText = $('#searchInput').val().toLowerCase();
+    
+    const filteredIvrs = ivrsData.filter(ivr => {
+        const matchesSearch = ivr.ivr_name.toLowerCase().includes(searchText) || 
+                             (ivr.ivr_description && ivr.ivr_description.toLowerCase().includes(searchText));
+        
+        return matchesSearch;
+    });
+    
+    populateIvrsTable(filteredIvrs);
+}
 
-        // Edit IVRS
-        function editIvr(ivrId) {
-            const ivr = ivrsData.find(i => i.sno === ivrId);
-            if (!ivr) return;
+// Initialize DTMF options in the form
+function initializeDtmfOptions() {
+    const dtmfOptionsData = [
+        { digit: '0', label: '0' },
+        { digit: '1', label: '1' },
+        { digit: '2', label: '2' },
+        { digit: '3', label: '3' },
+        { digit: '4', label: '4' },
+        { digit: '5', label: '5' },
+        { digit: '6', label: '6' },
+        { digit: '7', label: '7' },
+        { digit: '8', label: '8' },
+        { digit: '9', label: '9' },
+        { digit: '10', label: 'Invalid' },
+        { digit: '11', label: 'Time out' },
+        { digit: '12', label: 'Hangup' }
+    ];
+    
+    const tbody = $('#dtmfOptionsBody');
+    tbody.empty();
+    
+    dtmfOptionsData.forEach(option => {
+        const row = `
+            <tr>
+                <td class="text-center fw-bold">${option.label}</td>
+                <td>
+                    <select class="form-select form-select-sm ivr-option" id="ivr_option_${option.digit}" name="ivr_option[]" data-digit="${option.digit}" onchange="showParameters(this.value, '${option.digit}')">
+                        <option value=""></option>
+                        <option value="extension">Transfer to Extension</option>
+                        <option value="process">Transfer to Process</option>
+                        <option value="queue">Transfer to Queue</option>
+                        <option value="voicemail">Transfer to Voice Mail</option>
+                        <option value="complete">Complete Call</option>
+                        <option value="ivr">Transfer to IVR</option>
+                        <option value="ip">DirectIP Dial</option>
+                        <option value="callforward">Call Forward</option>
+                        <option value="play">Play Voicefile</option>
+                        <option value="callback">CallBack</option>
+                        <option value="sms">SMS</option>
+                    </select>
+                </td>
+                <td id="ivr_value_span_${option.digit}">
+                    <select class="form-select form-select-sm ivr-value" id="ivr_value_${option.digit}" name="ivr_value[]" data-digit="${option.digit}">
+                        <option value=""></option>
+                    </select>
+                </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearDtmfOption('${option.digit}')" title="Clear">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        tbody.append(row);
+    });
+}
 
-            currentEditingId = ivrId;
-            $('#modalTitle').html('<i class="fas fa-edit me-2"></i>Edit IVRS');
-            
-            // Fill form with IVRS data
-            $('#sno').val(ivr.sno);
-            $('#ivr_name').val(ivr.ivr_name);
-            $('#ivr_description').val(ivr.ivr_description);
-            $('#voice_file').val(ivr.voice_file);
-            $('#ivr_status').val(ivr.ivr_status);
+// Clear DTMF option
+function clearDtmfOption(digit) {
+    $(`#ivr_option_${digit}`).val('');
+    $(`#ivr_value_${digit}`).val('');
+    $(`#ivr_value_span_${digit}`).html(`
+        <select class="form-select form-select-sm ivr-value" id="ivr_value_${digit}" name="ivr_value[]" data-digit="${digit}">
+            <option value=""></option>
+        </select>
+    `);
+}
 
-            updatePreview();
-            $('#ivrModal').modal('show');
-        }
-
-        // Confirm delete
-        function confirmDelete(ivrId, ivrName) {
-            $('#deleteConfirmText').text(`Delete IVRS "${ivrName}"? This action cannot be undone.`);
-            $('#confirmDeleteBtn').off('click').on('click', function() {
-                deleteIvr(ivrId);
-            });
-            $('#deleteConfirmModal').modal('show');
-        }
-
-        // Delete IVRS
-        function deleteIvr(ivrId) {
-            $('#deleteConfirmModal').modal('hide');
-            showLoading(true);
-
-            // Simulate API call
-            setTimeout(() => {
-                ivrsData = ivrsData.filter(i => i.sno !== ivrId);
-                populateIvrsTable(ivrsData);
-                updateStatistics(ivrsData);
-                showLoading(false);
-                showToast('IVRS deleted successfully!', 'success');
-            }, 1000);
-        }
-
-        // Save IVRS
-        function saveIvr() {
-            const formData = new FormData(document.getElementById('ivrForm'));
-            const data = Object.fromEntries(formData.entries());
-
-            // Validation
-            if (!data.ivr_name.trim()) {
-                alert('Please enter an IVRS name');
+// Show parameters based on selected action - REAL-TIME API CALLS
+async function showParameters(action, digit) {
+    const paramContainer = $(`#ivr_value_span_${digit}`);
+    paramContainer.empty();
+    
+    // Show loading state
+    paramContainer.html('<div class="text-center"><div class="spinner-border spinner-border-sm" role="status"></div> Loading...</div>');
+    
+    if (!action) {
+        paramContainer.html(`
+            <select class="form-select form-select-sm ivr-value" id="ivr_value_${digit}" name="ivr_value[]" data-digit="${digit}">
+                <option value=""></option>
+            </select>
+        `);
+        return;
+    }
+    
+    let options = [];
+    let placeholder = '';
+    
+    try {
+        switch(action) {
+            case 'process':
+                // REAL-TIME API CALL for processes
+                const processesResult = await apiService.getProcesses();
+                options = processesResult.data.map(p => p.name);
+                placeholder = 'Select Process';
+                break;
+                
+            case 'queue':
+                // REAL-TIME API CALL for queues
+                const queuesResult = await apiService.getQueues();
+                options = queuesResult.data.map(q => q.name);
+                placeholder = 'Select Queue';
+                break;
+                
+            case 'ivr':
+                // REAL-TIME API CALL for IVRs
+                const ivrsResult = await apiService.getIvrsForDropdown();
+                options = ivrsResult.data.map(i => i.name);
+                placeholder = 'Select IVR';
+                break;
+                
+            case 'play':
+                // REAL-TIME API CALL for voice files
+                const voiceFilesResult = await apiService.getVoiceFiles();
+                options = voiceFilesResult.data.map(v => v.name);
+                placeholder = 'Select Voice File';
+                break;
+                
+            case 'extension':
+                paramContainer.html('<input type="text" class="form-control form-control-sm" id="ivr_value_' + digit + '" name="ivr_value[]" placeholder="Enter extension number" maxlength="10">');
                 return;
-            }
-            
-            if (!data.ivr_description.trim()) {
-                alert('Please enter a description');
+                
+            case 'voicemail':
+                paramContainer.html('<input type="text" class="form-control form-control-sm" id="ivr_value_' + digit + '" name="ivr_value[]" placeholder="Enter voicemail ID">');
                 return;
-            }
-            
-            if (!data.voice_file) {
-                alert('Please select a voice file');
+                
+            case 'ip':
+                paramContainer.html('<input type="text" class="form-control form-control-sm" id="ivr_value_' + digit + '" name="ivr_value[]" placeholder="Enter IP address">');
                 return;
+                
+            case 'callforward':
+                paramContainer.html('<input type="text" class="form-control form-control-sm" id="ivr_value_' + digit + '" name="ivr_value[]" placeholder="Enter phone number">');
+                return;
+                
+            case 'callback':
+                paramContainer.html('<input type="text" class="form-control form-control-sm" id="ivr_value_' + digit + '" name="ivr_value[]" placeholder="Enter callback number">');
+                return;
+                
+            case 'sms':
+                paramContainer.html('<input type="text" class="form-control form-control-sm" id="ivr_value_' + digit + '" name="ivr_value[]" placeholder="Enter SMS content">');
+                return;
+                
+            case 'complete':
+                paramContainer.html('<input type="hidden" id="ivr_value_' + digit + '" name="ivr_value[]" value="complete">');
+                paramContainer.append('<span class="text-muted">No parameter needed</span>');
+                return;
+                
+            default:
+                paramContainer.html('<input type="text" class="form-control form-control-sm" id="ivr_value_' + digit + '" name="ivr_value[]" placeholder="Enter value">');
+                return;
+        }
+        
+        // Create select element for options
+        let selectHtml = `<select class="form-select form-select-sm ivr-value" id="ivr_value_${digit}" name="ivr_value[]" data-digit="${digit}">`;
+        selectHtml += `<option value="">${placeholder}</option>`;
+        options.forEach(option => {
+            selectHtml += `<option value="${option}">${option}</option>`;
+        });
+        selectHtml += '</select>';
+        
+        paramContainer.html(selectHtml);
+        
+    } catch (error) {
+        console.error('Error loading parameters:', error);
+        paramContainer.html(`
+            <div class="text-danger">
+                <i class="fas fa-exclamation-triangle"></i> Failed to load data
+            </div>
+        `);
+        showToast('Failed to load ' + action + ' data: ' + error.message, 'error');
+    }
+}
+
+// Open add modal
+function openAddModal() {
+    currentEditingId = null;
+    $('#modalTitle').html('<i class="fas fa-plus me-2"></i>Add New IVR');
+    $('#ivrForm')[0].reset();
+    $('#ivr_id').val('');
+    initializeDtmfOptions();
+    $('#ivrModal').modal('show');
+}
+
+// Edit IVR
+async function editIvr(ivrId) {
+    showLoading(true);
+    try {
+        const result = await apiService.getIvr(ivrId);
+        const ivr = result.data;
+        
+        currentEditingId = ivrId;
+        $('#modalTitle').html('<i class="fas fa-edit me-2"></i>Edit IVR');
+        
+        // Fill form with IVR data
+        $('#ivr_id').val(ivr.ivr_id);
+        $('#ivr_name').val(ivr.ivr_name);
+        $('#ivr_description').val(ivr.ivr_description || '');
+        $('#voice_file').val(ivr.voice_file);
+        $('#seconds_to_wait').val(ivr.seconds_to_wait);
+        $('#repeats').val(ivr.repeats || 0);
+        $('#direct_call').val(ivr.direct_call || 'no');
+        
+        // Initialize DTMF options
+        initializeDtmfOptions();
+        
+        // Load DTMF options after a short delay to ensure DOM is ready
+        setTimeout(async () => {
+            if (ivr.options && ivr.options.length > 0) {
+                await loadDtmfOptions(ivr.options);
             }
+        }, 100);
+        
+        $('#ivrModal').modal('show');
+    } catch (error) {
+        showToast('Failed to load IVR: ' + error.message, 'error');
+    } finally {
+        showLoading(false);
+    }
+}
 
-            showLoading(true);
-
-            // Simulate API call
-            setTimeout(() => {
-                if (currentEditingId) {
-                    // Update existing IVRS
-                    const index = ivrsData.findIndex(i => i.sno === currentEditingId);
-                    if (index !== -1) {
-                        ivrsData[index] = { ...ivrsData[index], ...data, sno: currentEditingId };
-                    }
-                    showToast('IVRS updated successfully!', 'success');
+// Load DTMF options for editing
+async function loadDtmfOptions(options) {
+    for (const option of options) {
+        const digit = option.option_num;
+        const action = option.option_key;
+        const value = option.destination;
+        
+        $(`#ivr_option_${digit}`).val(action);
+        
+        // Wait for the parameters to load before setting the value
+        await showParameters(action, digit);
+        
+        // Set the value after options are loaded
+        setTimeout(() => {
+            const valueElement = $(`#ivr_value_${digit}`);
+            if (valueElement.length) {
+                if (valueElement.is('select')) {
+                    valueElement.val(value);
                 } else {
-                    // Add new IVRS
-                    const newIvr = {
-                        ...data,
-                        sno: Math.max(...ivrsData.map(i => i.sno)) + 1,
-                        queue_transfers: queueTransferCount
-                    };
-                    ivrsData.unshift(newIvr);
-                    showToast('IVRS created successfully!', 'success');
+                    valueElement.val(value);
                 }
+            }
+        }, 500);
+    }
+}
 
-                populateIvrsTable(ivrsData);
-                updateStatistics(ivrsData);
-                showLoading(false);
-                $('#ivrModal').modal('hide');
-            }, 1500);
+// Confirm delete
+function confirmDelete(ivrId, ivrName) {
+    $('#deleteIvrName').text(ivrName);
+    $('#confirmDeleteBtn').off('click').on('click', function() {
+        deleteIvr(ivrId);
+    });
+    $('#deleteConfirmModal').modal('show');
+}
+
+// Delete IVR
+async function deleteIvr(ivrId) {
+    $('#deleteConfirmModal').modal('hide');
+    showLoading(true);
+
+    try {
+        await apiService.deleteIvr(ivrId);
+        // Reload data from API after delete
+        await loadIvrs();
+        showToast('IVR deleted successfully!', 'success');
+    } catch (error) {
+        showToast('Failed to delete IVR: ' + error.message, 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+// Save IVR
+async function saveIvr() {
+    const formData = new FormData(document.getElementById('ivrForm'));
+    const data = Object.fromEntries(formData.entries());
+
+    // Validation
+    if (!data.ivr_name.trim()) {
+        alert('Please enter an IVR name');
+        return;
+    }
+    
+    if (!data.voice_file) {
+        alert('Please select a voice file');
+        return;
+    }
+    
+    if (!data.seconds_to_wait || data.seconds_to_wait < 0) {
+        alert('Please enter a valid wait time');
+        return;
+    }
+
+    // Collect DTMF options
+    const options = collectDtmfOptions();
+
+    // Prepare IVR data
+    const ivrData = {
+        ivr_name: data.ivr_name,
+        ivr_description: data.ivr_description || '',
+        voice_file: parseInt(data.voice_file),
+        seconds_to_wait: parseInt(data.seconds_to_wait),
+        repeats: parseInt(data.repeats) || 0,
+        direct_call: data.direct_call,
+        options: options
+    };
+
+    showLoading(true);
+
+    try {
+        if (currentEditingId) {
+            // Update existing IVR
+            await apiService.updateIvr(currentEditingId, ivrData);
+            showToast('IVR updated successfully!', 'success');
+        } else {
+            // Add new IVR
+            await apiService.createIvr(ivrData);
+            showToast('IVR created successfully!', 'success');
         }
 
-        // Add queue transfer item
-        function addQueueTransfer() {
-            if (queueTransferCount >= 10) {
-                showToast('Maximum 10 queue transfers allowed', 'warning');
-                return;
+        // Reload IVRs from API to get fresh data
+        await loadIvrs();
+        $('#ivrModal').modal('hide');
+    } catch (error) {
+        showToast('Failed to save IVR: ' + error.message, 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+// Collect DTMF options from form
+function collectDtmfOptions() {
+    const options = [];
+    $('.ivr-option').each(function() {
+        const digit = $(this).data('digit');
+        const action = $(this).val();
+        
+        if (action) {
+            const valueElement = $(`#ivr_value_${digit}`);
+            let value = '';
+            
+            if (valueElement.length) {
+                if (valueElement.is('select')) {
+                    value = valueElement.val();
+                } else {
+                    value = valueElement.val();
+                }
             }
             
-            queueTransferCount++;
-            const transferId = `transfer_${queueTransferCount}`;
+            // For complete action, set a default value
+            if (action === 'complete' && !value) {
+                value = 'complete';
+            }
             
-            const transferHtml = `
-                <div class="queue-transfer-item" id="${transferId}">
-                    <div class="row g-2 align-items-center">
-                        <div class="col-md-2">
-                            <label class="form-label small">Digit</label>
-                            <input type="text" class="form-control form-control-sm digit-input" maxlength="1" placeholder="1" name="transfer_digit[]">
-                        </div>
-                        <div class="col-md-5">
-                            <label class="form-label small">Description</label>
-                            <input type="text" class="form-control form-control-sm" placeholder="e.g., Sales Department" name="transfer_description[]">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label small">Target</label>
-                            <input type="text" class="form-control form-control-sm" placeholder="e.g., sales_queue" name="transfer_value[]">
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label small">&nbsp;</label>
-                            <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="removeQueueTransfer('${transferId}')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('queueTransfersContainer').insertAdjacentHTML('beforeend', transferHtml);
-        }
-
-        // Remove queue transfer item
-        function removeQueueTransfer(id) {
-            const element = document.getElementById(id);
-            if (element) {
-                element.remove();
-                queueTransferCount--;
+            if (value) {
+                options.push({
+                    option_num: parseInt(digit),
+                    option_key: action,
+                    destination: value
+                });
             }
         }
+    });
+    return options;
+}
 
-        // Update IVRS preview
-        function updatePreview() {
-            const name = $('#ivr_name').val() || 'IVRS Name';
-            const description = $('#ivr_description').val() || 'Description';
-            const voiceFile = $('#voice_file').val() || 'Not selected';
-            const status = $('#ivr_status').val() === 'active' ? 'Active' : 'Inactive';
-            const statusClass = $('#ivr_status').val() === 'active' ? 'bg-success' : 'bg-secondary';
-            
-            // Update preview text
-            $('#previewName').text(name);
-            $('#previewDescription').text(description);
-            $('#previewVoiceFile').text(voiceFile);
-            $('#previewStatus').text(status).removeClass('bg-success bg-secondary').addClass(statusClass);
-        }
+// Test IVR
+async function testIvr(ivrId) {
+    showLoading(true);
+    try {
+        await apiService.testIvr(ivrId);
+        showToast('IVR test completed successfully!', 'success');
+    } catch (error) {
+        showToast('Failed to test IVR: ' + error.message, 'error');
+    } finally {
+        showLoading(false);
+    }
+}
 
-        // Test IVRS
-        function testIvr(ivrId) {
-            showLoading(true);
-            // Simulate IVRS testing
-            setTimeout(() => {
-                showLoading(false);
-                showToast('IVRS test completed successfully!', 'success');
-            }, 2000);
-        }
-
-        // Function to reset filters
-        function resetFilters() {
-            $('#searchInput').val('');
-            $('#statusFilter').val('');
-            $('#typeFilter').val('');
-            
-            // Reset DataTable search and filters
-            const table = $('#ivrsTable').DataTable();
-            table.search('').columns().search('').draw();
-        }
-
-        // Function to show toast messages
-        function showToast(message, type = 'info') {
-            const toastContainer = $('#toastContainer');
-            const toastId = 'toast-' + Date.now();
-            
-            const toastHtml = `
-                <div id="${toastId}" class="toast align-items-center text-white bg-${type} border-0" role="alert">
-                    <div class="d-flex">
-                        <div class="toast-body">
-                            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
-                            ${message}
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                    </div>
+// Function to show toast messages
+function showToast(message, type = 'info') {
+    const toastContainer = $('#toastContainer');
+    const toastId = 'toast-' + Date.now();
+    
+    const bgClass = type === 'error' ? 'danger' : type;
+    
+    const toastHtml = `
+        <div id="${toastId}" class="toast align-items-center text-white bg-${bgClass} border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
+                    ${message}
                 </div>
-            `;
-            
-            toastContainer.append(toastHtml);
-            const toastElement = $('#' + toastId);
-            const toast = new bootstrap.Toast(toastElement);
-            toast.show();
-            
-            // Remove toast from DOM after it's hidden
-            toastElement.on('hidden.bs.toast', function() {
-                $(this).remove();
-            });
-        }
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    `;
+    
+    toastContainer.append(toastHtml);
+    const toastElement = $('#' + toastId);
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+    
+    // Remove toast from DOM after it's hidden
+    toastElement.on('hidden.bs.toast', function() {
+        $(this).remove();
+    });
+}
 
-        // Show/Hide loading overlay
-        function showLoading(show) {
-            document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
-        }
+// Show/Hide loading overlay
+function showLoading(show) {
+    document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+}
+    
+    
     </script>
 </body>
 </html>

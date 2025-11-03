@@ -131,40 +131,6 @@
             display: none;
         }
         
-        .stat-card {
-            text-align: center;
-            padding: 20px 15px;
-            border-radius: 12px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--glass-border);
-        }
-        
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 12px;
-            font-size: 1.5rem;
-            color: white;
-        }
-        
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            font-size: 0.8rem;
-            color: #6c757d;
-            font-weight: 600;
-        }
-        
         .toast-container {
             position: fixed;
             top: 20px;
@@ -350,11 +316,7 @@
                             <label for="process" class="form-label required-field">Process</label>
                             <select class="form-select" id="process" required>
                                 <option value="">Select Process</option>
-                                <option value="Production">Production</option>
-                                <option value="Verification">Verification</option>
-                                <option value="Quality Control">Quality Control</option>
-                                <option value="Management">Management</option>
-                                <option value="All">All Processes</option>
+                                <!-- Processes will be loaded dynamically from API -->
                             </select>
                         </div>
                     </form>
@@ -459,46 +421,6 @@
             </div>
         </div>
 
-        <!-- Statistics Cards -->
-        <div class="row mb-3">
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #4361ee, #3a0ca3);">
-                        <i class="fas fa-coffee"></i>
-                    </div>
-                    <div class="stat-number text-primary" id="morningBreaks">0</div>
-                    <div class="stat-label">Morning Breaks</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #4cc9f0, #4895ef);">
-                        <i class="fas fa-utensils"></i>
-                    </div>
-                    <div class="stat-number text-info" id="lunchBreaks">0</div>
-                    <div class="stat-label">Lunch Breaks</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #f72585, #b5179e);">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="stat-number text-warning" id="afternoonBreaks">0</div>
-                    <div class="stat-label">Afternoon Breaks</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #7209b7, #560bad);">
-                        <i class="fas fa-walking"></i>
-                    </div>
-                    <div class="stat-number text-secondary" id="shortBreaks">0</div>
-                    <div class="stat-label">Short Breaks</div>
-                </div>
-            </div>
-        </div>
-
         <!-- DataTable -->
         <div class="glass-card">
             <div class="table-responsive">
@@ -531,475 +453,473 @@
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 
    <script>
-
     // API Configuration
-const API_BASE_URL = '../api/breaks.php';
+    const API_BASE_URL = '../api/breaks.php';
+    const PROCESS_API_URL = '../api/indiapi/processes.php'; // New API for processes
 
-// Global variables
-let breaksData = [];
-let breakToDelete = null;
-let breaksTable;
+    // Global variables
+    let breaksData = [];
+    let processesData = []; // Store processes from API
+    let breakToDelete = null;
+    let breaksTable;
 
-// DOM Elements
-const breakModal = document.getElementById('breakModal');
-const breakForm = document.getElementById('breakForm');
-const breakIdInput = document.getElementById('breakId');
-const breakNameInput = document.getElementById('breakName');
-const descriptionInput = document.getElementById('description');
-const breakTimeInput = document.getElementById('breakTime');
-const processInput = document.getElementById('process');
-const saveBreakBtn = document.getElementById('saveBreakBtn');
-const toastContainer = document.getElementById('toastContainer');
-const loadingOverlay = document.getElementById('loadingOverlay');
-const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-const breakToDeleteName = document.getElementById('breakToDeleteName');
+    // DOM Elements
+    const breakModal = document.getElementById('breakModal');
+    const breakForm = document.getElementById('breakForm');
+    const breakIdInput = document.getElementById('breakId');
+    const breakNameInput = document.getElementById('breakName');
+    const descriptionInput = document.getElementById('description');
+    const breakTimeInput = document.getElementById('breakTime');
+    const processInput = document.getElementById('process');
+    const saveBreakBtn = document.getElementById('saveBreakBtn');
+    const toastContainer = document.getElementById('toastContainer');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    const breakToDeleteName = document.getElementById('breakToDeleteName');
 
-// Statistics elements
-const totalBreaksEl = document.getElementById('totalBreaks');
-const activeBreaksEl = document.getElementById('activeBreaks');
-const upcomingBreaksEl = document.getElementById('upcomingBreaks');
-const avgBreakTimeEl = document.getElementById('avgBreakTime');
-const morningBreaksEl = document.getElementById('morningBreaks');
-const lunchBreaksEl = document.getElementById('lunchBreaks');
-const afternoonBreaksEl = document.getElementById('afternoonBreaks');
-const shortBreaksEl = document.getElementById('shortBreaks');
+    // Statistics elements
+    const totalBreaksEl = document.getElementById('totalBreaks');
+    const activeBreaksEl = document.getElementById('activeBreaks');
+    const upcomingBreaksEl = document.getElementById('upcomingBreaks');
+    const avgBreakTimeEl = document.getElementById('avgBreakTime');
 
-// Initialize the page
-$(document).ready(function() {
-    loadBreaks();
-    setupEventListeners();
-});
+    // Initialize the page
+    $(document).ready(function() {
+        loadProcesses(); // Load processes first
+        loadBreaks();
+        setupEventListeners();
+    });
 
-// API Functions
-async function loadBreaks() {
-    showLoading(true);
-    try {
-        const response = await fetch(`${API_BASE_URL}?action=getAll`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        
-        // Check if the response has a success property
-        if (data.success) {
-            breaksData = data.data || [];
-            console.log('Loaded breaks:', breaksData); // Debug log
+    // Load processes from API
+    async function loadProcesses() {
+        showLoading(true);
+        try {
+            const response = await fetch(`${PROCESS_API_URL}?action=getProcesses`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
             
-            // Ensure all break_id values are numbers
-            breaksData = breaksData.map(breakItem => {
-                return {
-                    ...breakItem,
-                    break_id: parseInt(breakItem.break_id)
-                };
+            if (data.success) {
+                processesData = data.data || [];
+                populateProcessDropdown();
+                console.log('Loaded processes:', processesData);
+            } else {
+                throw new Error(data.message || 'Failed to load processes');
+            }
+        } catch (error) {
+            console.error('Error loading processes:', error);
+            showToast('Failed to load processes: ' + error.message, 'danger');
+            // Fallback to empty processes
+            processesData = [];
+            populateProcessDropdown();
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    // Populate process dropdown with data from API
+    function populateProcessDropdown() {
+        const processSelect = document.getElementById('process');
+        processSelect.innerHTML = '<option value="">Select Process</option>';
+        
+        processesData.forEach(process => {
+            const option = document.createElement('option');
+            option.value = process.name || process.process; // Handle different field names
+            option.textContent = process.name || process.process;
+            processSelect.appendChild(option);
+        });
+        
+        // Add "All Processes" option
+        const allOption = document.createElement('option');
+        allOption.value = 'All';
+        allOption.textContent = 'All Processes';
+        processSelect.appendChild(allOption);
+    }
+
+    // API Functions for breaks
+    async function loadBreaks() {
+        showLoading(true);
+        try {
+            const response = await fetch(`${API_BASE_URL}?action=getAll`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            
+            if (data.success) {
+                breaksData = data.data || [];
+                console.log('Loaded breaks:', breaksData);
+                
+                // Ensure all break_id values are numbers
+                breaksData = breaksData.map(breakItem => {
+                    return {
+                        ...breakItem,
+                        break_id: parseInt(breakItem.break_id)
+                    };
+                });
+                
+                console.log('Processed breaksData:', breaksData);
+            } else {
+                throw new Error(data.message || 'Failed to load breaks');
+            }
+            
+            initializeDataTable();
+            updateStatistics();
+        } catch (error) {
+            console.error('Error loading breaks:', error);
+            showToast('Failed to load breaks: ' + error.message, 'danger');
+            breaksData = [];
+            initializeDataTable();
+            updateStatistics();
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    async function saveBreakToAPI(breakData) {
+        const isUpdate = breakData.break_id !== undefined && breakData.break_id !== '';
+        const action = isUpdate ? 'update' : 'create';
+        
+        try {
+            const response = await fetch(`${API_BASE_URL}?action=${action}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(breakData)
             });
             
-            console.log('Processed breaksData:', breaksData); // Debug log
-        } else {
-            throw new Error(data.message || 'Failed to load breaks');
-        }
-        
-        initializeDataTable();
-        updateStatistics();
-    } catch (error) {
-        console.error('Error loading breaks:', error);
-        showToast('Failed to load breaks: ' + error.message, 'danger');
-        // Initialize with empty data if API fails
-        breaksData = [];
-        initializeDataTable();
-        updateStatistics();
-    } finally {
-        showLoading(false);
-    }
-}
-
-async function saveBreakToAPI(breakData) {
-    const isUpdate = breakData.break_id !== undefined && breakData.break_id !== '';
-    const action = isUpdate ? 'update' : 'create';
-    
-    try {
-        const response = await fetch(`${API_BASE_URL}?action=${action}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(breakData)
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            return result;
-        } else {
-            throw new Error(result.message || 'Failed to save break');
-        }
-    } catch (error) {
-        console.error('Error saving break:', error);
-        throw error;
-    }
-}
-
-async function deleteBreakFromAPI(breakId) {
-    try {
-        const response = await fetch(`${API_BASE_URL}?action=delete`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ break_id: breakId })
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            return result;
-        } else {
-            throw new Error(result.message || 'Failed to delete break');
-        }
-    } catch (error) {
-        console.error('Error deleting break:', error);
-        throw error;
-    }
-}
-
-function initializeDataTable() {
-    if (breaksTable) {
-        breaksTable.destroy();
-    }
-    
-    breaksTable = $('#breaksTable').DataTable({
-        data: breaksData,
-        columns: [
-            { data: 'break_id' },
-            { data: 'break' }, // Note: This matches your database column name
-            { data: 'description' },
-            { 
-                data: 'break_time',
-                render: function(data) {
-                    // Format time for display (remove seconds if 00:00)
-                    return data.endsWith(':00') ? data.substring(0, 5) : data;
-                }
-            },
-            { data: 'process' },
-            { 
-                data: 'break_time',
-                render: function(data) {
-                    return getBreakStatus(data);
-                }
-            },
-            {
-                data: 'break_id',
-                render: function(data, type, row) {
-                    return `
-                        <div class="btn-group" role="group">
-                            <button class="btn btn-sm btn-warning btn-action" onclick="editBreak(${data})">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger btn-action" onclick="deleteBreak(${data})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    `;
-                },
-                orderable: false,
-                searchable: false
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-        ],
-        pageLength: 10,
-        responsive: true,
-        dom: '<"row"<"col-md-6"l><"col-md-6"f>>rt<"row"<"col-md-6"i><"col-md-6"p>>',
-        language: {
-            search: "_INPUT_",
-            searchPlaceholder: "Search breaks...",
-            lengthMenu: "Show _MENU_ entries",
-            info: "Showing _START_ to _END_ of _TOTAL_ entries",
-            paginate: {
-                first: "First",
-                last: "Last",
-                next: "Next",
-                previous: "Previous"
-            }
-        },
-        // Add this to ensure data is available for editing
-        drawCallback: function() {
-            // Update breaksData with current table data
-            breaksData = this.api().rows().data().toArray();
-            console.log('DataTable breaksData updated:', breaksData); // Debug log
-        }
-    });
-}
-
-function setupEventListeners() {
-    // Save break button
-    saveBreakBtn.addEventListener('click', function() {
-        saveBreak();
-    });
-
-    // Delete confirmation
-    confirmDeleteBtn.addEventListener('click', function() {
-        if (breakToDelete) {
-            performDeleteBreak(breakToDelete);
-            const modal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmationModal'));
-            modal.hide();
-        }
-    });
-
-    // Reset form when modal is hidden
-    breakModal.addEventListener('hidden.bs.modal', function() {
-        resetForm();
-    });
-}
-
-function getBreakStatus(breakTime) {
-    const now = new Date();
-    const breakTimeObj = new Date();
-    const [hours, minutes] = breakTime.split(':');
-    breakTimeObj.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-    
-    let status = 'Upcoming';
-    let statusClass = 'bg-warning';
-    
-    if (now > breakTimeObj) {
-        status = 'Completed';
-        statusClass = 'bg-secondary';
-    }
-    
-    // Check if break is within the next 15 minutes
-    const fifteenMinutesFromNow = new Date(now.getTime() + 15 * 60000);
-    if (now < breakTimeObj && breakTimeObj < fifteenMinutesFromNow) {
-        status = 'Starting Soon';
-        statusClass = 'bg-info';
-    }
-    
-    return `<span class="badge ${statusClass}">${status}</span>`;
-}
-
-function updateStatistics() {
-    const breaks = breaksTable ? breaksTable.data().toArray() : [];
-    
-    // Update main statistics
-    totalBreaksEl.textContent = breaks.length;
-    
-    // Calculate active breaks (within the next hour)
-    const now = new Date();
-    const oneHourFromNow = new Date(now.getTime() + 60 * 60000);
-    const activeBreaks = breaks.filter(breakItem => {
-        const breakTime = new Date();
-        const [hours, minutes] = breakItem.break_time.split(':');
-        breakTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-        return now < breakTime && breakTime < oneHourFromNow;
-    });
-    activeBreaksEl.textContent = activeBreaks.length;
-    
-    // Calculate upcoming breaks (today)
-    const upcomingBreaks = breaks.filter(breakItem => {
-        const breakTime = new Date();
-        const [hours, minutes] = breakItem.break_time.split(':');
-        breakTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-        return now < breakTime;
-    });
-    upcomingBreaksEl.textContent = upcomingBreaks.length;
-    
-    // Calculate break type statistics
-    const morningBreaks = breaks.filter(breakItem => {
-        const hour = parseInt(breakItem.break_time.split(':')[0]);
-        return hour >= 6 && hour < 12;
-    });
-    morningBreaksEl.textContent = morningBreaks.length;
-    
-    const lunchBreaks = breaks.filter(breakItem => {
-        const hour = parseInt(breakItem.break_time.split(':')[0]);
-        return hour >= 11 && hour < 14;
-    });
-    lunchBreaksEl.textContent = lunchBreaks.length;
-    
-    const afternoonBreaks = breaks.filter(breakItem => {
-        const hour = parseInt(breakItem.break_time.split(':')[0]);
-        return hour >= 14 && hour < 18;
-    });
-    afternoonBreaksEl.textContent = afternoonBreaks.length;
-    
-    const shortBreaks = breaks.filter(breakItem => {
-        return breakItem.description.toLowerCase().includes('quick') || 
-               breakItem.description.toLowerCase().includes('short') ||
-               breakItem.description.toLowerCase().includes('coffee');
-    });
-    shortBreaksEl.textContent = shortBreaks.length;
-}
-
-async function saveBreak() {
-    const id = breakIdInput.value ? parseInt(breakIdInput.value) : null;
-    const breakName = breakNameInput.value.trim();
-    const description = descriptionInput.value.trim();
-    const breakTime = breakTimeInput.value;
-    const process = processInput.value;
-    
-    if (!breakName || !breakTime || !process) {
-        showValidationModal('Missing Information', 'Please fill in all required fields!');
-        return;
-    }
-    
-    // Format time properly
-    const formattedTime = breakTime + ':00';
-    
-    const breakData = {
-        break_id: id,
-        break: breakName, // Note: This matches your API field name
-        description: description,
-        break_time: formattedTime,
-        process: process
-    };
-
-    showLoading(true);
-    try {
-        const result = await saveBreakToAPI(breakData);
-        
-        if (result.success) {
-            showToast(id ? 'Break updated successfully!' : 'Break added successfully!', 'success');
-            await loadBreaks(); // Reload data from API
             
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(breakModal);
-            modal.hide();
+            const result = await response.json();
+            
+            if (result.success) {
+                return result;
+            } else {
+                throw new Error(result.message || 'Failed to save break');
+            }
+        } catch (error) {
+            console.error('Error saving break:', error);
+            throw error;
         }
-    } catch (error) {
-        console.error('Error saving break:', error);
-        showToast('Failed to save break: ' + error.message, 'danger');
-    } finally {
-        showLoading(false);
     }
-}
 
-function deleteBreak(id) {
-    // Get the break data directly from the DataTable
-    const breakItem = breaksTable.row(`[data-id="${id}"]`).data();
-    if (!breakItem) {
-        // Fallback: search in breaksData array
-        const foundBreak = breaksData.find(b => b.break_id === id);
-        if (!foundBreak) {
+    async function deleteBreakFromAPI(breakId) {
+        try {
+            const response = await fetch(`${API_BASE_URL}?action=delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ break_id: breakId })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                return result;
+            } else {
+                throw new Error(result.message || 'Failed to delete break');
+            }
+        } catch (error) {
+            console.error('Error deleting break:', error);
+            throw error;
+        }
+    }
+
+    function initializeDataTable() {
+        if (breaksTable) {
+            breaksTable.destroy();
+        }
+        
+        breaksTable = $('#breaksTable').DataTable({
+            data: breaksData,
+            columns: [
+                { data: 'break_id' },
+                { data: 'break' },
+                { data: 'description' },
+                { 
+                    data: 'break_time',
+                    render: function(data) {
+                        return data.endsWith(':00') ? data.substring(0, 5) : data;
+                    }
+                },
+                { data: 'process' },
+                { 
+                    data: 'break_time',
+                    render: function(data) {
+                        return getBreakStatus(data);
+                    }
+                },
+                {
+                    data: 'break_id',
+                    render: function(data, type, row) {
+                        return `
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-warning btn-action" onclick="editBreak(${data})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger btn-action" onclick="deleteBreak(${data})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                    },
+                    orderable: false,
+                    searchable: false
+                }
+            ],
+            pageLength: 10,
+            responsive: true,
+            dom: '<"row"<"col-md-6"l><"col-md-6"f>>rt<"row"<"col-md-6"i><"col-md-6"p>>',
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search breaks...",
+                lengthMenu: "Show _MENU_ entries",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                paginate: {
+                    first: "First",
+                    last: "Last",
+                    next: "Next",
+                    previous: "Previous"
+                }
+            },
+            drawCallback: function() {
+                breaksData = this.api().rows().data().toArray();
+                console.log('DataTable breaksData updated:', breaksData);
+            }
+        });
+    }
+
+    function setupEventListeners() {
+        saveBreakBtn.addEventListener('click', function() {
+            saveBreak();
+        });
+
+        confirmDeleteBtn.addEventListener('click', function() {
+            if (breakToDelete) {
+                performDeleteBreak(breakToDelete);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmationModal'));
+                modal.hide();
+            }
+        });
+
+        breakModal.addEventListener('hidden.bs.modal', function() {
+            resetForm();
+        });
+    }
+
+    function getBreakStatus(breakTime) {
+        const now = new Date();
+        const breakTimeObj = new Date();
+        const [hours, minutes] = breakTime.split(':');
+        breakTimeObj.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+        
+        let status = 'Upcoming';
+        let statusClass = 'bg-warning';
+        
+        if (now > breakTimeObj) {
+            status = 'Completed';
+            statusClass = 'bg-secondary';
+        }
+        
+        const fifteenMinutesFromNow = new Date(now.getTime() + 15 * 60000);
+        if (now < breakTimeObj && breakTimeObj < fifteenMinutesFromNow) {
+            status = 'Starting Soon';
+            statusClass = 'bg-info';
+        }
+        
+        return `<span class="badge ${statusClass}">${status}</span>`;
+    }
+
+    function updateStatistics() {
+        const breaks = breaksTable ? breaksTable.data().toArray() : [];
+        
+        totalBreaksEl.textContent = breaks.length;
+        
+        const now = new Date();
+        const oneHourFromNow = new Date(now.getTime() + 60 * 60000);
+        const activeBreaks = breaks.filter(breakItem => {
+            const breakTime = new Date();
+            const [hours, minutes] = breakItem.break_time.split(':');
+            breakTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+            return now < breakTime && breakTime < oneHourFromNow;
+        });
+        activeBreaksEl.textContent = activeBreaks.length;
+        
+        const upcomingBreaks = breaks.filter(breakItem => {
+            const breakTime = new Date();
+            const [hours, minutes] = breakItem.break_time.split(':');
+            breakTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+            return now < breakTime;
+        });
+        upcomingBreaksEl.textContent = upcomingBreaks.length;
+    }
+
+    async function saveBreak() {
+        const id = breakIdInput.value ? parseInt(breakIdInput.value) : null;
+        const breakName = breakNameInput.value.trim();
+        const description = descriptionInput.value.trim();
+        const breakTime = breakTimeInput.value;
+        const process = processInput.value;
+        
+        if (!breakName || !breakTime || !process) {
+            showValidationModal('Missing Information', 'Please fill in all required fields!');
+            return;
+        }
+        
+        const formattedTime = breakTime + ':00';
+        
+        const breakData = {
+            break_id: id,
+            break: breakName,
+            description: description,
+            break_time: formattedTime,
+            process: process
+        };
+
+        showLoading(true);
+        try {
+            const result = await saveBreakToAPI(breakData);
+            
+            if (result.success) {
+                showToast(id ? 'Break updated successfully!' : 'Break added successfully!', 'success');
+                await loadBreaks();
+                
+                const modal = bootstrap.Modal.getInstance(breakModal);
+                modal.hide();
+            }
+        } catch (error) {
+            console.error('Error saving break:', error);
+            showToast('Failed to save break: ' + error.message, 'danger');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    function deleteBreak(id) {
+        const breakItem = breaksTable.row(`[data-id="${id}"]`).data();
+        if (!breakItem) {
+            const foundBreak = breaksData.find(b => b.break_id === id);
+            if (!foundBreak) {
+                showToast('Break not found!', 'danger');
+                return;
+            }
+            breakToDeleteName.textContent = foundBreak.break;
+        } else {
+            breakToDeleteName.textContent = breakItem.break;
+        }
+        
+        breakToDelete = id;
+        
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
+        deleteModal.show();
+    }
+
+    async function performDeleteBreak(id) {
+        showLoading(true);
+        try {
+            const result = await deleteBreakFromAPI(id);
+            
+            if (result.success) {
+                showToast('Break deleted successfully!', 'success');
+                await loadBreaks();
+            }
+        } catch (error) {
+            console.error('Error deleting break:', error);
+            showToast('Failed to delete break: ' + error.message, 'danger');
+        } finally {
+            showLoading(false);
+            breakToDelete = null;
+        }
+    }
+
+    function editBreak(id) {
+        console.log('Editing break ID:', id);
+        console.log('Available breaksData:', breaksData);
+        
+        const breakItem = breaksData.find(b => b.break_id == id);
+        
+        if (!breakItem) {
+            console.error('Break not found in breaksData. ID:', id);
             showToast('Break not found!', 'danger');
             return;
         }
-        breakToDeleteName.textContent = foundBreak.break;
-    } else {
-        breakToDeleteName.textContent = breakItem.break;
-    }
-    
-    breakToDelete = id;
-    
-    const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
-    deleteModal.show();
-}
-
-async function performDeleteBreak(id) {
-    showLoading(true);
-    try {
-        const result = await deleteBreakFromAPI(id);
         
-        if (result.success) {
-            showToast('Break deleted successfully!', 'success');
-            await loadBreaks(); // Reload data from API
+        console.log('Found break item:', breakItem);
+        
+        breakIdInput.value = breakItem.break_id;
+        breakNameInput.value = breakItem.break;
+        descriptionInput.value = breakItem.description || '';
+        
+        let timeValue = breakItem.break_time;
+        if (timeValue && timeValue.endsWith(':00')) {
+            timeValue = timeValue.substring(0, 5);
         }
-    } catch (error) {
-        console.error('Error deleting break:', error);
-        showToast('Failed to delete break: ' + error.message, 'danger');
-    } finally {
-        showLoading(false);
-        breakToDelete = null;
+        breakTimeInput.value = timeValue;
+        
+        processInput.value = breakItem.process;
+        
+        document.getElementById('breakModalLabel').textContent = 'Edit Break';
+        
+        const modal = new bootstrap.Modal(breakModal);
+        modal.show();
     }
-}
 
-function editBreak(id) {
-    console.log('Editing break ID:', id); // Debug log
-    console.log('Available breaksData:', breaksData); // Debug log
-    
-    // Try to find the break in the breaksData array
-    const breakItem = breaksData.find(b => b.break_id == id);
-    
-    if (!breakItem) {
-        console.error('Break not found in breaksData. ID:', id); // Debug log
-        showToast('Break not found!', 'danger');
-        return;
+    function resetForm() {
+        breakForm.reset();
+        breakIdInput.value = '';
+        document.getElementById('breakModalLabel').textContent = 'Add New Break';
     }
-    
-    console.log('Found break item:', breakItem); // Debug log
-    
-    breakIdInput.value = breakItem.break_id;
-    breakNameInput.value = breakItem.break;
-    descriptionInput.value = breakItem.description || '';
-    
-    // Format time for input (remove seconds)
-    let timeValue = breakItem.break_time;
-    if (timeValue && timeValue.endsWith(':00')) {
-        timeValue = timeValue.substring(0, 5);
+
+    function showValidationModal(title, message) {
+        document.getElementById('validationTitle').textContent = title;
+        document.getElementById('validationMessage').textContent = message;
+        const validationModal = new bootstrap.Modal(document.getElementById('validationModal'));
+        validationModal.show();
     }
-    breakTimeInput.value = timeValue;
-    
-    processInput.value = breakItem.process;
-    
-    // Update modal title
-    document.getElementById('breakModalLabel').textContent = 'Edit Break';
-    
-    // Show modal
-    const modal = new bootstrap.Modal(breakModal);
-    modal.show();
-}
 
-function resetForm() {
-    breakForm.reset();
-    breakIdInput.value = '';
-    document.getElementById('breakModalLabel').textContent = 'Add New Break';
-}
+    function showLoading(show) {
+        loadingOverlay.style.display = show ? 'flex' : 'none';
+    }
 
-function showValidationModal(title, message) {
-    document.getElementById('validationTitle').textContent = title;
-    document.getElementById('validationMessage').textContent = message;
-    const validationModal = new bootstrap.Modal(document.getElementById('validationModal'));
-    validationModal.show();
-}
-
-function showLoading(show) {
-    loadingOverlay.style.display = show ? 'flex' : 'none';
-}
-
-function showToast(message, type) {
-    const toast = document.createElement('div');
-    toast.className = `toast align-items-center text-bg-${type} border-0`;
-    toast.setAttribute('role', 'alert');
-    toast.setAttribute('aria-live', 'assertive');
-    toast.setAttribute('aria-atomic', 'true');
-    
-    toast.innerHTML = `
-        <div class="d-flex">
-            <div class="toast-body">
-                ${message}
+    function showToast(message, type) {
+        const toast = document.createElement('div');
+        toast.className = `toast align-items-center text-bg-${type} border-0`;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+        
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-    `;
-    
-    toastContainer.appendChild(toast);
-    
-    const bsToast = new bootstrap.Toast(toast);
-    bsToast.show();
-    
-    // Remove toast from DOM after it's hidden
-    toast.addEventListener('hidden.bs.toast', function() {
-        toast.remove();
-    });
-}
+        `;
+        
+        toastContainer.appendChild(toast);
+        
+        const bsToast = new bootstrap.Toast(toast);
+        bsToast.show();
+        
+        toast.addEventListener('hidden.bs.toast', function() {
+            toast.remove();
+        });
+    }
 
-// Simulate real-time updates
-setInterval(function() {
-    updateStatistics();
-}, 60000); // Update every minute
+    // Simulate real-time updates
+    setInterval(function() {
+        updateStatistics();
+    }, 60000);
    </script>
   
 </body>
