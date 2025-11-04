@@ -5,13 +5,10 @@ header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
 // Database configuration
-$host = 'localhost';
-$dbname = 'your_database_name';
-$username = 'your_username';
-$password = 'your_password';
+include('../../config/config.php');
 
 // Create connection
-$conn = new mysqli($host, $username, $password, $dbname);
+$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
 
 // Check connection
 if ($conn->connect_error) {
