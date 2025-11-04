@@ -171,6 +171,7 @@
             padding: 1rem 1.25rem;
             background: var(--primary-color);
             color: white;
+            border-bottom: none;
         }
         
         .modal-title {
@@ -179,32 +180,12 @@
         }
         
         .modal-body {
-            padding: 1.25rem;
+            padding: 0;
         }
         
         .modal-footer {
             padding: 1rem 1.25rem;
-        }
-        
-        /* Tabs */
-        .nav-tabs {
-            border-bottom: 1px solid #dee2e6;
-            margin-bottom: 1.25rem;
-        }
-        
-        .nav-tabs .nav-link {
-            font-size: 0.8rem;
-            padding: 0.6rem 1rem;
-            border: none;
-            color: #6c757d;
-            font-weight: 500;
-            border-radius: 0;
-        }
-        
-        .nav-tabs .nav-link.active {
-            background: none;
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
+            border-top: 1px solid #dee2e6;
         }
         
         /* Form Elements */
@@ -229,34 +210,6 @@
         .required-field::after {
             content: " *";
             color: var(--danger-color);
-        }
-        
-        /* Form Sections */
-        .form-section {
-            margin-bottom: 1.5rem;
-        }
-        
-        .section-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--primary-color);
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #e9ecef;
-        }
-        
-        /* Process Visual */
-        .process-visual {
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            color: white;
-            font-weight: 600;
-            font-size: 0.9rem;
         }
         
         /* Loading Overlay */
@@ -316,7 +269,203 @@
             margin-top: 0.25rem;
             display: none;
         }
-        
+
+        /* Rich Modify Form Styles */
+        .modify-form-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .form-section-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1rem 1.5rem;
+            margin-bottom: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .form-section-body {
+            padding: 1.5rem;
+            background: #f8f9fa;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid #e9ecef;
+        }
+
+        .form-card-header {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .form-group-enhanced {
+            margin-bottom: 1rem;
+        }
+
+        .form-group-enhanced label {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .required-star {
+            color: var(--danger-color);
+        }
+
+        .form-control-enhanced {
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 0.6rem 0.75rem;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .form-control-enhanced:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.15);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .checkbox-group label {
+            margin-bottom: 0;
+            font-weight: normal;
+        }
+
+        .timeout-input {
+            width: 80px;
+            display: inline-block;
+            margin-left: 0.5rem;
+        }
+
+        .range-text {
+            font-size: 0.7rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+
+        .settings-tabs {
+            background: white;
+            border-bottom: 1px solid #dee2e6;
+            padding: 0 1.5rem;
+        }
+
+        .settings-tabs .nav-link {
+            font-size: 0.8rem;
+            padding: 0.75rem 1rem;
+            border: none;
+            color: #6c757d;
+            font-weight: 500;
+            border-radius: 0;
+            background: none;
+        }
+
+        .settings-tabs .nav-link.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            background: none;
+        }
+
+        .tab-content {
+            padding: 1.5rem;
+        }
+
+        .dual-select-container {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1rem;
+            align-items: start;
+        }
+
+        .select-box {
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 0.75rem;
+            background: white;
+        }
+
+        .select-box-header {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .select-list {
+            height: 200px;
+            width: 100%;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .transfer-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            justify-content: center;
+            height: 200px;
+        }
+
+        .section-divider {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #dee2e6, transparent);
+            margin: 1.5rem 0;
+        }
+
+        .advanced-toggle {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0;
+        }
+
+        .advanced-settings {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-left: 3px solid var(--primary-color);
+        }
+
         /* Responsive Adjustments */
         @media (max-width: 768px) {
             .btn-action {
@@ -325,6 +474,21 @@
             
             .stat-card {
                 margin-bottom: 1rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dual-select-container {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .transfer-buttons {
+                flex-direction: row;
+                height: auto;
+                justify-content: center;
             }
         }
     </style>
@@ -442,9 +606,8 @@
                         <tr>
                             <th>ID</th>
                             <th>Process Name</th>
+                            <th>Description</th>
                             <th>Type</th>
-                            <th>Caller ID</th>
-                            <th>Channels</th>
                             <th>Status</th>
                             <th>Health</th>
                             <th>Actions</th>
@@ -458,243 +621,328 @@
         </div>
     </div>
 
-    <!-- Process Modal Form -->
-    <div class="modal fade" id="processModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-        <div class="modal-dialog modal-lg">
+    <!-- Add Process Modal (Simple Form) -->
+    <div class="modal fade" id="addProcessModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle"><i class="fas fa-plus-circle me-2"></i>Add New Process</h5>
+                    <h5 class="modal-title"><i class="fas fa-plus-circle me-2"></i>Add New Process</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <ul class="nav nav-tabs" id="processTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic" type="button" role="tab">
-                                <i class="fas fa-info-circle me-1"></i> Basic
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="outbound-tab" data-bs-toggle="tab" data-bs-target="#outbound" type="button" role="tab">
-                                <i class="fas fa-sign-out-alt me-1"></i> Outbound
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="inbound-tab" data-bs-toggle="tab" data-bs-target="#inbound" type="button" role="tab">
-                                <i class="fas fa-sign-in-alt me-1"></i> Inbound
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="breaks-tab" data-bs-toggle="tab" data-bs-target="#breaks" type="button" role="tab">
-                                <i class="fas fa-clock me-1"></i> Breaks
-                            </button>
-                        </li>
-                    </ul>
-                    
-                    <div class="tab-content mt-3" id="processTabsContent">
-                        <div class="tab-pane fade show active" id="basic" role="tabpanel">
-                            <form id="processForm">
-                                <input type="hidden" id="sno" name="sno">
-                                
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <div class="form-section">
-                                            <div class="section-title">
-                                                <i class="fas fa-signature"></i> Process Info
-                                            </div>
-                                            <div class="row g-2">
-                                                <div class="col-md-6">
-                                                    <div class="mb-2">
-                                                        <label for="process" class="form-label required-field">Process Name</label>
-                                                        <input type="text" class="form-control form-control-sm" id="process" name="process" required maxlength="50" placeholder="e.g., Sales-Campaign">
-                                                        <div class="validation-error" id="processError">Process name is required</div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-2">
-                                                        <label for="process_type" class="form-label required-field">Process Type</label>
-                                                        <select class="form-select form-select-sm" id="process_type" name="process_type" required onchange="toggleProcessConfig()">
-                                                            <option value="inbound">Inbound</option>
-                                                            <option value="outbound">Outbound</option>
-                                                            <option value="blended">Blended</option>
-                                                        </select>
-                                                        <div class="validation-error" id="processTypeError">Process type is required</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="row g-2">
-                                                <div class="col-md-12">
-                                                    <div class="mb-2">
-                                                        <label for="process_description" class="form-label">Description</label>
-                                                        <textarea class="form-control form-control-sm" id="process_description" name="process_description" maxlength="250" rows="2" placeholder="Process description"></textarea>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="form-section">
-                                            <div class="section-title">
-                                                <i class="fas fa-sliders-h"></i> Configuration
-                                            </div>
-                                            <div class="row g-2">
-                                                <div class="col-md-6">
-                                                    <div class="mb-2">
-                                                        <label for="callerid" class="form-label">Caller ID</label>
-                                                        <input type="text" class="form-control form-control-sm" id="callerid" name="callerid" maxlength="30" placeholder="e.g., +1-555-0100">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-2">
-                                                        <label for="channels" class="form-label">Channels</label>
-                                                        <input type="number" class="form-control form-control-sm" id="channels" name="channels" value="0" min="0" max="100">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="row g-2">
-                                                <div class="col-md-6">
-                                                    <div class="mb-2">
-                                                        <label for="extension" class="form-label">Extension</label>
-                                                        <input type="text" class="form-control form-control-sm" id="extension" name="extension" maxlength="10" placeholder="e.g., 1001">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-2">
-                                                        <label for="active" class="form-label">Status</label>
-                                                        <select class="form-select form-select-sm" id="active" name="active">
-                                                            <option value="N">Inactive</option>
-                                                            <option value="Y">Active</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-md-4">
-                                        <div class="process-visual">
-                                            <div class="text-center">
-                                                <i class="fas fa-project-diagram fa-2x mb-1"></i>
-                                                <div>Process Preview</div>
-                                                <small id="processVisualType">Inbound</small>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="small">
-                                            <div><strong>Name:</strong> <span id="previewName">-</span></div>
-                                            <div><strong>Type:</strong> <span id="previewType">-</span></div>
-                                            <div><strong>Caller ID:</strong> <span id="previewCallerId">-</span></div>
-                                            <div><strong>Status:</strong> <span id="previewStatus" class="badge bg-secondary">Inactive</span></div>
-                                            <div><strong>Channels:</strong> <span id="previewChannels">0</span></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
+                    <form id="addProcessForm">
+                        <div class="mb-3">
+                            <label for="new_process" class="form-label required-field">Process Name</label>
+                            <input type="text" class="form-control form-control-sm" id="new_process" name="process" required maxlength="50" placeholder="e.g., Sales-Campaign">
+                            <div class="validation-error" id="processError">Process name is required</div>
                         </div>
                         
-                        <!-- Outbound Settings Tab -->
-                        <div class="tab-pane fade" id="outbound" role="tabpanel">
-                            <div class="form-section">
-                                <div class="section-title">
-                                    <i class="fas fa-bullhorn"></i> Outbound Settings
-                                </div>
-                                
-                                <div class="row g-2">
-                                    <div class="col-md-6">
-                                        <div class="mb-2">
-                                            <label for="outbound_type" class="form-label">Outbound Type</label>
-                                            <select class="form-select form-select-sm" id="outbound_type" name="outbound_type">
-                                                <option value="broadcast">Broadcast</option>
-                                                <option value="preview">Preview</option>
-                                                <option value="predictive">Predictive</option>
-                                                <option value="progressive">Progressive</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-2">
-                                            <label for="outbound_broadcast_action" class="form-label">Broadcast Action</label>
-                                            <select class="form-select form-select-sm" id="outbound_broadcast_action" name="outbound_broadcast_action">
-                                                <option value="PFAH">PFAH</option>
-                                                <option value="PFACD">PFACD</option>
-                                                <option value="PFADTQ">PFADTQ</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="mb-3">
+                            <label for="new_process_description" class="form-label">Process Description</label>
+                            <textarea class="form-control form-control-sm" id="new_process_description" name="process_description" maxlength="250" rows="3" placeholder="Process description"></textarea>
                         </div>
                         
-                        <!-- Inbound Settings Tab -->
-                        <div class="tab-pane fade" id="inbound" role="tabpanel">
-                            <div class="form-section">
-                                <div class="section-title">
-                                    <i class="fas fa-phone-volume"></i> Inbound Settings
-                                </div>
-                                
-                                <div class="row g-2">
-                                    <div class="col-md-6">
-                                        <div class="mb-2">
-                                            <label for="inbound_did" class="form-label">DID Number</label>
-                                            <input type="text" class="form-control form-control-sm" id="inbound_did" name="inbound_did" maxlength="20" placeholder="e.g., +1-555-0100">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-2">
-                                            <label for="inbound_type" class="form-label">Inbound Type</label>
-                                            <select class="form-select form-select-sm" id="inbound_type" name="inbound_type">
-                                                <option value="direct-transfer">Direct Transfer</option>
-                                                <option value="ivr">IVR</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="mb-3">
+                            <label for="new_active" class="form-label">Status</label>
+                            <select class="form-select form-select-sm" id="new_active" name="active">
+                                <option value="Y">Active</option>
+                                <option value="N">Inactive</option>
+                            </select>
                         </div>
-                        
-                        <!-- Breaks Tab -->
-                        <div class="tab-pane fade" id="breaks" role="tabpanel">
-                            <div class="form-section">
-                                <div class="section-title">
-                                    <i class="fas fa-clock"></i> Break Configuration
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="addBreakRow()">
-                                        <i class="fas fa-plus me-1"></i> Add Break
-                                    </button>
-                                </div>
-                                
-                                <div id="breaksContainer">
-                                    <!-- Break rows will be added here -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary btn-sm" onclick="saveProcess()">
-                        <i class="fas fa-save me-1"></i> Save Process
+                    <button type="button" class="btn btn-primary btn-sm" onclick="createProcess()">
+                        <i class="fas fa-save me-1"></i> Create Process
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Validation Error Modal -->
-    <div class="modal fade" id="validationErrorModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header bg-warning text-dark">
-                    <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Validation Error</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <!-- Modify Process Modal (Rich Form) -->
+    <div class="modal fade" id="modifyProcessModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content modify-form-container">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Modify Process</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <p id="validationErrorMessage">Please check the form for errors.</p>
+                
+                <div class="settings-tabs">
+                    <ul class="nav nav-tabs" id="modifyTabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#basic-settings">
+                                <i class="fas fa-cog me-1"></i>Basic Settings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#outbound-settings">
+                                <i class="fas fa-sign-out-alt me-1"></i>Outbound
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#inbound-settings">
+                                <i class="fas fa-sign-in-alt me-1"></i>Inbound
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#advanced-settings">
+                                <i class="fas fa-sliders-h me-1"></i>Advanced
+                            </a>
+                        </li>
+                    </ul>
                 </div>
+
+                <div class="tab-content">
+                    <!-- Basic Settings Tab -->
+                    <div class="tab-pane fade show active" id="basic-settings">
+                        <div class="form-card">
+                            <div class="form-card-header">
+                                <i class="fas fa-info-circle"></i>Process Information
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group-enhanced">
+                                    <label>Process Name <span class="required-star">*</span></label>
+                                    <input type="text" class="form-control-enhanced" id="modify_process" readonly>
+                                </div>
+                                <div class="form-group-enhanced">
+                                    <label>Inbound DID <span class="required-star">*</span></label>
+                                    <input type="text" class="form-control-enhanced" id="modify_inbound_did" value="101">
+                                </div>
+                                <div class="form-group-enhanced">
+                                    <label>Status</label>
+                                    <select class="form-control-enhanced" id="modify_active">
+                                        <option value="Y">Active</option>
+                                        <option value="N">Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="form-group-enhanced">
+                                    <label>Process Type <span class="required-star">*</span></label>
+                                    <select class="form-control-enhanced" id="modify_process_type">
+                                        <optgroup label="InComing">
+                                            <option value="Inbound">Inbound & Manual Out Dial</option>
+                                        </optgroup>
+                                        <optgroup label="Only Outgoing">
+                                            <option value="O_Predictive">Outbound - Predictive</option>
+                                            <option value="O_Preview">Outbound - Preview</option>
+                                            <option value="O_Progressive">Outbound - Progressive</option>
+                                        </optgroup>
+                                        <optgroup label="Blended">
+                                            <option value="B_Predictive">Blended - Predictive</option>
+                                            <option value="B_Preview">Blended - Preview</option>
+                                            <option value="B_Progressive">Blended - Progressive</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group-enhanced">
+                                <label>Process Description</label>
+                                <textarea class="form-control-enhanced" id="modify_process_description" rows="3" placeholder="Enter process description"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-card">
+                            <div class="form-card-header">
+                                <i class="fas fa-wrench"></i>Configuration
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group-enhanced">
+                                    <label>Channels</label>
+                                    <input type="number" class="form-control-enhanced" id="modify_channels" value="30" min="1" max="120">
+                                    <div class="range-text">Range: 1-120</div>
+                                </div>
+                                <div class="form-group-enhanced">
+                                    <label>CRM</label>
+                                    <select class="form-control-enhanced" id="modify_crm_id">
+                                        <option value="">Select CRM</option>
+                                        <option value="1001">ConVox CRM</option>
+                                        <option value="1002">SalesForce</option>
+                                        <option value="1003">HubSpot</option>
+                                    </select>
+                                </div>
+                                <div class="form-group-enhanced">
+                                    <label>Script</label>
+                                    <select class="form-control-enhanced" id="modify_process_script">
+                                        <option value="">-- Select Script --</option>
+                                        <option value="sales">Sales Script</option>
+                                        <option value="support">Support Script</option>
+                                        <option value="collections">Collections Script</option>
+                                    </select>
+                                </div>
+                                <div class="form-group-enhanced">
+                                    <label>Web Form Type</label>
+                                    <select class="form-control-enhanced" id="modify_webform_type">
+                                        <option value="SHOW">SHOW</option>
+                                        <option value="SHOW_WITH_ENDCALL">SHOW WITH ENDCALL</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Outbound Settings Tab -->
+                    <div class="tab-pane fade" id="outbound-settings">
+                        <div class="form-card">
+                            <div class="form-card-header">
+                                <i class="fas fa-bullhorn"></i>Outbound Configuration
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group-enhanced">
+                                    <label>Dial Prefix</label>
+                                    <input type="text" class="form-control-enhanced" id="modify_dial_prefix" value="3301" maxlength="4">
+                                    <div class="range-text">Strictly 4 digits</div>
+                                </div>
+                                <div class="form-group-enhanced">
+                                    <label>Caller ID</label>
+                                    <input type="text" class="form-control-enhanced" id="modify_callerid" value="1234">
+                                </div>
+                                <div class="form-group-enhanced">
+                                    <label>Buffer Level</label>
+                                    <input type="number" class="form-control-enhanced" id="modify_buffer_level" value="1" min="0" max="100">
+                                </div>
+                                <div class="form-group-enhanced">
+                                    <label>Lead Order</label>
+                                    <select class="form-control-enhanced" id="modify_lead_order">
+                                        <option value="leads_by_asc">Lead By Ascending</option>
+                                        <option value="leads_by_desc">Lead By Descending</option>
+                                        <option value="random">Random</option>
+                                        <option value="first_dial_least_called">First Dial Least Called</option>
+                                        <option value="first_dial_max_called">First Dial Max Called</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Inbound Settings Tab -->
+                    <div class="tab-pane fade" id="inbound-settings">
+                        <div class="form-card">
+                            <div class="form-card-header">
+                                <i class="fas fa-phone-volume"></i>Inbound Configuration
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group-enhanced">
+                                    <label>Greeting File</label>
+                                    <select class="form-control-enhanced" id="modify_greeting_file">
+                                        <option value="">Select Greeting File</option>
+                                        <option value="welcome">Welcome Message</option>
+                                        <option value="support">Support Greeting</option>
+                                        <option value="sales">Sales Greeting</option>
+                                    </select>
+                                </div>
+                                <div class="form-group-enhanced">
+                                    <label>Accept Input Greeting</label>
+                                    <select class="form-control-enhanced" id="modify_greeting_accept">
+                                        <option value="Y">Yes</option>
+                                        <option value="N">No</option>
+                                    </select>
+                                </div>
+                                <div class="form-group-enhanced">
+                                    <label>Time Out (seconds)</label>
+                                    <input type="number" class="form-control-enhanced" id="modify_time_out" value="1" min="1" max="60">
+                                </div>
+                                <div class="form-group-enhanced">
+                                    <label>Retries</label>
+                                    <select class="form-control-enhanced" id="modify_retries">
+                                        <option value="0">0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Settings Tab -->
+                    <div class="tab-pane fade" id="advanced-settings">
+                        <div class="form-card">
+                            <div class="form-card-header">
+                                <i class="fas fa-clock"></i>Auto Settings
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group-enhanced">
+                                    <div class="checkbox-group">
+                                        <input type="checkbox" id="modify_auto_wp" checked>
+                                        <label>Auto Wrapup</label>
+                                    </div>
+                                    <input type="number" class="form-control-enhanced timeout-input" id="modify_wp_time" value="10" min="5" max="600">
+                                    <div class="range-text">Range: 5-600 seconds</div>
+                                </div>
+                                <div class="form-group-enhanced">
+                                    <div class="checkbox-group">
+                                        <input type="checkbox" id="modify_auto_mp" checked>
+                                        <label>Auto Missed</label>
+                                    </div>
+                                    <input type="number" class="form-control-enhanced timeout-input" id="modify_mp_time" value="10" min="5" max="600">
+                                    <div class="range-text">Range: 5-600 seconds</div>
+                                </div>
+                                <div class="form-group-enhanced">
+                                    <div class="checkbox-group">
+                                        <input type="checkbox" id="modify_auto_op" checked>
+                                        <label>Auto Outbound</label>
+                                    </div>
+                                    <input type="number" class="form-control-enhanced timeout-input" id="modify_op_time" value="15" min="5" max="600">
+                                    <div class="range-text">Range: 5-600 seconds</div>
+                                </div>
+                                <div class="form-group-enhanced">
+                                    <div class="checkbox-group">
+                                        <input type="checkbox" id="modify_auto_fp" checked>
+                                        <label>Auto FirstLogin</label>
+                                    </div>
+                                    <input type="number" class="form-control-enhanced timeout-input" id="modify_fp_time" value="15" min="5" max="600">
+                                    <div class="range-text">Range: 5-600 seconds</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-card">
+                            <div class="form-card-header">
+                                <i class="fas fa-shield-alt"></i>Security & Compliance
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group-enhanced">
+                                    <label>DNC Enable</label>
+                                    <select class="form-control-enhanced" id="modify_dnc_enable">
+                                        <option value="Y">Yes</option>
+                                        <option value="N">No</option>
+                                    </select>
+                                </div>
+                                <div class="form-group-enhanced">
+                                    <label>Number Masking</label>
+                                    <select class="form-control-enhanced" id="modify_num_masking">
+                                        <option value="Y">Yes</option>
+                                        <option value="N">No</option>
+                                    </select>
+                                </div>
+                                <div class="form-group-enhanced">
+                                    <label>Agent Wise Dialing</label>
+                                    <select class="form-control-enhanced" id="modify_agent_wise_dialing">
+                                        <option value="Y">Yes</option>
+                                        <option value="N">No</option>
+                                    </select>
+                                </div>
+                                <div class="form-group-enhanced">
+                                    <label>List Selection</label>
+                                    <select class="form-control-enhanced" id="modify_list_select">
+                                        <option value="SERIAL">Serial</option>
+                                        <option value="SHUFFLE">Shuffle</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-warning btn-sm" data-bs-dismiss="modal">OK</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="saveModifiedProcess()">
+                        <i class="fas fa-save me-1"></i> Save Changes
+                    </button>
                 </div>
             </div>
         </div>
@@ -730,7 +978,6 @@
         let currentEditingId = null;
         let processesData = [];
         let processesTable;
-        let breaksData = [];
 
         // Initialize DataTable
         $(document).ready(function() {
@@ -749,50 +996,86 @@
                 }
             });
 
-            // Update preview when form fields change
-            $('#process, #process_type, #callerid, #active, #channels').on('input change', updatePreview);
-            
             // Load initial data
             loadProcesses();
-            loadBreaks();
         });
 
         // Load processes from API
         function loadProcesses() {
             showLoading(true);
             
-            // Fetch data from API
-            fetch('../api/processes.php?action=get')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        processesData = data.processes;
-                        populateProcessesTable(processesData);
-                        updateStatistics(processesData);
-                    } else {
-                        showToast('Failed to load processes: ' + data.message, 'error');
+            // Simulate API call - replace with actual API endpoint
+            setTimeout(() => {
+                // Mock data - replace with actual API response
+                processesData = [
+                    {
+                        sno: 1,
+                        process: "Sales-Campaign",
+                        process_description: "Outbound sales campaign for new customers",
+                        process_type: "outbound",
+                        active: "Y",
+                        channels: 30,
+                        inbound_did: "101",
+                        crm_id: "1001",
+                        webform_type: "SHOW",
+                        dial_prefix: "3301",
+                        callerid: "1234",
+                        buffer_level: 1,
+                        lead_order: "leads_by_asc",
+                        greeting_file: "welcome",
+                        greeting_accept: "N",
+                        time_out: 1,
+                        retries: 2,
+                        auto_wp: true,
+                        wp_time: 10,
+                        auto_mp: true,
+                        mp_time: 10,
+                        auto_op: true,
+                        op_time: 15,
+                        auto_fp: true,
+                        fp_time: 15,
+                        dnc_enable: "Y",
+                        num_masking: "N",
+                        agent_wise_dialing: "N",
+                        list_select: "SERIAL"
+                    },
+                    {
+                        sno: 2,
+                        process: "Customer-Support",
+                        process_description: "Inbound customer support process",
+                        process_type: "inbound",
+                        active: "Y",
+                        channels: 25,
+                        inbound_did: "102",
+                        crm_id: "1001",
+                        webform_type: "SHOW",
+                        dial_prefix: "3302",
+                        callerid: "1235",
+                        buffer_level: 1,
+                        lead_order: "leads_by_asc",
+                        greeting_file: "support",
+                        greeting_accept: "Y",
+                        time_out: 2,
+                        retries: 3,
+                        auto_wp: true,
+                        wp_time: 15,
+                        auto_mp: true,
+                        mp_time: 15,
+                        auto_op: false,
+                        op_time: 10,
+                        auto_fp: true,
+                        fp_time: 20,
+                        dnc_enable: "Y",
+                        num_masking: "Y",
+                        agent_wise_dialing: "Y",
+                        list_select: "SERIAL"
                     }
-                    showLoading(false);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showToast('Error loading processes', 'error');
-                    showLoading(false);
-                });
-        }
-
-        // Load breaks from API
-        function loadBreaks() {
-            fetch('../api/breaks.php?action=get')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        breaksData = data.breaks;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading breaks:', error);
-                });
+                ];
+                
+                populateProcessesTable(processesData);
+                updateStatistics(processesData);
+                showLoading(false);
+            }, 1000);
         }
 
         // Populate processes table
@@ -825,15 +1108,13 @@
                 
                 table.row.add([
                     process.sno,
-                    `<div class="fw-bold">${process.process}</div>
-                     <small class="text-muted">${process.process_description || 'No description'}</small>`,
+                    `<div class="fw-bold">${process.process}</div>`,
+                    process.process_description || 'No description',
                     `<span class="badge ${typeBadge}">${typeText}</span>`,
-                    process.callerid || '-',
-                    process.channels,
                     statusBadge,
                     `<span class="health-indicator health-${health}"></span>${healthText}`,
                     `<div class="btn-group">
-                        <button class="btn btn-outline-primary btn-action" onclick="editProcess(${process.sno})" title="Edit">
+                        <button class="btn btn-outline-primary btn-action" onclick="openModifyModal(${process.sno})" title="Modify">
                             <i class="fas fa-edit"></i>
                         </button>
                         <button class="btn btn-outline-success btn-action" onclick="testProcess(${process.sno})" title="Test">
@@ -855,103 +1136,174 @@
             $('#activeProcesses').text(processes.filter(p => p.active === 'Y').length);
         }
 
-        // Open add modal
+        // Open add modal (simple form)
         function openAddModal() {
-            currentEditingId = null;
-            $('#modalTitle').html('<i class="fas fa-plus-circle me-2"></i>Add New Process');
-            $('#processForm')[0].reset();
-            $('#sno').val('');
-            updatePreview();
-            toggleProcessConfig();
-            clearBreaksContainer();
-            $('#processModal').modal('show');
+            $('#addProcessForm')[0].reset();
+            $('#addProcessModal').modal('show');
         }
 
-        // Edit process
-        function editProcess(processId) {
+        // Create new process
+        function createProcess() {
+            const processName = $('#new_process').val().trim();
+            const processDescription = $('#new_process_description').val().trim();
+            const activeStatus = $('#new_active').val();
+
+            if (!processName) {
+                showToast('Process name is required', 'error');
+                return;
+            }
+
+            showLoading(true);
+
+            // Simulate API call to create process
+            setTimeout(() => {
+                const newProcess = {
+                    sno: processesData.length + 1,
+                    process: processName,
+                    process_description: processDescription,
+                    process_type: 'inbound',
+                    active: activeStatus,
+                    channels: 30,
+                    inbound_did: (100 + processesData.length + 1).toString(),
+                    crm_id: "1001",
+                    webform_type: "SHOW",
+                    dial_prefix: "3301",
+                    callerid: "1234",
+                    buffer_level: 1,
+                    lead_order: "leads_by_asc",
+                    greeting_file: "welcome",
+                    greeting_accept: "N",
+                    time_out: 1,
+                    retries: 2,
+                    auto_wp: true,
+                    wp_time: 10,
+                    auto_mp: true,
+                    mp_time: 10,
+                    auto_op: true,
+                    op_time: 15,
+                    auto_fp: true,
+                    fp_time: 15,
+                    dnc_enable: "Y",
+                    num_masking: "N",
+                    agent_wise_dialing: "N",
+                    list_select: "SERIAL"
+                };
+
+                processesData.unshift(newProcess);
+                populateProcessesTable(processesData);
+                updateStatistics(processesData);
+                
+                $('#addProcessModal').modal('hide');
+                showToast('Process created successfully!', 'success');
+                showLoading(false);
+
+                // Auto-open modify modal for the new process
+                setTimeout(() => {
+                    openModifyModal(newProcess.sno);
+                }, 500);
+            }, 1000);
+        }
+
+        // Open modify modal (rich form)
+        function openModifyModal(processId) {
             const process = processesData.find(p => p.sno === processId);
             if (!process) return;
 
             currentEditingId = processId;
-            $('#modalTitle').html('<i class="fas fa-edit me-2"></i>Edit Process');
-            
-            // Fill form with process data
-            $('#sno').val(process.sno);
-            $('#process').val(process.process);
-            $('#process_description').val(process.process_description);
-            $('#process_type').val(process.process_type);
-            $('#callerid').val(process.callerid);
-            $('#channels').val(process.channels);
-            $('#extension').val(process.extension);
-            $('#active').val(process.active);
-            $('#outbound_type').val(process.outbound_type);
-            $('#outbound_broadcast_action').val(process.outbound_broadcast_action);
-            $('#inbound_did').val(process.inbound_did);
-            $('#inbound_type').val(process.inbound_type);
 
-            updatePreview();
-            loadProcessBreaks(processId);
-            $('#processModal').modal('show');
+            // Fill the modify form with process data
+            $('#modify_process').val(process.process);
+            $('#modify_inbound_did').val(process.inbound_did);
+            $('#modify_active').val(process.active);
+            $('#modify_process_description').val(process.process_description);
+            $('#modify_process_type').val(process.process_type === 'inbound' ? 'Inbound' : 
+                                         process.process_type === 'outbound' ? 'O_Predictive' : 'B_Progressive');
+            $('#modify_channels').val(process.channels);
+            $('#modify_crm_id').val(process.crm_id);
+            $('#modify_webform_type').val(process.webform_type);
+            $('#modify_dial_prefix').val(process.dial_prefix);
+            $('#modify_callerid').val(process.callerid);
+            $('#modify_buffer_level').val(process.buffer_level);
+            $('#modify_lead_order').val(process.lead_order);
+            $('#modify_greeting_file').val(process.greeting_file);
+            $('#modify_greeting_accept').val(process.greeting_accept);
+            $('#modify_time_out').val(process.time_out);
+            $('#modify_retries').val(process.retries);
+            $('#modify_auto_wp').prop('checked', process.auto_wp);
+            $('#modify_wp_time').val(process.wp_time);
+            $('#modify_auto_mp').prop('checked', process.auto_mp);
+            $('#modify_mp_time').val(process.mp_time);
+            $('#modify_auto_op').prop('checked', process.auto_op);
+            $('#modify_op_time').val(process.op_time);
+            $('#modify_auto_fp').prop('checked', process.auto_fp);
+            $('#modify_fp_time').val(process.fp_time);
+            $('#modify_dnc_enable').val(process.dnc_enable);
+            $('#modify_num_masking').val(process.num_masking);
+            $('#modify_agent_wise_dialing').val(process.agent_wise_dialing);
+            $('#modify_list_select').val(process.list_select);
+
+            // Reset to first tab
+            $('#modifyTabs a:first').tab('show');
+
+            $('#modifyProcessModal').modal('show');
         }
 
-        // Load breaks for a specific process
-        function loadProcessBreaks(processId) {
-            clearBreaksContainer();
-            
-            // Filter breaks for this process
-            const processBreaks = breaksData.filter(breakItem => breakItem.process_id == processId);
-            
-            if (processBreaks.length === 0) {
-                addBreakRow(); // Add one empty row if no breaks exist
-            } else {
-                processBreaks.forEach(breakItem => {
-                    addBreakRow(breakItem);
-                });
-            }
-        }
+        // Save modified process
+        function saveModifiedProcess() {
+            if (!currentEditingId) return;
 
-        // Add a break row
-        function addBreakRow(breakData = null) {
-            const breakId = breakData ? breakData.break_id : 'new_' + Date.now();
-            const breakName = breakData ? breakData.break : '';
-            const breakDescription = breakData ? breakData.description : '';
-            const breakTime = breakData ? breakData.break_time : '';
-            
-            const breakRow = `
-                <div class="break-row mb-2 p-2 border rounded" data-break-id="${breakId}">
-                    <div class="row g-2">
-                        <div class="col-md-4">
-                            <label class="form-label">Break Name</label>
-                            <input type="text" class="form-control form-control-sm break-name" value="${breakName}" placeholder="e.g., Lunch">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Description</label>
-                            <input type="text" class="form-control form-control-sm break-description" value="${breakDescription}" placeholder="Break description">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Time</label>
-                            <input type="time" class="form-control form-control-sm break-time" value="${breakTime}">
-                        </div>
-                        <div class="col-md-1 d-flex align-items-end">
-                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeBreakRow('${breakId}')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            $('#breaksContainer').append(breakRow);
-        }
+            showLoading(true);
 
-        // Remove a break row
-        function removeBreakRow(breakId) {
-            $(`[data-break-id="${breakId}"]`).remove();
-        }
+            // Simulate API call to update process
+            setTimeout(() => {
+                const processIndex = processesData.findIndex(p => p.sno === currentEditingId);
+                if (processIndex !== -1) {
+                    // Update process data with all form values
+                    processesData[processIndex].process_description = $('#modify_process_description').val();
+                    processesData[processIndex].active = $('#modify_active').val();
+                    processesData[processIndex].channels = parseInt($('#modify_channels').val()) || 0;
+                    processesData[processIndex].inbound_did = $('#modify_inbound_did').val();
+                    processesData[processIndex].crm_id = $('#modify_crm_id').val();
+                    processesData[processIndex].webform_type = $('#modify_webform_type').val();
+                    processesData[processIndex].dial_prefix = $('#modify_dial_prefix').val();
+                    processesData[processIndex].callerid = $('#modify_callerid').val();
+                    processesData[processIndex].buffer_level = parseInt($('#modify_buffer_level').val()) || 0;
+                    processesData[processIndex].lead_order = $('#modify_lead_order').val();
+                    processesData[processIndex].greeting_file = $('#modify_greeting_file').val();
+                    processesData[processIndex].greeting_accept = $('#modify_greeting_accept').val();
+                    processesData[processIndex].time_out = parseInt($('#modify_time_out').val()) || 1;
+                    processesData[processIndex].retries = $('#modify_retries').val();
+                    processesData[processIndex].auto_wp = $('#modify_auto_wp').is(':checked');
+                    processesData[processIndex].wp_time = parseInt($('#modify_wp_time').val()) || 10;
+                    processesData[processIndex].auto_mp = $('#modify_auto_mp').is(':checked');
+                    processesData[processIndex].mp_time = parseInt($('#modify_mp_time').val()) || 10;
+                    processesData[processIndex].auto_op = $('#modify_auto_op').is(':checked');
+                    processesData[processIndex].op_time = parseInt($('#modify_op_time').val()) || 15;
+                    processesData[processIndex].auto_fp = $('#modify_auto_fp').is(':checked');
+                    processesData[processIndex].fp_time = parseInt($('#modify_fp_time').val()) || 15;
+                    processesData[processIndex].dnc_enable = $('#modify_dnc_enable').val();
+                    processesData[processIndex].num_masking = $('#modify_num_masking').val();
+                    processesData[processIndex].agent_wise_dialing = $('#modify_agent_wise_dialing').val();
+                    processesData[processIndex].list_select = $('#modify_list_select').val();
 
-        // Clear breaks container
-        function clearBreaksContainer() {
-            $('#breaksContainer').empty();
+                    // Update process type based on selection
+                    const processType = $('#modify_process_type').val();
+                    if (processType === 'Inbound') {
+                        processesData[processIndex].process_type = 'inbound';
+                    } else if (processType.startsWith('O_')) {
+                        processesData[processIndex].process_type = 'outbound';
+                    } else if (processType.startsWith('B_')) {
+                        processesData[processIndex].process_type = 'blended';
+                    }
+
+                    populateProcessesTable(processesData);
+                    updateStatistics(processesData);
+                    
+                    $('#modifyProcessModal').modal('hide');
+                    showToast('Process updated successfully!', 'success');
+                }
+                showLoading(false);
+            }, 1000);
         }
 
         // Confirm delete
@@ -968,157 +1320,14 @@
             $('#deleteConfirmModal').modal('hide');
             showLoading(true);
 
-            // API call to delete process
-            fetch('../api/processes.php?action=delete', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ sno: processId })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    processesData = processesData.filter(p => p.sno !== processId);
-                    populateProcessesTable(processesData);
-                    updateStatistics(processesData);
-                    showToast('Process deleted successfully!', 'success');
-                } else {
-                    showToast('Failed to delete process: ' + data.message, 'error');
-                }
+            // Simulate API call to delete process
+            setTimeout(() => {
+                processesData = processesData.filter(p => p.sno !== processId);
+                populateProcessesTable(processesData);
+                updateStatistics(processesData);
+                showToast('Process deleted successfully!', 'success');
                 showLoading(false);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showToast('Error deleting process', 'error');
-                showLoading(false);
-            });
-        }
-
-        // Save process
-        function saveProcess() {
-            // Validate form
-            if (!validateForm()) {
-                showValidationError('Please fill in all required fields');
-                return;
-            }
-
-            const formData = new FormData(document.getElementById('processForm'));
-            const data = Object.fromEntries(formData.entries());
-            
-            // Collect breaks data
-            const breaks = [];
-            $('.break-row').each(function() {
-                const breakId = $(this).data('break-id');
-                const breakName = $(this).find('.break-name').val();
-                const breakDescription = $(this).find('.break-description').val();
-                const breakTime = $(this).find('.break-time').val();
-                
-                if (breakName && breakTime) {
-                    breaks.push({
-                        break_id: breakId,
-                        break: breakName,
-                        description: breakDescription,
-                        break_time: breakTime
-                    });
-                }
-            });
-
-            data.breaks = breaks;
-            data.action = currentEditingId ? 'update' : 'create';
-
-            showLoading(true);
-
-            // API call to save process
-            fetch('../api/processes.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    loadProcesses(); // Reload data from server
-                    showToast(
-                        currentEditingId ? 'Process updated successfully!' : 'Process created successfully!', 
-                        'success'
-                    );
-                    $('#processModal').modal('hide');
-                } else {
-                    showToast('Failed to save process: ' + data.message, 'error');
-                }
-                showLoading(false);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showToast('Error saving process', 'error');
-                showLoading(false);
-            });
-        }
-
-        // Validate form
-        function validateForm() {
-            let isValid = true;
-            
-            // Reset error states
-            $('.validation-error').hide();
-            $('.form-control, .form-select').removeClass('is-invalid');
-            
-            // Check required fields
-            if (!$('#process').val().trim()) {
-                $('#processError').show();
-                $('#process').addClass('is-invalid');
-                isValid = false;
-            }
-            
-            if (!$('#process_type').val()) {
-                $('#processTypeError').show();
-                $('#process_type').addClass('is-invalid');
-                isValid = false;
-            }
-            
-            return isValid;
-        }
-
-        // Show validation error modal
-        function showValidationError(message) {
-            $('#validationErrorMessage').text(message);
-            $('#validationErrorModal').modal('show');
-        }
-
-        // Toggle process configuration
-        function toggleProcessConfig() {
-            const processType = $('#process_type').val();
-            
-            // Update visual
-            let displayText = 'Inbound';
-            if (processType === 'outbound') displayText = 'Outbound';
-            else if (processType === 'blended') displayText = 'Blended';
-            
-            $('#processVisualType').text(displayText);
-        }
-
-        // Update process preview
-        function updatePreview() {
-            const name = $('#process').val() || 'Process Name';
-            const type = $('#process_type').val();
-            let displayType = 'Inbound';
-            if (type === 'outbound') displayType = 'Outbound';
-            else if (type === 'blended') displayType = 'Blended';
-            
-            const callerId = $('#callerid').val() || '-';
-            const status = $('#active').val() === 'Y' ? 'Active' : 'Inactive';
-            const statusClass = $('#active').val() === 'Y' ? 'bg-success' : 'bg-secondary';
-            const channels = $('#channels').val() || '0';
-            
-            // Update preview text
-            $('#previewName').text(name);
-            $('#previewType').text(displayType);
-            $('#previewCallerId').text(callerId);
-            $('#previewStatus').text(status).removeClass('bg-success bg-secondary').addClass(statusClass);
-            $('#previewChannels').text(channels);
+            }, 1000);
         }
 
         // Test process
