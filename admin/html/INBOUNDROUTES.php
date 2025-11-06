@@ -361,7 +361,7 @@
         /* Notification System */
         .notification-container {
             position: fixed;
-            top: 20px;
+            bottom: 20px;
             right: 20px;
             z-index: 1050;
             max-width: 350px;
@@ -742,10 +742,16 @@
 
   <script>
     // API Configuration
-    const API_BASE_URL = '.././api/inbound_route.php'; // Update this path if needed
+    const API_BASE_URL = '../api/inbound_route.php'; // Update this path if needed
+    const PROCESS_API_URL = '../api/indiapi/processes.php'; // Process API
+    const QUEUE_API_URL = '../api/indiapi/queue_api.php'; // Queue API
+    const IVR_API_URL = '../api/ivr_api.php'; // IVR API
     
     let routesTable;
     let routeToDelete = null;
+    let processes = [];
+    let queues = [];
+    let ivrs = [];
 
     // Initialize the application when page loads
     document.addEventListener('DOMContentLoaded', function() {
@@ -761,6 +767,11 @@
         
         // Reset form when modal is hidden
         document.getElementById('addRouteModal').addEventListener('hidden.bs.modal', resetForm);
+        
+        // Load dynamic data
+        loadProcesses();
+        loadQueues();
+        loadIVRs();
     });
 
     // API Functions
@@ -793,6 +804,54 @@
                 success: false,
                 message: 'Network error: ' + error.message
             };
+        }
+    }
+
+    // Load processes from API
+    async function loadProcesses() {
+        try {
+            const result = await apiCall(PROCESS_API_URL);
+            if (result.success && result.data) {
+                processes = result.data;
+                console.log('Loaded processes:', processes);
+            } else {
+                throw new Error(result.message || 'Failed to load processes');
+            }
+        } catch (error) {
+            console.error('Error loading processes:', error);
+            showNotification('error', 'Error', 'Failed to load processes: ' + error.message);
+        }
+    }
+
+    // Load queues from API
+    async function loadQueues() {
+        try {
+            const result = await apiCall(QUEUE_API_URL);
+            if (result.success && result.data) {
+                queues = result.data;
+                console.log('Loaded queues:', queues);
+            } else {
+                throw new Error(result.message || 'Failed to load queues');
+            }
+        } catch (error) {
+            console.error('Error loading queues:', error);
+            showNotification('error', 'Error', 'Failed to load queues: ' + error.message);
+        }
+    }
+
+    // Load IVRs from API
+    async function loadIVRs() {
+        try {
+            const result = await apiCall(`${IVR_API_URL}?action=ivrs_dropdown`);
+            if (result.success && result.data) {
+                ivrs = result.data;
+                console.log('Loaded IVRs:', ivrs);
+            } else {
+                throw new Error(result.message || 'Failed to load IVRs');
+            }
+        } catch (error) {
+            console.error('Error loading IVRs:', error);
+            showNotification('error', 'Error', 'Failed to load IVRs: ' + error.message);
         }
     }
 
@@ -988,43 +1047,55 @@
     }
 
     // Show application value based on selected type
-    function showApplicationValue(type) {
+    async function showApplicationValue(type) {
         const container = document.getElementById('application_value_container');
         
         if (type === 'process') {
+            // Create process dropdown
+            let options = '<option value="">Select Process</option>';
+            if (processes.length > 0) {
+                processes.forEach(process => {
+                    options += `<option value="${process.name}">${process.name}</option>`;
+                });
+            } else {
+                options += '<option value="">Loading processes...</option>';
+            }
+            
             container.innerHTML = `
                 <select class="form-select" id="application_value" name="application_value" required>
-                    <option value="">Select Process</option>
-                    <option value="ConVox_Process">ConVox_Process</option>
-                    <option value="EMRI_PROCESS">EMRI_PROCESS</option>
-                    <option value="merit_tool">merit_tool</option>
-                    <option value="merit_R1">merit_R1</option>
-                    <option value="merit_R2">merit_R2</option>
-                    <option value="merit_R3">merit_R3</option>
-                    <option value="merit_R4">merit_R4</option>
-                    <option value="merit_A1">merit_A1</option>
-                    <option value="vehicle_release">vehicle_release</option>
-                    <option value="merit_R5">merit_R5</option>
-                    <option value="Complaint">Complaint</option>
-                    <option value="merit_R5_1">merit_R5_1</option>
-                    <option value="merit_R7">merit_R7</option>
-                    <option value="merit_R6">merit_R6</option>
-                    <option value="merit_R8">merit_R8</option>
-                    <option value="merit_R9">merit_R9</option>
-                    <option value="merit_R10">merit_R10</option>
-                    <option value="merit_R11">merit_R11</option>
-                    <option value="Merit_R13">Merit_R13</option>
-                    <option value="Merit_R14">Merit_R14</option>
-                    <option value="Merit_R15">Merit_R15</option>
-                    <option value="Merit_R16">Merit_R16</option>
-                    <option value="Merit_R17">Merit_R17</option>
+                    ${options}
+                </select>
+            `;
+        } else if (type === 'queue') {
+            // Create queue dropdown - direct selection without process
+            let options = '<option value="">Select Queue</option>';
+            if (queues.length > 0) {
+                queues.forEach(queue => {
+                    options += `<option value="${queue.queue_name}">${queue.queue_name}</option>`;
+                });
+            } else {
+                options += '<option value="">Loading queues...</option>';
+            }
+            
+            container.innerHTML = `
+                <select class="form-select" id="application_value" name="application_value" required>
+                    ${options}
                 </select>
             `;
         } else if (type === 'ivr') {
+            // Create IVR dropdown
+            let options = '<option value="">Select IVR</option>';
+            if (ivrs.length > 0) {
+                ivrs.forEach(ivr => {
+                    options += `<option value="${ivr.name}">${ivr.name}</option>`;
+                });
+            } else {
+                options += '<option value="">Loading IVRs...</option>';
+            }
+            
             container.innerHTML = `
                 <select class="form-select" id="application_value" name="application_value" required>
-                    <option value="">Select IVR</option>
-                    <option value="1">emri_ivr</option>
+                    ${options}
                 </select>
             `;
         } else {
@@ -1052,7 +1123,7 @@
                 document.getElementById('application_type').value = route.Application_Type || 'process';
                 
                 // Update application value
-                showApplicationValue(route.Application_Type || 'process');
+                await showApplicationValue(route.Application_Type || 'process');
                 setTimeout(() => {
                     document.getElementById('application_value').value = route.Application_Value || '';
                 }, 100);

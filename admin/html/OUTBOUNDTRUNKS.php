@@ -203,7 +203,7 @@
         
         .notification-container {
             position: fixed;
-            top: 20px;
+             bottom: 20px;
             right: 20px;
             z-index: 1050;
             max-width: 350px;

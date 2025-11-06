@@ -20,28 +20,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit(0);
 }
 
-// Get only active processes (where active = 'Y')
-$sql = "SELECT sno as id, process as name FROM process_details WHERE active = 'Y' ORDER BY process ASC";
+// Get all active queues
+$sql = "SELECT queue_id, queue_name FROM queues ORDER BY queue_name ASC";
 
 $result = mysqli_query($conn, $sql);
 
 if ($result) {
-    $processes = [];
+    $queues = [];
     while ($row = mysqli_fetch_assoc($result)) {
-        $processes[] = [
-            'id' => (int)$row['id'],
-            'name' => $row['name']
+        $queues[] = [
+            'queue_id' => (int)$row['queue_id'],
+            'queue_name' => $row['queue_name']
         ];
     }
-    // Return in the exact format you specified
+    
     echo json_encode([
         'success' => true,
-        'data' => $processes
+        'data' => $queues
     ]);
 } else {
     echo json_encode([
         'success' => false, 
-        'message' => 'Error fetching processes'
+        'message' => 'Error fetching queues: ' . mysqli_error($conn)
     ]);
 }
 

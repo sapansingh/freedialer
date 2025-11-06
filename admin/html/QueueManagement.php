@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Queue Management - Call Center</title>
+    <title>Queue Management</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
-    <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
     <style>
         :root {
             --primary-color: #4361ee;
@@ -20,174 +18,201 @@
             --info-color: #4895ef;
             --warning-color: #f72585;
             --danger-color: #e63946;
-            --executive-color: #7209b7;
-            --verifier-color: #f72585;
             --light-bg: #f8f9fa;
-            --dark-bg: #212529;
-            --glass-bg: rgba(255, 255, 255, 0.95);
-            --glass-border: rgba(255, 255, 255, 0.2);
         }
         
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            background-color: #f5f7fb;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding-bottom: 2rem;
+            font-size: 0.875rem;
+            padding: 1rem;
         }
         
+        .container-fluid {
+            padding: 0;
+        }
+        
+        /* Header */
+        .page-header {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .page-header h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .page-header p {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-bottom: 0;
+        }
+        
+        /* Statistics Cards */
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 1rem;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            transition: transform 0.2s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin: 0 auto 0.75rem;
+            font-size: 1.2rem;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        /* Glass Card */
         .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--glass-border);
-            padding: 30px;
-            margin-bottom: 25px;
-            transition: all 0.3s ease;
-            position: relative;
+            background: white;
+            border-radius: 10px;
+            padding: 1.25rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Search and Filters */
+        .search-box .input-group-text {
+            background: white;
+            border-right: none;
+        }
+        
+        .search-box .form-control {
+            border-left: none;
+        }
+        
+        .filter-section label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: #495057;
+        }
+        
+        /* Table */
+        #queuesTable th {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #6c757d;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 0.75rem;
+        }
+        
+        #queuesTable td {
+            font-size: 0.8rem;
+            vertical-align: middle;
+            padding: 0.75rem;
+        }
+        
+        .table-responsive {
+            border-radius: 10px;
             overflow: hidden;
         }
         
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+        /* Badges */
+        .badge {
+            font-size: 0.7rem;
+            font-weight: 500;
+            padding: 0.35em 0.65em;
         }
         
-        .glass-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-        
-        .page-header {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 25px 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--glass-border);
-        }
-        
-        .nav-tabs {
-            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-            margin-bottom: 25px;
-        }
-        
-        .nav-tabs .nav-link {
-            border: none;
-            padding: 12px 25px;
-            font-weight: 600;
-            color: #6c757d;
-            border-radius: 10px 10px 0 0;
-            margin-right: 5px;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-tabs .nav-link.active {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
-        }
-        
-        .nav-tabs .nav-link:hover:not(.active) {
-            background: rgba(67, 97, 238, 0.1);
-            color: var(--primary-color);
-        }
-        
-        .form-section {
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        }
-        
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid rgba(67, 97, 238, 0.2);
-            display: flex;
-            align-items: center;
-        }
-        
-        .section-title i {
-            margin-right: 10px;
-            font-size: 1.3rem;
-        }
-        
-        .form-label {
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 8px;
-        }
-        
-        .form-control, .form-select {
-            border-radius: 10px;
-            padding: 12px 15px;
-            border: 1px solid #e1e5e9;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-        
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
-        }
-        
-        .required-field::after {
-            content: ' *';
-            color: var(--warning-color);
-        }
-        
-        .btn {
-            border-radius: 10px;
-            padding: 12px 25px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
+        /* Action Buttons */
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            border-radius: 6px;
         }
         
         .btn-action {
-            padding: 8px 12px;
-            border-radius: 8px;
-            margin: 0 3px;
-            transition: all 0.2s ease;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 2px;
         }
         
-        .btn-action:hover {
-            transform: scale(1.1);
+        /* Modal */
+        .modal-header {
+            padding: 1rem 1.25rem;
+            background: var(--primary-color);
+            color: white;
+            border-bottom: none;
         }
         
-        .status-badge {
-            padding: 8px 15px;
-            border-radius: 20px;
+        .modal-title {
+            font-size: 1rem;
             font-weight: 600;
-            font-size: 0.85rem;
         }
         
-        .queue-type-badge {
-            padding: 6px 12px;
-            border-radius: 15px;
+        .modal-body {
+            padding: 1.25rem;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.25rem;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        /* Form Elements */
+        .form-label {
             font-size: 0.8rem;
             font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: #495057;
         }
         
+        .form-control, .form-select {
+            font-size: 0.8rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+        }
+        
+        .form-text {
+            font-size: 0.7rem;
+        }
+        
+        .required-field::after {
+            content: " *";
+            color: var(--danger-color);
+        }
+        
+        /* Loading Overlay */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -196,330 +221,98 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.7);
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             z-index: 9999;
             display: none;
         }
         
-        .stat-card {
-            text-align: center;
-            padding: 25px 20px;
-            border-radius: 15px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--glass-border);
-            transition: all 0.3s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-        }
-        
-        .stat-icon {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            font-size: 1.8rem;
-            color: white;
-        }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            font-size: 0.9rem;
-            color: #6c757d;
-            font-weight: 600;
-        }
-        
+        /* Toast Container */
         .toast-container {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 1rem;
+            right: 1rem;
             z-index: 9999;
         }
         
-        .search-box {
-            position: relative;
-        }
-        
-        .search-box .input-group-text {
-            background: white;
-            border-right: none;
-            border-radius: 10px 0 0 10px;
-        }
-        
-        .search-box .form-control {
-            border-left: none;
-            border-radius: 0 10px 10px 0;
-        }
-        
-        .filter-section {
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 10px;
-            padding: 15px;
-        }
-        
-        .table-responsive {
-            border-radius: 15px;
-            overflow: hidden;
-        }
-        
-        .table {
-            margin-bottom: 0;
-        }
-        
-        .table thead th {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border: none;
-            padding: 15px 12px;
-            font-weight: 600;
-        }
-        
-        .table tbody td {
-            padding: 12px;
-            vertical-align: middle;
-            border-color: #f1f3f4;
-        }
-        
-        .table-hover tbody tr:hover {
-            background-color: rgba(67, 97, 238, 0.05);
-        }
-        
-        .queue-visual {
-            height: 120px;
+        /* Confirmation Modal */
+        .confirmation-modal .modal-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #f8d7da;
+            color: var(--danger-color);
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 15px;
-            margin-bottom: 20px;
-            color: white;
-            font-weight: 700;
-            font-size: 1.2rem;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            position: relative;
-            overflow: hidden;
+            font-size: 1.25rem;
+            margin: 0 auto 0.75rem;
         }
         
-        .queue-visual::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
-            background-size: cover;
-        }
-        
-        .feature-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border-left: 4px solid var(--primary-color);
-        }
-        
-        .feature-toggle label {
-            margin-bottom: 0;
-            font-weight: 600;
-        }
-        
-        .config-preview {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
-            border-left: 4px solid var(--primary-color);
-        }
-        
-        .preview-title {
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-        }
-        
-        .preview-content {
-            font-family: 'Courier New', monospace;
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .drop-action-config {
-            background: #e9ecef;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 10px;
-            border-left: 4px solid var(--info-color);
-        }
-        
-        .call-flow-diagram {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-top: 20px;
-            border: 2px solid var(--primary-color);
-        }
-        
-        .flow-step {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            border-left: 4px solid var(--info-color);
-        }
-        
-        .flow-number {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 15px;
-        }
-        
-        @media (max-width: 768px) {
-            .glass-card {
-                padding: 20px;
-            }
-            
-            .btn-action {
-                margin-bottom: 5px;
-                display: block;
-                width: 100%;
-            }
-            
-            .table-responsive {
-                font-size: 0.85rem;
-            }
-        }
-        
-        .select2-container--default .select2-selection--single {
-            border-radius: 10px;
-            padding: 10px;
-            border: 1px solid #e1e5e9;
-            height: auto;
-        }
-        
-        .connection-line {
-            position: relative;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary-color), var(--success-color));
-            margin: 30px 0;
-            border-radius: 2px;
-        }
-        
-        .connection-line::before, .connection-line::after {
-            content: '';
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            top: -5px;
-        }
-        
-        .connection-line::before {
-            left: 0;
-        }
-        
-        .connection-line::after {
-            right: 0;
-            background: var(--success-color);
-        }
-        
-        .file-upload-box {
-            border: 2px dashed #dee2e6;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            background: #f8f9fa;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .file-upload-box:hover {
-            border-color: var(--primary-color);
-            background: #e9ecef;
-        }
-        
-        .file-upload-box i {
-            font-size: 2rem;
-            color: #6c757d;
-            margin-bottom: 10px;
-        }
-        
-        .queue-health {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
+        /* Health Indicator */
         .health-indicator {
-            width: 12px;
-            height: 12px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            margin-right: 10px;
+            display: inline-block;
+            margin-right: 5px;
         }
         
         .health-good { background: var(--success-color); }
         .health-warning { background: var(--warning-color); }
         .health-critical { background: var(--danger-color); }
         
-        .real-time-stats {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
+        /* Validation Error */
+        .validation-error {
+            color: var(--danger-color);
+            font-size: 0.7rem;
+            margin-top: 0.25rem;
+            display: none;
         }
-        
-        .stat-item {
-            text-align: center;
-            padding: 15px;
+
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
         }
-        
-        .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 5px;
+
+        .form-group-enhanced {
+            margin-bottom: 1rem;
         }
-        
-        .stat-label-small {
-            font-size: 0.85rem;
-            opacity: 0.9;
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .checkbox-group label {
+            margin-bottom: 0;
+            font-weight: normal;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .btn-action {
+                margin-bottom: 0.25rem;
+            }
+            
+            .stat-card {
+                margin-bottom: 1rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
-        <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;">
+        <div class="spinner-border text-light" role="status" style="width: 2rem; height: 2rem;">
             <span class="visually-hidden">Loading...</span>
         </div>
     </div>
@@ -527,53 +320,23 @@
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <div class="container-fluid py-4">
+    <div class="container-fluid">
         <!-- Header -->
         <div class="page-header">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+            <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h1 class="h3 mb-1"><i class="fas fa-list-alt me-2 text-primary"></i>Queue Management</h1>
-                    <p class="text-muted mb-0">Manage call queues and monitor real-time performance</p>
+                    <p class="text-muted mb-0">Configure and manage call center queues</p>
                 </div>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#queueModal">
-                    <i class="fas fa-plus me-1"></i> Add New Queue
+                <button class="btn btn-primary btn-sm" onclick="openAddModal()">
+                    <i class="fas fa-plus me-1"></i> Add Queue
                 </button>
             </div>
         </div>
 
-        <!-- Real-time Statistics -->
-        <div class="real-time-stats">
-            <div class="row text-center">
-                <div class="col-md-3">
-                    <div class="stat-item">
-                        <div class="stat-value" id="activeCalls">0</div>
-                        <div class="stat-label-small">Active Calls</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-item">
-                        <div class="stat-value" id="waitingCalls">0</div>
-                        <div class="stat-label-small">Waiting Calls</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-item">
-                        <div class="stat-value" id="avgWaitTime">0s</div>
-                        <div class="stat-label-small">Avg Wait Time</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-item">
-                        <div class="stat-value" id="abandonRate">0%</div>
-                        <div class="stat-label-small">Abandon Rate</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Statistics Cards -->
-        <div class="row mb-4">
-            <div class="col-md-3">
+        <div class="row mb-3">
+            <div class="col-md-3 col-6 mb-2">
                 <div class="stat-card">
                     <div class="stat-icon" style="background: linear-gradient(135deg, #4361ee, #3a0ca3);">
                         <i class="fas fa-list-alt"></i>
@@ -582,41 +345,41 @@
                     <div class="stat-label">Total Queues</div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-6 mb-2">
                 <div class="stat-card">
                     <div class="stat-icon" style="background: linear-gradient(135deg, #4cc9f0, #4895ef);">
                         <i class="fas fa-user-tie"></i>
                     </div>
                     <div class="stat-number text-info" id="executiveQueues">0</div>
-                    <div class="stat-label">Executive Queues</div>
+                    <div class="stat-label">Executive</div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-6 mb-2">
                 <div class="stat-card">
                     <div class="stat-icon" style="background: linear-gradient(135deg, #f72585, #b5179e);">
                         <i class="fas fa-user-check"></i>
                     </div>
                     <div class="stat-number text-warning" id="verifierQueues">0</div>
-                    <div class="stat-label">Verifier Queues</div>
+                    <div class="stat-label">Verifier</div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-6 mb-2">
                 <div class="stat-card">
                     <div class="stat-icon" style="background: linear-gradient(135deg, #7209b7, #560bad);">
-                        <i class="fas fa-play-circle"></i>
+                        <i class="fas fa-check-circle"></i>
                     </div>
                     <div class="stat-number text-secondary" id="activeQueues">0</div>
-                    <div class="stat-label">Active Queues</div>
+                    <div class="stat-label">Active</div>
                 </div>
             </div>
         </div>
 
         <!-- Search and Filters -->
         <div class="glass-card">
-            <div class="row g-3 align-items-center">
+            <div class="row g-2 align-items-center">
                 <div class="col-md-4">
                     <div class="search-box">
-                        <div class="input-group">
+                        <div class="input-group input-group-sm">
                             <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
                             <input type="text" id="searchInput" class="form-control border-start-0" placeholder="Search queues...">
                         </div>
@@ -624,7 +387,7 @@
                 </div>
                 <div class="col-md-3">
                     <div class="filter-section">
-                        <label class="form-label small fw-bold">Queue Type</label>
+                        <label class="form-label">Type</label>
                         <select id="typeFilter" class="form-select form-select-sm">
                             <option value="">All Types</option>
                             <option value="executive">Executive</option>
@@ -634,7 +397,7 @@
                 </div>
                 <div class="col-md-3">
                     <div class="filter-section">
-                        <label class="form-label small fw-bold">Status</label>
+                        <label class="form-label">Status</label>
                         <select id="statusFilter" class="form-select form-select-sm">
                             <option value="">All Status</option>
                             <option value="Y">Active</option>
@@ -643,7 +406,7 @@
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <button class="btn btn-outline-secondary w-100 mt-4" onclick="resetFilters()">
+                    <button class="btn btn-outline-secondary btn-sm w-100 mt-3" onclick="resetFilters()">
                         <i class="fas fa-redo me-1"></i> Reset
                     </button>
                 </div>
@@ -654,14 +417,14 @@
         <div class="glass-card">
             <div class="table-responsive">
                 <table id="queuesTable" class="table table-sm table-hover w-100">
-                    <thead class="table-light">
+                    <thead>
                         <tr>
                             <th>ID</th>
                             <th>Queue Name</th>
                             <th>Type</th>
                             <th>DID</th>
                             <th>Process</th>
-                            <th>Length</th>
+                            <th>Queue Length</th>
                             <th>Drop Time</th>
                             <th>Status</th>
                             <th>Health</th>
@@ -676,383 +439,174 @@
         </div>
     </div>
 
-    <!-- Queue Modal Form -->
+    <!-- Add/Edit Queue Modal -->
     <div class="modal fade" id="queueModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="modalTitle"><i class="fas fa-plus-circle me-2"></i>Add New Queue</h5>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="queueModalTitle">
+                        <i class="fas fa-plus-circle me-2"></i>Add New Queue
+                    </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <ul class="nav nav-tabs" id="queueTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic" type="button" role="tab">
-                                <i class="fas fa-info-circle me-1"></i> Basic Settings
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="audio-tab" data-bs-toggle="tab" data-bs-target="#audio" type="button" role="tab">
-                                <i class="fas fa-volume-up me-1"></i> Audio Settings
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="advanced-tab" data-bs-toggle="tab" data-bs-target="#advanced" type="button" role="tab">
-                                <i class="fas fa-cogs me-1"></i> Advanced
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="preview-tab" data-bs-toggle="tab" data-bs-target="#preview" type="button" role="tab">
-                                <i class="fas fa-eye me-1"></i> Preview
-                            </button>
-                        </li>
-                    </ul>
-                    
-                    <div class="tab-content mt-4" id="queueTabsContent">
-                        <div class="tab-pane fade show active" id="basic" role="tabpanel">
-                            <form id="queueForm">
-                                <input type="hidden" id="queue_id" name="queue_id">
-                                
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <div class="form-section">
-                                            <div class="section-title">
-                                                <i class="fas fa-signature"></i> Queue Identification
-                                            </div>
-                                            <div class="row g-3">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="queue_name" class="form-label required-field">Queue Name</label>
-                                                        <input type="text" class="form-control" id="queue_name" name="queue_name" required maxlength="30" placeholder="e.g., Sales-Queue">
-                                                        <small class="form-text text-muted">Unique name for the queue</small>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="queue_type" class="form-label required-field">Queue Type</label>
-                                                        <select class="form-select" id="queue_type" name="queue_type" required>
-                                                            <option value="executive">Executive</option>
-                                                            <option value="verifier">Verifier</option>
-                                                        </select>
-                                                        <small class="form-text text-muted">Type of queue</small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="row g-3 mt-2">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="queue_did" class="form-label">DID Number</label>
-                                                        <input type="text" class="form-control" id="queue_did" name="queue_did" maxlength="20" placeholder="e.g., +1-555-0100">
-                                                        <small class="form-text text-muted">Direct Inward Dial number</small>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="queue_assigned_process" class="form-label">Assigned Process</label>
-                                                        <input type="text" class="form-control" id="queue_assigned_process" name="queue_assigned_process" maxlength="50" placeholder="e.g., Sales Process">
-                                                        <small class="form-text text-muted">Process assigned to this queue</small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="form-section">
-                                            <div class="section-title">
-                                                <i class="fas fa-sliders-h"></i> Queue Configuration
-                                            </div>
-                                            <div class="row g-3">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="queue_length" class="form-label">Queue Length</label>
-                                                        <input type="number" class="form-control" id="queue_length" name="queue_length" value="1" min="1" max="100">
-                                                        <small class="form-text text-muted">Maximum queue length</small>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="queue_drop_time" class="form-label">Drop Time (seconds)</label>
-                                                        <input type="number" class="form-control" id="queue_drop_time" name="queue_drop_time" value="0" min="0" max="3600">
-                                                        <small class="form-text text-muted">Time before call is dropped from queue</small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="row g-3 mt-2">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="queue_selected" class="form-label">Queue Status</label>
-                                                        <select class="form-select" id="queue_selected" name="queue_selected">
-                                                            <option value="N">Inactive</option>
-                                                            <option value="Y">Active</option>
-                                                        </select>
-                                                        <small class="form-text text-muted">Queue activation status</small>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="queue_over_flow" class="form-label">Overflow Queue</label>
-                                                        <input type="text" class="form-control" id="queue_over_flow" name="queue_over_flow" maxlength="30" placeholder="e.g., Overflow-Queue">
-                                                        <small class="form-text text-muted">Queue for overflow calls</small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-md-4">
-                                        <div class="queue-visual">
-                                            <div class="text-center">
-                                                <i class="fas fa-phone-alt fa-3x mb-2"></i>
-                                                <div>Queue Preview</div>
-                                                <small id="queueVisualType">Executive Queue</small>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="config-preview">
-                                            <div class="preview-title">
-                                                <i class="fas fa-info-circle me-2"></i>Queue Summary
-                                            </div>
-                                            <div class="preview-content">
-                                                <div><strong>Name:</strong> <span id="previewName">Sales-Queue</span></div>
-                                                <div><strong>Type:</strong> <span id="previewType">Executive</span></div>
-                                                <div><strong>DID:</strong> <span id="previewDid">+1-555-0100</span></div>
-                                                <div><strong>Status:</strong> <span id="previewStatus" class="badge bg-success">Active</span></div>
-                                                <div><strong>Length:</strong> <span id="previewLength">1</span></div>
-                                                <div><strong>Drop Time:</strong> <span id="previewDropTime">0s</span></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                        
-                        <div class="tab-pane fade" id="audio" role="tabpanel">
-                            <div class="form-section">
-                                <div class="section-title">
-                                    <i class="fas fa-music"></i> Audio Files
-                                </div>
-                                
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="greeting_file_id" class="form-label">Greeting File ID</label>
-                                            <input type="number" class="form-control" id="greeting_file_id" name="greeting_file_id" value="0" min="0">
-                                            <small class="form-text text-muted">ID of the greeting audio file</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="call_queue_file_id" class="form-label">Queue File ID</label>
-                                            <input type="number" class="form-control" id="call_queue_file_id" name="call_queue_file_id" value="0" min="0">
-                                            <small class="form-text text-muted">ID of the queue announcement file</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="connection-line"></div>
-                                
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <div class="file-upload-box" onclick="document.getElementById('queue_no_file').click()">
-                                            <i class="fas fa-upload"></i>
-                                            <div>Upload Queue Number File</div>
-                                            <small class="text-muted">Click to upload or select file ID</small>
-                                            <input type="file" id="queue_no_file_upload" class="d-none" accept="audio/*">
-                                        </div>
-                                        <div class="form-group mt-2">
-                                            <label for="queue_no_file" class="form-label">Queue Number File</label>
-                                            <input type="text" class="form-control" id="queue_no_file" name="queue_no_file" maxlength="100" placeholder="e.g., queue_number.wav">
-                                            <small class="form-text text-muted">File for queue number announcement</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="file-upload-box" onclick="document.getElementById('hold_durn_file').click()">
-                                            <i class="fas fa-upload"></i>
-                                            <div>Upload Hold Duration File</div>
-                                            <small class="text-muted">Click to upload or select file ID</small>
-                                            <input type="file" id="hold_durn_file_upload" class="d-none" accept="audio/*">
-                                        </div>
-                                        <div class="form-group mt-2">
-                                            <label for="hold_durn_file" class="form-label">Hold Duration File</label>
-                                            <input type="text" class="form-control" id="hold_durn_file" name="hold_durn_file" maxlength="100" placeholder="e.g., hold_music.wav">
-                                            <small class="form-text text-muted">File for hold duration announcement</small>
-                                        </div>
-                                    </div>
+                    <form id="queueForm">
+                        <div class="form-grid">
+                            <div class="form-group-enhanced">
+                                <label for="queue_name" class="form-label required-field">Queue Name</label>
+                                <input type="text" class="form-control" id="queue_name" name="queue_name" required maxlength="30" placeholder="Enter queue name">
+                                <div class="validation-error" id="queueNameError">Queue name is required</div>
+                            </div>
+                            
+                            <div class="form-group-enhanced">
+                                <label for="queue_type" class="form-label">Queue Type</label>
+                                <select class="form-select" id="queue_type" name="queue_type">
+                                    <option value="executive">Executive</option>
+                                    <option value="verifier">Verifier</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group-enhanced">
+                                <label for="queue_did" class="form-label">DID</label>
+                                <input type="text" class="form-control" id="queue_did" name="queue_did" maxlength="20" placeholder="Enter DID">
+                            </div>
+                            
+                            <div class="form-group-enhanced">
+                                <label for="greeting_file_id" class="form-label required-field">Greeting File</label>
+                                <select class="form-select" id="greeting_file_id" name="greeting_file_id" required>
+                                    <option value="">Select Greeting File</option>
+                                    <!-- Options will be populated dynamically -->
+                                </select>
+                            </div>
+                            
+                            <div class="form-group-enhanced">
+                                <label for="call_queue_file_id" class="form-label required-field">Waiting Message</label>
+                                <select class="form-select" id="call_queue_file_id" name="call_queue_file_id" required>
+                                    <option value="">Select Waiting Message</option>
+                                    <!-- Options will be populated dynamically -->
+                                </select>
+                            </div>
+                            
+                            <div class="form-group-enhanced">
+                                <label for="queue_drop_time" class="form-label required-field">Queue Drop Time (sec)</label>
+                                <input type="number" class="form-control" id="queue_drop_time" name="queue_drop_time" required min="0" max="999" value="0">
+                            </div>
+                            
+                            <div class="form-group-enhanced">
+                                <label for="queue_drop_action" class="form-label">Queue Drop Action</label>
+                                <select class="form-select" id="queue_drop_action" name="queue_drop_action" onchange="toggleDropValue()">
+                                    <option value="play">Play Voicefile</option>
+                                    <option value="voicemail">Transfer To Voice Mail</option>
+                                    <option value="callforward">Call Forward</option>
+                                    <option value="extension">Transfer To Extension</option>
+                                    <option value="ip">DirectIP Dial</option>
+                                    <option value="queue">Transfer To Queue</option>
+                                    <option value="IVR">IVR</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group-enhanced">
+                                <label for="queue_drop_value" class="form-label required-field">Queue Drop Value</label>
+                                <div id="dropValueContainer">
+                                    <select class="form-select" id="queue_drop_value" name="queue_drop_value" required>
+                                        <option value="">Select Drop Value</option>
+                                        <!-- Options will be populated dynamically -->
+                                    </select>
                                 </div>
                             </div>
                             
-                            <div class="form-section">
-                                <div class="section-title">
-                                    <i class="fas fa-play-circle"></i> Playback Settings
-                                </div>
-                                
-                                <div class="row g-3">
-                                    <div class="col-md-4">
-                                        <div class="feature-toggle">
-                                            <label for="play_queue_no" class="form-label">Play Queue No</label>
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" id="play_queue_no" name="play_queue_no" value="Y">
-                                            </div>
-                                        </div>
-                                        <small class="text-muted">Play queue position to caller</small>
-                                    </div>
-                                    
-                                    <div class="col-md-4">
-                                        <div class="feature-toggle">
-                                            <label for="play_hold_durn" class="form-label">Play Hold Duration</label>
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" id="play_hold_durn" name="play_hold_durn" value="Y">
-                                            </div>
-                                        </div>
-                                        <small class="text-muted">Play hold duration to caller</small>
-                                    </div>
-                                    
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="playback_freq" class="form-label">Playback Frequency</label>
-                                            <input type="number" class="form-control" id="playback_freq" name="playback_freq" value="0" min="0" max="3600">
-                                            <small class="form-text text-muted">Frequency of playback announcements (seconds)</small>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="form-group-enhanced">
+                                <label for="queue_length" class="form-label required-field">Queue Length</label>
+                                <input type="number" class="form-control" id="queue_length" name="queue_length" required min="0" max="999" value="1">
+                                <small class="form-text text-muted">0 = unlimited calls</small>
+                            </div>
+                            
+                            <div class="form-group-enhanced">
+                                <label for="queue_assigned_process" class="form-label required-field">Process</label>
+                                <select class="form-select" id="queue_assigned_process" name="queue_assigned_process" required>
+                                    <option value="">Select Process</option>
+                                    <!-- Options will be populated dynamically -->
+                                </select>
                             </div>
                         </div>
                         
-                        <div class="tab-pane fade" id="advanced" role="tabpanel">
-                            <div class="form-section">
-                                <div class="section-title">
-                                    <i class="fas fa-random"></i> Drop Action Configuration
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="play_queue_no" name="play_queue_no" value="Y">
+                                    <label for="play_queue_no">Play Queue No</label>
                                 </div>
-                                
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="queue_drop_action" class="form-label">Drop Action</label>
-                                            <select class="form-select" id="queue_drop_action" name="queue_drop_action" onchange="toggleDropActionConfig()">
-                                                <option value="">Select Action</option>
-                                                <option value="callforward">Call Forward</option>
-                                                <option value="voicemail">Voicemail</option>
-                                                <option value="queue">Another Queue</option>
-                                                <option value="extension">Extension</option>
-                                                <option value="ip">IP Address</option>
-                                                <option value="play">Play Message</option>
-                                                <option value="IVR">IVR</option>
-                                            </select>
-                                            <small class="form-text text-muted">Action when call is dropped from queue</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="queue_drop_value" class="form-label">Drop Value</label>
-                                            <input type="text" class="form-control" id="queue_drop_value" name="queue_drop_value" maxlength="250" placeholder="Value based on selected action">
-                                            <small class="form-text text-muted">Value for the drop action</small>
-                                        </div>
-                                    </div>
+                                <select class="form-select mt-2" id="queue_no_file" name="queue_no_file" disabled>
+                                    <option value="">Select Queue No File</option>
+                                    <!-- Options will be populated dynamically -->
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="play_hold_durn" name="play_hold_durn" value="Y">
+                                    <label for="play_hold_durn">Play Hold Duration</label>
                                 </div>
-                                
-                                <div id="dropActionConfig" class="drop-action-config" style="display: none;">
-                                    <div class="preview-title">
-                                        <i class="fas fa-cog me-2"></i>Drop Action Configuration
-                                    </div>
-                                    <div id="dropActionHelp" class="text-muted">
-                                        Configure the specific settings for the selected drop action.
-                                    </div>
+                                <select class="form-select mt-2" id="hold_durn_file" name="hold_durn_file" disabled>
+                                    <option value="">Select Hold Duration File</option>
+                                    <!-- Options will be populated dynamically -->
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <div class="form-group-enhanced">
+                                    <label for="playback_freq" class="form-label">PlayBack Frequency (sec)</label>
+                                    <input type="number" class="form-control" id="playback_freq" name="playback_freq" min="0" max="99" value="0">
                                 </div>
                             </div>
                             
-                            <div class="form-section">
-                                <div class="section-title">
-                                    <i class="fas fa-sitemap"></i> IVR Integration
-                                </div>
-                                
-                                <div class="row g-3">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="ivr_id" class="form-label">IVR ID</label>
-                                            <input type="number" class="form-control" id="ivr_id" name="ivr_id" value="0" min="0">
-                                            <small class="form-text text-muted">ID of the IVR system to integrate with</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Call Flow Diagram -->
-                                <div class="call-flow-diagram">
-                                    <div class="preview-title">
-                                        <i class="fas fa-project-diagram me-2"></i>Call Flow Diagram
-                                    </div>
-                                    <div class="flow-step">
-                                        <div class="flow-number">1</div>
-                                        <div>
-                                            <strong>Call Enters Queue</strong>
-                                            <div class="text-muted small">Call arrives at the queue</div>
-                                        </div>
-                                    </div>
-                                    <div class="flow-step">
-                                        <div class="flow-number">2</div>
-                                        <div>
-                                            <strong>Play Greeting</strong>
-                                            <div class="text-muted small">Greeting message played to caller</div>
-                                        </div>
-                                    </div>
-                                    <div class="flow-step">
-                                        <div class="flow-number">3</div>
-                                        <div>
-                                            <strong>Wait for Agent</strong>
-                                            <div class="text-muted small">Call waits in queue for available agent</div>
-                                        </div>
-                                    </div>
-                                    <div class="flow-step">
-                                        <div class="flow-number">4</div>
-                                        <div>
-                                            <strong>Drop Action</strong>
-                                            <div class="text-muted small">If timeout reached, execute drop action</div>
-                                        </div>
-                                    </div>
+                            <div class="col-md-6">
+                                <div class="form-group-enhanced">
+                                    <label for="queue_over_flow" class="form-label">Queue Overflow</label>
+                                    <select class="form-select" id="queue_over_flow" name="queue_over_flow">
+                                        <option value="">Select Overflow Queue</option>
+                                        <!-- Options will be populated dynamically -->
+                                    </select>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="tab-pane fade" id="preview" role="tabpanel">
-                            <div class="form-section">
-                                <div class="section-title">
-                                    <i class="fas fa-code"></i> Configuration Preview
-                                </div>
-                                
-                                <div class="alert alert-info">
-                                    <i class="fas fa-info-circle me-2"></i>
-                                    This is a preview of the Asterisk configuration that will be generated for this queue.
-                                </div>
-                                
-                                <div class="config-preview">
-                                    <div class="preview-title">
-                                        <i class="fas fa-file-code me-2"></i>Generated Configuration
-                                    </div>
-                                    <div class="preview-content" id="configPreview">
-                                        <!-- Configuration preview will be generated here -->
-                                    </div>
-                                </div>
-                                
-                                <div class="mt-4">
-                                    <button type="button" class="btn btn-outline-primary" onclick="generateConfigPreview()">
-                                        <i class="fas fa-sync me-1"></i> Refresh Preview
-                                    </button>
-                                    <button type="button" class="btn btn-outline-success" onclick="copyConfigToClipboard()">
-                                        <i class="fas fa-copy me-1"></i> Copy to Clipboard
-                                    </button>
-                                    <button type="button" class="btn btn-outline-warning" onclick="testQueueConfig()">
-                                        <i class="fas fa-play me-1"></i> Test Configuration
-                                    </button>
-                                </div>
-                            </div>
+                        <div class="alert alert-info mt-3">
+                            <small>
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Note:</strong> 
+                                1. If Queue Length is zero, then queue can take unlimited calls. Greeting File, Play Queue No, Play Hold Duration, PlayBack Frequency will not be affected in Predictive Mode.<br>
+                                2. In Queue Drop Action Call Forward, Transfer To Extension, Direct IP Dial and Transfer To Queue will not be affected in Predictive Mode.
+                            </small>
                         </div>
-                    </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="saveQueue()">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="saveQueueBtn" onclick="saveQueue()">
                         <i class="fas fa-save me-1"></i> Save Queue
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade confirmation-modal" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <div class="modal-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h6 class="mb-2">Confirm Delete</h6>
+                    <p class="text-muted mb-3 small" id="deleteConfirmText">Are you sure you want to delete this queue?</p>
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger btn-sm" id="confirmDeleteBtn">Delete</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1064,373 +618,432 @@
     <!-- DataTables -->
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
-    <!-- Select2 -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+    
     <script>
         // API Configuration
-        const API_BASE_URL = 'api/queues/'; // Adjust this to your API endpoint
+        const API_BASE_URL = '../api/queue_api.php'; // Update this path as needed
         
-        // Sample data for demonstration
-        let sampleQueues = [
-            {
-                queue_id: 1,
-                queue_name: 'Sales-Queue',
-                queue_type: 'executive',
-                queue_did: '+1-555-0100',
-                greeting_file_id: 101,
-                call_queue_file_id: 102,
-                queue_drop_time: 300,
-                queue_drop_action: 'voicemail',
-                queue_drop_value: '1001',
-                queue_assigned_process: 'Sales Process',
-                queue_length: 10,
-                queue_selected: 'Y',
-                queue_over_flow: 'Overflow-Queue',
-                play_queue_no: 'Y',
-                queue_no_file: 'queue_position.wav',
-                play_hold_durn: 'N',
-                hold_durn_file: 'hold_music.wav',
-                playback_freq: 60,
-                ivr_id: 5
-            },
-            {
-                queue_id: 2,
-                queue_name: 'Support-Queue',
-                queue_type: 'verifier',
-                queue_did: '+1-555-0101',
-                greeting_file_id: 103,
-                call_queue_file_id: 104,
-                queue_drop_time: 180,
-                queue_drop_action: 'extension',
-                queue_drop_value: '2001',
-                queue_assigned_process: 'Support Process',
-                queue_length: 5,
-                queue_selected: 'Y',
-                queue_over_flow: 'Backup-Queue',
-                play_queue_no: 'Y',
-                queue_no_file: 'support_queue.wav',
-                play_hold_durn: 'Y',
-                hold_durn_file: 'support_hold.wav',
-                playback_freq: 45,
-                ivr_id: 3
-            },
-            {
-                queue_id: 3,
-                queue_name: 'Billing-Queue',
-                queue_type: 'executive',
-                queue_did: '+1-555-0102',
-                greeting_file_id: 105,
-                call_queue_file_id: 106,
-                queue_drop_time: 240,
-                queue_drop_action: 'IVR',
-                queue_drop_value: 'billing_menu',
-                queue_assigned_process: 'Billing Process',
-                queue_length: 8,
-                queue_selected: 'N',
-                queue_over_flow: '',
-                play_queue_no: 'N',
-                queue_no_file: '',
-                play_hold_durn: 'N',
-                hold_durn_file: '',
-                playback_freq: 0,
-                ivr_id: 7
-            }
-        ];
+        let currentEditingId = null;
+        let queuesData = [];
+        let queuesTable;
+        let voiceFiles = []; // This would be populated from your voice files API
 
         // Initialize DataTable
-        let queuesTable;
         $(document).ready(function() {
-            // Initialize Select2
-            $('.form-select').select2({
-                width: '100%',
-                theme: 'bootstrap-5'
-            });
-            
             queuesTable = $('#queuesTable').DataTable({
                 pageLength: 10,
-                responsive: true,
-                dom: '<"row"<"col-md-6"l><"col-md-6"f>>rt<"row"<"col-md-6"i><"col-md-6"p>>',
+                lengthMenu: [10, 25, 50],
+                order: [[0, 'desc']],
                 language: {
-                    search: "_INPUT_",
-                    searchPlaceholder: "Search queues..."
+                    search: "",
+                    searchPlaceholder: "Search queues...",
+                    lengthMenu: "_MENU_"
                 },
-                columns: [
-                    { data: 'queue_id' },
-                    { data: 'queue_name' },
-                    { 
-                        data: 'queue_type',
-                        render: function(data, type, row) {
-                            let badgeClass = data === 'executive' ? 'bg-primary' : 'bg-warning';
-                            let displayText = data === 'executive' ? 'Executive' : 'Verifier';
-                            return `<span class="queue-type-badge ${badgeClass}">${displayText}</span>`;
-                        }
-                    },
-                    { data: 'queue_did' },
-                    { data: 'queue_assigned_process' },
-                    { data: 'queue_length' },
-                    { 
-                        data: 'queue_drop_time',
-                        render: function(data, type, row) {
-                            return data > 0 ? `${data}s` : 'No Drop';
-                        }
-                    },
-                    { 
-                        data: 'queue_selected',
-                        render: function(data, type, row) {
-                            return data === 'Y' 
-                                ? '<span class="status-badge bg-success">Active</span>' 
-                                : '<span class="status-badge bg-secondary">Inactive</span>';
-                        }
-                    },
-                    { 
-                        data: null,
-                        render: function(data, type, row) {
-                            // Simple health calculation based on queue configuration
-                            let health = 'good';
-                            let healthText = 'Good';
-                            
-                            if (!row.queue_drop_action && row.queue_drop_time > 0) {
-                                health = 'warning';
-                                healthText = 'Warning';
-                            }
-                            
-                            if (row.queue_length <= 0) {
-                                health = 'critical';
-                                healthText = 'Critical';
-                            }
-                            
-                            return `
-                                <div class="queue-health">
-                                    <span class="health-indicator health-${health}"></span>
-                                    <span>${healthText}</span>
-                                </div>
-                            `;
-                        }
-                    },
-                    {
-                        data: 'queue_id',
-                        render: function(data, type, row) {
-                            return `
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-outline-primary btn-action" onclick="editQueue(${data})" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-outline-info btn-action" onclick="viewQueue(${data})" title="View">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-outline-success btn-action" onclick="testQueue(${data})" title="Test">
-                                        <i class="fas fa-play"></i>
-                                    </button>
-                                    <button class="btn btn-outline-warning btn-action" onclick="toggleQueueStatus(${data})" title="Toggle Status">
-                                        <i class="fas fa-power-off"></i>
-                                    </button>
-                                    <button class="btn btn-outline-danger btn-action" onclick="deleteQueue(${data})" title="Delete">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            `;
-                        },
-                        orderable: false
-                    }
-                ]
+                initComplete: function() {
+                    $('.dataTables_length select').addClass('form-select form-select-sm');
+                    $('.dataTables_filter input').addClass('form-control form-control-sm');
+                }
             });
 
             // Load initial data
             loadQueues();
-            
-            // Initialize form event listeners
-            initializeFormListeners();
-            
-            // Start real-time stats updates
-            updateRealTimeStats();
-            setInterval(updateRealTimeStats, 5000);
+            loadStatistics();
+            loadDropdownData();
+
+            // Event listeners for checkboxes
+            $('#play_queue_no').change(function() {
+                $('#queue_no_file').prop('disabled', !this.checked);
+            });
+
+            $('#play_hold_durn').change(function() {
+                $('#hold_durn_file').prop('disabled', !this.checked);
+            });
         });
 
-        // Update real-time statistics
-        function updateRealTimeStats() {
-            // Simulate real-time data
-            const activeCalls = Math.floor(Math.random() * 50) + 10;
-            const waitingCalls = Math.floor(Math.random() * 20) + 1;
-            const avgWaitTime = Math.floor(Math.random() * 180) + 30;
-            const abandonRate = (Math.random() * 10).toFixed(1);
-            
-            document.getElementById('activeCalls').textContent = activeCalls;
-            document.getElementById('waitingCalls').textContent = waitingCalls;
-            document.getElementById('avgWaitTime').textContent = `${avgWaitTime}s`;
-            document.getElementById('abandonRate').textContent = `${abandonRate}%`;
+        // API Call Helper Function
+        async function apiCall(url, options = {}) {
+            try {
+                showLoading(true);
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                const data = await response.json();
+                showLoading(false);
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'API request failed');
+                }
+                
+                return data;
+            } catch (error) {
+                showLoading(false);
+                showToast('Error: ' + error.message, 'error');
+                throw error;
+            }
         }
 
-        // Initialize form event listeners for real-time updates
-        function initializeFormListeners() {
-            // Update preview when form fields change
-            $('#queue_name, #queue_type, #queue_did, #queue_selected, #queue_length, #queue_drop_time').on('input change', function() {
-                updateQueuePreview();
+        // Load dropdown data (voice files, processes, etc.)
+     // Update the loadDropdownData function in your Queue Management page
+async function loadDropdownData() {
+    try {
+        // Load voice files from API
+        const voiceFilesResponse = await apiCall('../api/indiapi/voice_files_api.php?action=getAll');
+        const voiceFilesData = voiceFilesResponse.data;
+
+        // Load processes (you might have a separate API for this)
+
+      const processesDataResponse = await apiCall('../api/indiapi/processes.php');
+const processesData = processesDataResponse.data || [];
+
+        // Populate voice file dropdowns
+        populateVoiceFileDropdown('#greeting_file_id', voiceFilesData);
+        populateVoiceFileDropdown('#call_queue_file_id', voiceFilesData);
+        populateVoiceFileDropdown('#queue_drop_value', voiceFilesData);
+        populateVoiceFileDropdown('#queue_no_file', voiceFilesData);
+        populateVoiceFileDropdown('#hold_durn_file', voiceFilesData);
+
+        // Populate process dropdown
+        populateProcessDropdown('#queue_assigned_process', processesData);
+
+        // Populate queue overflow dropdown
+        const queuesData = await apiCall(`${API_BASE_URL}?action=getAll`);
+        populateQueueDropdown('#queue_over_flow', queuesData.data);
+
+    } catch (error) {
+        console.error('Error loading dropdown data:', error);
+    }
+}
+
+// Update the populateVoiceFileDropdown function
+function populateVoiceFileDropdown(selector, files) {
+    const dropdown = $(selector);
+    dropdown.empty();
+    dropdown.append('<option value="">Select File</option>');
+    files.forEach(file => {
+        dropdown.append(`<option value="${file.id}">${file.name}</option>`);
+    });
+}
+
+        function populateVoiceFileDropdown(selector, files) {
+            const dropdown = $(selector);
+            dropdown.empty();
+            dropdown.append('<option value="">Select File</option>');
+            files.forEach(file => {
+                dropdown.append(`<option value="${file.id}">${file.name}</option>`);
             });
-            
-            // Initialize drop action configuration
-            toggleDropActionConfig();
+        }
+function populateProcessDropdown(selector, processes) {
+    const dropdown = $(selector);
+    dropdown.empty();
+    dropdown.append('<option value="">Select Process</option>');
+    processes.forEach(process => {
+        // If process is an object with name property
+        if (typeof process === 'object' && process.name) {
+            dropdown.append(`<option value="${process.name}">${process.name}</option>`);
+        } 
+        // If process is just a string
+        else if (typeof process === 'string') {
+            dropdown.append(`<option value="${process}">${process}</option>`); 
+        }
+    });
+}
+
+        function populateQueueDropdown(selector, queues) {
+            const dropdown = $(selector);
+            dropdown.empty();
+            dropdown.append('<option value="">Select Queue</option>');
+            queues.forEach(queue => {
+                dropdown.append(`<option value="${queue.queue_id}">${queue.queue_name}</option>`);
+            });
         }
 
-        // Toggle drop action configuration based on selected action
-        function toggleDropActionConfig() {
-            const dropAction = $('#queue_drop_action').val();
-            const configDiv = $('#dropActionConfig');
-            const helpDiv = $('#dropActionHelp');
+        // Toggle drop value based on drop action
+        function toggleDropValue() {
+            const action = $('#queue_drop_action').val();
+            const container = $('#dropValueContainer');
             
-            if (!dropAction) {
-                configDiv.hide();
+            if (['play', 'voicemail'].includes(action)) {
+                container.html(`
+                    <select class="form-select" id="queue_drop_value" name="queue_drop_value" required>
+                        <option value="">Select Voice File</option>
+                    </select>
+                `);
+                populateVoiceFileDropdown('#queue_drop_value', voiceFiles);
+            } else if (action === 'queue') {
+                container.html(`
+                    <select class="form-select" id="queue_drop_value" name="queue_drop_value" required>
+                        <option value="">Select Queue</option>
+                    </select>
+                `);
+                populateQueueDropdown('#queue_drop_value', queuesData);
+            } else {
+                container.html(`
+                    <input type="text" class="form-control" id="queue_drop_value" name="queue_drop_value" required placeholder="Enter value">
+                `);
+            }
+        }
+
+        // Load queues from API
+        async function loadQueues() {
+            try {
+                const data = await apiCall(`${API_BASE_URL}?action=getAll`);
+                queuesData = data.data;
+                populateQueuesTable(queuesData);
+            } catch (error) {
+                console.error('Error loading queues:', error);
+            }
+        }
+
+        // Load statistics
+        async function loadStatistics() {
+            try {
+                const data = await apiCall(`${API_BASE_URL}?action=getStats`);
+                updateStatistics(data.data);
+            } catch (error) {
+                console.error('Error loading statistics:', error);
+            }
+        }
+
+        // Populate queues table
+        function populateQueuesTable(queues) {
+            const table = $('#queuesTable').DataTable();
+            table.clear();
+            
+            queues.forEach(queue => {
+                const statusBadge = queue.queue_selected === 'Y' ? 
+                    '<span class="badge bg-success">Active</span>' : 
+                    '<span class="badge bg-secondary">Inactive</span>';
+                
+                const typeBadge = queue.queue_type === 'executive' ? 'bg-primary' : 'bg-warning';
+                const typeText = queue.queue_type === 'executive' ? 'Executive' : 'Verifier';
+                
+                // Health calculation
+                let health = 'good';
+                let healthText = 'Good';
+                
+                if (queue.queue_length === 0 && queue.queue_selected === 'Y') {
+                    health = 'warning';
+                    healthText = 'Unlimited';
+                } else if (!queue.queue_assigned_process && queue.queue_selected === 'Y') {
+                    health = 'critical';
+                    healthText = 'No Process';
+                } else if (queue.queue_selected === 'N') {
+                    health = 'warning';
+                    healthText = 'Inactive';
+                }
+                
+                table.row.add([
+                    queue.queue_id,
+                    `<div class="fw-bold">${queue.queue_name}</div>`,
+                    `<span class="badge ${typeBadge}">${typeText}</span>`,
+                    queue.queue_did || 'N/A',
+                    queue.queue_assigned_process || 'N/A',
+                    queue.queue_length === 0 ? 'Unlimited' : queue.queue_length,
+                    `${queue.queue_drop_time}s`,
+                    statusBadge,
+                    `<span class="health-indicator health-${health}"></span>${healthText}`,
+                    `<div class="btn-group">
+                        <button class="btn btn-outline-primary btn-action" onclick="openEditModal(${queue.queue_id})" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-outline-danger btn-action" onclick="confirmDelete(${queue.queue_id}, '${queue.queue_name}')" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>`
+                ]).draw(false);
+            });
+        }
+
+        // Update statistics
+        function updateStatistics(stats) {
+            $('#totalQueues').text(stats.totalQueues || 0);
+            $('#executiveQueues').text(stats.executiveQueues || 0);
+            $('#verifierQueues').text(stats.verifierQueues || 0);
+            $('#activeQueues').text(stats.activeQueues || 0);
+        }
+
+        // Open add modal
+        function openAddModal() {
+            currentEditingId = null;
+            $('#queueForm')[0].reset();
+            $('#queueModalTitle').html('<i class="fas fa-plus-circle me-2"></i>Add New Queue');
+            $('#saveQueueBtn').html('<i class="fas fa-save me-1"></i> Save Queue');
+            $('#queueModal').modal('show');
+        }
+
+        // Open edit modal
+        async function openEditModal(queueId) {
+            try {
+                const data = await apiCall(`${API_BASE_URL}?action=get&id=${queueId}`);
+                const queue = data.data;
+                
+                if (!queue) {
+                    showToast('Queue not found', 'error');
+                    return;
+                }
+
+                currentEditingId = queueId;
+
+                // Fill the form with queue data
+                $('#queue_name').val(queue.queue_name);
+                $('#queue_type').val(queue.queue_type);
+                $('#queue_did').val(queue.queue_did);
+                $('#greeting_file_id').val(queue.greeting_file_id);
+                $('#call_queue_file_id').val(queue.call_queue_file_id);
+                $('#queue_drop_time').val(queue.queue_drop_time);
+                $('#queue_drop_action').val(queue.queue_drop_action);
+                $('#queue_drop_value').val(queue.queue_drop_value);
+                $('#queue_length').val(queue.queue_length);
+                $('#queue_assigned_process').val(queue.queue_assigned_process);
+                $('#play_queue_no').prop('checked', queue.play_queue_no === 'Y');
+                $('#queue_no_file').val(queue.queue_no_file).prop('disabled', queue.play_queue_no !== 'Y');
+                $('#play_hold_durn').prop('checked', queue.play_hold_durn === 'Y');
+                $('#hold_durn_file').val(queue.hold_durn_file).prop('disabled', queue.play_hold_durn !== 'Y');
+                $('#playback_freq').val(queue.playback_freq);
+                $('#queue_over_flow').val(queue.queue_over_flow);
+
+                $('#queueModalTitle').html('<i class="fas fa-edit me-2"></i>Edit Queue');
+                $('#saveQueueBtn').html('<i class="fas fa-save me-1"></i> Update Queue');
+                $('#queueModal').modal('show');
+
+            } catch (error) {
+                console.error('Error loading queue details:', error);
+            }
+        }
+
+        // Save queue
+        async function saveQueue() {
+            const form = $('#queueForm')[0];
+            
+            if (!form.checkValidity()) {
+                form.reportValidity();
                 return;
             }
-            
-            let helpText = '';
-            let placeholder = '';
-            
-            switch(dropAction) {
-                case 'callforward':
-                    helpText = 'Forward call to another number. Enter the destination number.';
-                    placeholder = 'e.g., +1-555-0123';
-                    break;
-                case 'voicemail':
-                    helpText = 'Send call to voicemail. Enter the voicemail extension.';
-                    placeholder = 'e.g., 1001';
-                    break;
-                case 'queue':
-                    helpText = 'Transfer call to another queue. Enter the queue name.';
-                    placeholder = 'e.g., Backup-Queue';
-                    break;
-                case 'extension':
-                    helpText = 'Transfer call to an extension. Enter the extension number.';
-                    placeholder = 'e.g., 2001';
-                    break;
-                case 'ip':
-                    helpText = 'Transfer call to an IP address. Enter the IP and port.';
-                    placeholder = 'e.g., 192.168.1.100:5060';
-                    break;
-                case 'play':
-                    helpText = 'Play a message to the caller. Enter the audio file name.';
-                    placeholder = 'e.g., goodbye_message.wav';
-                    break;
-                case 'IVR':
-                    helpText = 'Transfer call to IVR. Enter the IVR menu name.';
-                    placeholder = 'e.g., main_menu';
-                    break;
-            }
-            
-            $('#queue_drop_value').attr('placeholder', placeholder);
-            helpDiv.html(helpText);
-            configDiv.show();
-        }
 
-        // Update queue preview
-        function updateQueuePreview() {
-            const name = $('#queue_name').val() || 'Queue Name';
-            const type = $('#queue_type').val() === 'executive' ? 'Executive' : 'Verifier';
-            const did = $('#queue_did').val() || 'Not set';
-            const status = $('#queue_selected').val() === 'Y' ? 'Active' : 'Inactive';
-            const statusClass = $('#queue_selected').val() === 'Y' ? 'bg-success' : 'bg-secondary';
-            const length = $('#queue_length').val() || '1';
-            const dropTime = $('#queue_drop_time').val() || '0';
-            
-            // Update visual
-            $('#queueVisualType').text(`${type} Queue`);
-            
-            // Update preview text
-            $('#previewName').text(name);
-            $('#previewType').text(type);
-            $('#previewDid').text(did);
-            $('#previewStatus').text(status).removeClass('bg-success bg-secondary').addClass(statusClass);
-            $('#previewLength').text(length);
-            $('#previewDropTime').text(`${dropTime}s`);
-        }
+            try {
+                const queueData = {
+                    queue_name: $('#queue_name').val(),
+                    queue_type: $('#queue_type').val(),
+                    queue_did: $('#queue_did').val(),
+                    greeting_file_id: $('#greeting_file_id').val(),
+                    call_queue_file_id: $('#call_queue_file_id').val(),
+                    queue_drop_time: $('#queue_drop_time').val(),
+                    queue_drop_action: $('#queue_drop_action').val(),
+                    queue_drop_value: $('#queue_drop_value').val(),
+                    queue_length: $('#queue_length').val(),
+                    queue_assigned_process: $('#queue_assigned_process').val(),
+                    play_queue_no: $('#play_queue_no').is(':checked') ? 'Y' : 'N',
+                    queue_no_file: $('#queue_no_file').val(),
+                    play_hold_durn: $('#play_hold_durn').is(':checked') ? 'Y' : 'N',
+                    hold_durn_file: $('#hold_durn_file').val(),
+                    playback_freq: $('#playback_freq').val(),
+                    queue_over_flow: $('#queue_over_flow').val(),
+                    queue_selected: 'Y' // Default to active
+                };
 
-        // Generate configuration preview
-        function generateConfigPreview() {
-            const formData = new FormData(document.getElementById('queueForm'));
-            const data = Object.fromEntries(formData);
-            
-            // Add checkbox values
-            $('.form-check-input').each(function() {
-                data[this.name] = this.checked ? 'Y' : 'N';
-            });
-            
-            let config = `; Queue Configuration for: ${data.queue_name}\n`;
-            config += `; Generated on: ${new Date().toLocaleString()}\n\n`;
-            
-            config += `[${data.queue_name}]\n`;
-            config += `strategy = ringall\n`;
-            config += `timeout = ${data.queue_drop_time || 0}\n`;
-            config += `maxlen = ${data.queue_length || 1}\n`;
-            
-            if (data.queue_did) {
-                config += `did = ${data.queue_did}\n`;
-            }
-            
-            if (data.greeting_file_id > 0) {
-                config += `announce = ${data.greeting_file_id}\n`;
-            }
-            
-            if (data.play_queue_no === 'Y' && data.queue_no_file) {
-                config += `queue_announce = ${data.queue_no_file}\n`;
-            }
-            
-            if (data.play_hold_durn === 'Y' && data.hold_durn_file) {
-                config += `hold_file = ${data.hold_durn_file}\n`;
-            }
-            
-            if (data.playback_freq > 0) {
-                config += `announce_frequency = ${data.playback_freq}\n`;
-            }
-            
-            if (data.queue_drop_action && data.queue_drop_value) {
-                config += `timeout_priority = app\n`;
-                switch(data.queue_drop_action) {
-                    case 'callforward':
-                        config += `timeout_app = Dial\n`;
-                        config += `timeout_data = SIP/${data.queue_drop_value}\n`;
-                        break;
-                    case 'voicemail':
-                        config += `timeout_app = Voicemail\n`;
-                        config += `timeout_data = ${data.queue_drop_value}\n`;
-                        break;
-                    case 'queue':
-                        config += `timeout_app = Queue\n`;
-                        config += `timeout_data = ${data.queue_drop_value}\n`;
-                        break;
-                    case 'extension':
-                        config += `timeout_app = Dial\n`;
-                        config += `timeout_data = SIP/${data.queue_drop_value}\n`;
-                        break;
-                    case 'ip':
-                        config += `timeout_app = Dial\n`;
-                        config += `timeout_data = SIP/${data.queue_drop_value}\n`;
-                        break;
-                    case 'play':
-                        config += `timeout_app = Playback\n`;
-                        config += `timeout_data = ${data.queue_drop_value}\n`;
-                        break;
-                    case 'IVR':
-                        config += `timeout_app = Goto\n`;
-                        config += `timeout_data = ivr-${data.queue_drop_value},s,1\n`;
-                        break;
+                let response;
+                if (currentEditingId) {
+                    queueData.queue_id = currentEditingId;
+                    response = await apiCall(`${API_BASE_URL}?action=update`, {
+                        method: 'POST',
+                        body: JSON.stringify(queueData)
+                    });
+                } else {
+                    response = await apiCall(`${API_BASE_URL}?action=create`, {
+                        method: 'POST',
+                        body: JSON.stringify(queueData)
+                    });
                 }
+
+                $('#queueModal').modal('hide');
+                showToast(`Queue ${currentEditingId ? 'updated' : 'created'} successfully!`, 'success');
+                
+                // Reload data
+                await loadQueues();
+                await loadStatistics();
+
+            } catch (error) {
+                console.error('Error saving queue:', error);
             }
-            
-            if (data.ivr_id > 0) {
-                config += `\n; IVR Integration\n`;
-                config += `ivr_id = ${data.ivr_id}\n`;
-            }
-            
-            document.getElementById('configPreview').textContent = config;
         }
 
-        // Copy configuration to clipboard
-        function copyConfigToClipboard() {
-            const configText = document.getElementById('configPreview').textContent;
-            navigator.clipboard.writeText(configText).then(function() {
-                showNotification('Configuration copied to clipboard!', 'success');
-            }, function(err) {
-                showNotification('Failed to copy configuration', 'danger');
+        // Confirm delete
+        function confirmDelete(queueId, queueName) {
+            $('#deleteConfirmText').text(`Delete queue "${queueName}"? This action cannot be undone.`);
+            $('#confirmDeleteBtn').off('click').on('click', function() {
+                deleteQueue(queueId);
+            });
+            $('#deleteConfirmModal').modal('show');
+        }
+
+        // Delete queue
+        async function deleteQueue(queueId) {
+            $('#deleteConfirmModal').modal('hide');
+            
+            try {
+                const data = await apiCall(`${API_BASE_URL}?action=delete`, {
+                    method: 'POST',
+                    body: JSON.stringify({ queue_id: queueId })
+                });
+
+                showToast('Queue deleted successfully!', 'success');
+                
+                // Reload data
+                await loadQueues();
+                await loadStatistics();
+
+            } catch (error) {
+                console.error('Error deleting queue:', error);
+            }
+        }
+
+        // Function to reset filters
+        function resetFilters() {
+            $('#searchInput').val('');
+            $('#typeFilter').val('');
+            $('#statusFilter').val('');
+            
+            // Reset DataTable search and filters
+            const table = $('#queuesTable').DataTable();
+            table.search('').columns().search('').draw();
+        }
+
+        // Function to show toast messages
+        function showToast(message, type = 'info') {
+            const toastContainer = $('#toastContainer');
+            const toastId = 'toast-' + Date.now();
+            
+            const bgClass = type === 'success' ? 'bg-success' : 
+                           type === 'error' ? 'bg-danger' : 'bg-info';
+            
+            const icon = type === 'success' ? 'check-circle' : 
+                        type === 'error' ? 'exclamation-circle' : 'info-circle';
+            
+            const toastHtml = `
+                <div id="${toastId}" class="toast align-items-center text-white ${bgClass} border-0" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="fas fa-${icon} me-2"></i>
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            
+            toastContainer.append(toastHtml);
+            const toastElement = $('#' + toastId);
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+            
+            // Remove toast from DOM after it's hidden
+            toastElement.on('hidden.bs.toast', function() {
+                $(this).remove();
             });
         }
 
@@ -1439,373 +1052,19 @@
             document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
         }
 
-        // API Functions
-        async function loadQueues() {
-            showLoading(true);
-            try {
-                // In a real application, you would fetch from your API
-                // const response = await fetch(`${API_BASE_URL}queues.php?action=getAll`);
-                // const result = await response.json();
-                
-                // For demonstration, we're using sample data
-                const result = { success: true, data: sampleQueues };
-                
-                if (result.success) {
-                    queuesTable.clear().rows.add(result.data).draw();
-                    updateStatistics(result.data);
-                } else {
-                    showNotification('Failed to load queues: ' + result.message, 'danger');
-                }
-            } catch (error) {
-                console.error('Error loading queues:', error);
-                showNotification('Error loading queues. Please check console.', 'danger');
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        async function getQueue(id) {
-            showLoading(true);
-            try {
-                // In a real application, you would fetch from your API
-                // const response = await fetch(`${API_BASE_URL}queues.php?action=get&id=${id}`);
-                // const result = await response.json();
-                
-                // For demonstration, we're using sample data
-                const queue = sampleQueues.find(q => q.queue_id == id);
-                const result = { success: !!queue, data: queue };
-                
-                if (result.success) {
-                    return result.data;
-                } else {
-                    showNotification('Failed to load queue: ' + result.message, 'danger');
-                    return null;
-                }
-            } catch (error) {
-                console.error('Error loading queue:', error);
-                showNotification('Error loading queue. Please check console.', 'danger');
-                return null;
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        async function saveQueue() {
-            const formData = new FormData(document.getElementById('queueForm'));
-            const data = Object.fromEntries(formData);
-            
-            // Add checkbox values
-            $('.form-check-input').each(function() {
-                data[this.name] = this.checked ? 'Y' : 'N';
-            });
-            
-            // Validation
-            if (!data.queue_name.trim()) {
-                alert('Please enter a queue name');
-                return;
-            }
-            
-            if (!data.queue_type) {
-                alert('Please select a queue type');
-                return;
-            }
-
-            showLoading(true);
-            try {
-                const action = data.queue_id ? 'update' : 'create';
-                
-                // In a real application, you would send to your API
-                // const response = await fetch(`${API_BASE_URL}queues.php?action=${action}`, {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'application/json'
-                //     },
-                //     body: JSON.stringify(data)
-                // });
-                // const result = await response.json();
-                
-                // For demonstration, we're simulating API response
-                let result;
-                if (action === 'create') {
-                    const newId = Math.max(...sampleQueues.map(q => q.queue_id)) + 1;
-                    data.queue_id = newId;
-                    sampleQueues.push(data);
-                    result = { success: true, message: 'Queue created successfully' };
-                } else {
-                    const index = sampleQueues.findIndex(q => q.queue_id == data.queue_id);
-                    if (index !== -1) {
-                        sampleQueues[index] = data;
-                        result = { success: true, message: 'Queue updated successfully' };
-                    } else {
-                        result = { success: false, message: 'Queue not found' };
-                    }
-                }
-                
-                if (result.success) {
-                    showNotification(`Queue ${data.queue_id ? 'updated' : 'created'} successfully!`, 'success');
-                    loadQueues();
-                    
-                    // Close modal
-                    bootstrap.Modal.getInstance(document.getElementById('queueModal')).hide();
-                } else {
-                    showNotification('Failed to save queue: ' + result.message, 'danger');
-                }
-            } catch (error) {
-                console.error('Error saving queue:', error);
-                showNotification('Error saving queue. Please check console.', 'danger');
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        async function deleteQueue(id) {
-            if (!confirm('Are you sure you want to delete this queue?')) {
-                return;
-            }
-
-            showLoading(true);
-            try {
-                // In a real application, you would send to your API
-                // const response = await fetch(`${API_BASE_URL}queues.php?action=delete`, {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'application/json'
-                //     },
-                //     body: JSON.stringify({ queue_id: id })
-                // });
-                // const result = await response.json();
-                
-                // For demonstration, we're simulating API response
-                const index = sampleQueues.findIndex(q => q.queue_id == id);
-                let result;
-                if (index !== -1) {
-                    sampleQueues.splice(index, 1);
-                    result = { success: true, message: 'Queue deleted successfully' };
-                } else {
-                    result = { success: false, message: 'Queue not found' };
-                }
-                
-                if (result.success) {
-                    showNotification('Queue deleted successfully!', 'success');
-                    loadQueues();
-                } else {
-                    showNotification('Failed to delete queue: ' + result.message, 'danger');
-                }
-            } catch (error) {
-                console.error('Error deleting queue:', error);
-                showNotification('Error deleting queue. Please check console.', 'danger');
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        // UI Functions
-        async function editQueue(id) {
-            const queue = await getQueue(id);
-            if (!queue) return;
-
-            // Populate form
-            Object.keys(queue).forEach(key => {
-                const element = document.getElementById(key);
-                if (element) {
-                    if (element.type === 'checkbox') {
-                        element.checked = queue[key] === 'Y';
-                    } else {
-                        element.value = queue[key];
-                    }
-                }
+        // Add event listeners for real-time filtering
+        $(document).ready(function() {
+            $('#searchInput').on('keyup', function() {
+                queuesTable.search(this.value).draw();
             });
 
-            // Update modal title
-            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit me-2"></i>Edit Queue';
-            
-            // Update preview and configurations
-            updateQueuePreview();
-            toggleDropActionConfig();
-            generateConfigPreview();
-
-            // Show modal and activate first tab
-            const modal = new bootstrap.Modal(document.getElementById('queueModal'));
-            modal.show();
-            const firstTab = new bootstrap.Tab(document.getElementById('basic-tab'));
-            firstTab.show();
-        }
-
-        async function viewQueue(id) {
-            const queue = await getQueue(id);
-            if (!queue) return;
-
-            // Create a detailed view modal
-            let detailsHtml = `
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6 class="text-primary mb-3">Basic Information</h6>
-                        <p><strong>Queue Name:</strong> ${queue.queue_name}</p>
-                        <p><strong>Type:</strong> <span class="badge ${queue.queue_type === 'executive' ? 'bg-primary' : 'bg-warning'}">${queue.queue_type === 'executive' ? 'Executive' : 'Verifier'}</span></p>
-                        <p><strong>DID:</strong> ${queue.queue_did || 'Not set'}</p>
-                        <p><strong>Process:</strong> ${queue.queue_assigned_process || 'Not set'}</p>
-                        <p><strong>Status:</strong> <span class="badge ${queue.queue_selected === 'Y' ? 'bg-success' : 'bg-secondary'}">${queue.queue_selected === 'Y' ? 'Active' : 'Inactive'}</span></p>
-                    </div>
-                    <div class="col-md-6">
-                        <h6 class="text-primary mb-3">Configuration</h6>
-                        <p><strong>Queue Length:</strong> ${queue.queue_length}</p>
-                        <p><strong>Drop Time:</strong> ${queue.queue_drop_time}s</p>
-                        <p><strong>Drop Action:</strong> ${queue.queue_drop_action || 'None'}</p>
-                        <p><strong>Overflow Queue:</strong> ${queue.queue_over_flow || 'None'}</p>
-                        <p><strong>IVR ID:</strong> ${queue.ivr_id || 'None'}</p>
-                    </div>
-                </div>
-                <div class="row mt-3">
-                    <div class="col-12">
-                        <h6 class="text-primary mb-3">Audio Settings</h6>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p><strong>Greeting File:</strong> ${queue.greeting_file_id || 'Not set'}</p>
-                                <p><strong>Queue File:</strong> ${queue.call_queue_file_id || 'Not set'}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <p><strong>Play Queue No:</strong> <span class="badge ${queue.play_queue_no === 'Y' ? 'bg-success' : 'bg-secondary'}">${queue.play_queue_no === 'Y' ? 'Yes' : 'No'}</span></p>
-                                <p><strong>Play Hold Duration:</strong> <span class="badge ${queue.play_hold_durn === 'Y' ? 'bg-success' : 'bg-secondary'}">${queue.play_hold_durn === 'Y' ? 'Yes' : 'No'}</span></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            const viewModal = `
-                <div class="modal fade" id="viewModal" tabindex="-1">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header bg-info text-white">
-                                <h5 class="modal-title">Queue Details - ${queue.queue_name}</h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                ${detailsHtml}
-                            </div>
-                            <div class="modal-footer">
-                                <button class="btn btn-primary" onclick="editQueue(${queue.queue_id}); bootstrap.Modal.getInstance(document.getElementById('viewModal')).hide();">
-                                    <i class="fas fa-edit me-2"></i>Edit Queue
-                                </button>
-                                <button class="btn btn-success" onclick="testQueue(${queue.queue_id})">
-                                    <i class="fas fa-play me-2"></i>Test Queue
-                                </button>
-                                <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                                    <i class="fas fa-times me-2"></i>Close
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            // Remove existing modal if any
-            const existingModal = document.getElementById('viewModal');
-            if (existingModal) existingModal.remove();
-
-            // Add modal to DOM and show it
-            document.body.insertAdjacentHTML('beforeend', viewModal);
-            new bootstrap.Modal(document.getElementById('viewModal')).show();
-        }
-
-        function testQueue(id) {
-            showLoading(true);
-            // Simulate queue testing
-            setTimeout(() => {
-                showLoading(false);
-                showNotification('Queue test completed successfully!', 'success');
-            }, 2000);
-        }
-
-        function testQueueConfig() {
-            showLoading(true);
-            // Simulate configuration testing
-            setTimeout(() => {
-                showLoading(false);
-                showNotification('Configuration test completed! No errors found.', 'success');
-            }, 1500);
-        }
-
-        function toggleQueueStatus(id) {
-            if (confirm('Are you sure you want to toggle the queue status?')) {
-                showLoading(true);
-                // Simulate status toggle
-                setTimeout(() => {
-                    showLoading(false);
-                    showNotification('Queue status updated successfully!', 'success');
-                    loadQueues();
-                }, 1000);
-            }
-        }
-
-        function updateStatistics(queues) {
-            const total = queues.length;
-            const executive = queues.filter(q => q.queue_type === 'executive').length;
-            const verifier = queues.filter(q => q.queue_type === 'verifier').length;
-            const active = queues.filter(q => q.queue_selected === 'Y').length;
-            
-            document.getElementById('totalQueues').textContent = total;
-            document.getElementById('executiveQueues').textContent = executive;
-            document.getElementById('verifierQueues').textContent = verifier;
-            document.getElementById('activeQueues').textContent = active;
-        }
-
-        // Search functionality
-        $('#searchInput').on('keyup', function() {
-            queuesTable.search(this.value).draw();
-        });
-
-        // Filter by type
-        $('#typeFilter').on('change', function() {
-            queuesTable.column(2).search(this.value).draw();
-        });
-
-        // Filter by status
-        $('#statusFilter').on('change', function() {
-            queuesTable.column(7).search(this.value).draw();
-        });
-
-        function resetFilters() {
-            $('#searchInput').val('');
-            $('#typeFilter').val('');
-            $('#statusFilter').val('');
-            queuesTable.search('').columns().search('').draw();
-        }
-
-        function showNotification(message, type = 'info') {
-            // Create toast notification
-            const toast = document.createElement('div');
-            toast.className = `toast align-items-center text-bg-${type === 'success' ? 'success' : type === 'danger' ? 'danger' : 'primary'} border-0`;
-            toast.setAttribute('role', 'alert');
-            toast.setAttribute('aria-live', 'assertive');
-            toast.setAttribute('aria-atomic', 'true');
-            toast.innerHTML = `
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'danger' ? 'fa-exclamation-circle' : 'fa-info-circle'} me-2"></i>
-                        ${message}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-            `;
-            
-            document.getElementById('toastContainer').appendChild(toast);
-            const bsToast = new bootstrap.Toast(toast);
-            bsToast.show();
-            
-            // Remove after hide
-            toast.addEventListener('hidden.bs.toast', () => {
-                toast.remove();
+            $('#typeFilter').on('change', function() {
+                queuesTable.column(2).search(this.value).draw();
             });
-        }
 
-        // Reset form when modal is hidden
-        document.getElementById('queueModal').addEventListener('hidden.bs.modal', function() {
-            document.getElementById('queueForm').reset();
-            document.getElementById('queue_id').value = '';
-            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus-circle me-2"></i>Add New Queue';
-            updateQueuePreview();
-            toggleDropActionConfig();
+            $('#statusFilter').on('change', function() {
+                queuesTable.column(7).search(this.value).draw();
+            });
         });
     </script>
 </body>

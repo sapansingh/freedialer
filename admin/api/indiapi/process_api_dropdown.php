@@ -20,20 +20,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit(0);
 }
 
-// Get only active processes (where active = 'Y')
-$sql = "SELECT sno as id, process as name FROM process_details WHERE active = 'Y' ORDER BY process ASC";
-
+// Get distinct processes from process_statuses table
+$sql = "SELECT DISTINCT process FROM process_statuses WHERE process != '' ORDER BY process ASC";
 $result = mysqli_query($conn, $sql);
 
 if ($result) {
     $processes = [];
     while ($row = mysqli_fetch_assoc($result)) {
-        $processes[] = [
-            'id' => (int)$row['id'],
-            'name' => $row['name']
-        ];
+        $processes[] = $row['process'];
     }
-    // Return in the exact format you specified
+    
     echo json_encode([
         'success' => true,
         'data' => $processes

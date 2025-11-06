@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
-   <style>
+    <style>
         :root {
             --primary-color: #4361ee;
             --secondary-color: #3f37c9;
@@ -709,7 +709,7 @@
                                 </div>
                                 <div class="form-group-enhanced">
                                     <label>Inbound DID <span class="required-star">*</span></label>
-                                    <input type="text" class="form-control-enhanced" id="modify_inbound_did">
+                                    <input type="text" class="form-control-enhanced" id="modify_inbound_did" value="101">
                                 </div>
                                 <div class="form-group-enhanced">
                                     <label>Status</label>
@@ -975,9 +975,6 @@
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
     
     <script>
-        // API Configuration
-        const API_BASE_URL = '../api/process_details.php'; // Update this path as needed
-        
         let currentEditingId = null;
         let processesData = [];
         let processesTable;
@@ -1001,55 +998,84 @@
 
             // Load initial data
             loadProcesses();
-            loadStatistics();
         });
 
-        // API Call Helper Function
-        async function apiCall(url, options = {}) {
-            try {
-                showLoading(true);
-                const response = await fetch(url, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...options.headers
-                    },
-                    ...options
-                });
-                
-                const data = await response.json();
-                showLoading(false);
-                
-                if (!data.success) {
-                    throw new Error(data.message || 'API request failed');
-                }
-                
-                return data;
-            } catch (error) {
-                showLoading(false);
-                showToast('Error: ' + error.message, 'error');
-                throw error;
-            }
-        }
-
         // Load processes from API
-        async function loadProcesses() {
-            try {
-                const data = await apiCall(`${API_BASE_URL}?action=getAll`);
-                processesData = data.data;
+        function loadProcesses() {
+            showLoading(true);
+            
+            // Simulate API call - replace with actual API endpoint
+            setTimeout(() => {
+                // Mock data - replace with actual API response
+                processesData = [
+                    {
+                        sno: 1,
+                        process: "Sales-Campaign",
+                        process_description: "Outbound sales campaign for new customers",
+                        process_type: "outbound",
+                        active: "Y",
+                        channels: 30,
+                        inbound_did: "101",
+                        crm_id: "1001",
+                        webform_type: "SHOW",
+                        dial_prefix: "3301",
+                        callerid: "1234",
+                        buffer_level: 1,
+                        lead_order: "leads_by_asc",
+                        greeting_file: "welcome",
+                        greeting_accept: "N",
+                        time_out: 1,
+                        retries: 2,
+                        auto_wp: true,
+                        wp_time: 10,
+                        auto_mp: true,
+                        mp_time: 10,
+                        auto_op: true,
+                        op_time: 15,
+                        auto_fp: true,
+                        fp_time: 15,
+                        dnc_enable: "Y",
+                        num_masking: "N",
+                        agent_wise_dialing: "N",
+                        list_select: "SERIAL"
+                    },
+                    {
+                        sno: 2,
+                        process: "Customer-Support",
+                        process_description: "Inbound customer support process",
+                        process_type: "inbound",
+                        active: "Y",
+                        channels: 25,
+                        inbound_did: "102",
+                        crm_id: "1001",
+                        webform_type: "SHOW",
+                        dial_prefix: "3302",
+                        callerid: "1235",
+                        buffer_level: 1,
+                        lead_order: "leads_by_asc",
+                        greeting_file: "support",
+                        greeting_accept: "Y",
+                        time_out: 2,
+                        retries: 3,
+                        auto_wp: true,
+                        wp_time: 15,
+                        auto_mp: true,
+                        mp_time: 15,
+                        auto_op: false,
+                        op_time: 10,
+                        auto_fp: true,
+                        fp_time: 20,
+                        dnc_enable: "Y",
+                        num_masking: "Y",
+                        agent_wise_dialing: "Y",
+                        list_select: "SERIAL"
+                    }
+                ];
+                
                 populateProcessesTable(processesData);
-            } catch (error) {
-                console.error('Error loading processes:', error);
-            }
-        }
-
-        // Load statistics
-        async function loadStatistics() {
-            try {
-                const data = await apiCall(`${API_BASE_URL}?action=getStats`);
-                updateStatistics(data.data);
-            } catch (error) {
-                console.error('Error loading statistics:', error);
-            }
+                updateStatistics(processesData);
+                showLoading(false);
+            }, 1000);
         }
 
         // Populate processes table
@@ -1068,19 +1094,16 @@
                 const typeText = process.process_type === 'inbound' ? 'Inbound' : 
                                process.process_type === 'outbound' ? 'Outbound' : 'Blended';
                 
-                // Health calculation based on actual data
+                // Simple health calculation
                 let health = 'good';
                 let healthText = 'Good';
-                
                 if (process.channels === 0 && process.active === 'Y') {
                     health = 'warning';
-                    healthText = 'No Channels';
-                } else if (!process.process_description && process.active === 'Y') {
+                    healthText = 'Warning';
+                }
+                if (!process.process_description && process.active === 'Y') {
                     health = 'critical';
-                    healthText = 'No Description';
-                } else if (process.active === 'N') {
-                    health = 'warning';
-                    healthText = 'Inactive';
+                    healthText = 'Critical';
                 }
                 
                 table.row.add([
@@ -1106,11 +1129,11 @@
         }
 
         // Update statistics
-        function updateStatistics(stats) {
-            $('#totalProcesses').text(stats.totalProcesses || 0);
-            $('#inboundProcesses').text(stats.inboundProcesses || 0);
-            $('#outboundProcesses').text(stats.outboundProcesses || 0);
-            $('#activeProcesses').text(stats.activeProcesses || 0);
+        function updateStatistics(processes) {
+            $('#totalProcesses').text(processes.length);
+            $('#inboundProcesses').text(processes.filter(p => p.process_type === 'inbound').length);
+            $('#outboundProcesses').text(processes.filter(p => p.process_type === 'outbound').length);
+            $('#activeProcesses').text(processes.filter(p => p.active === 'Y').length);
         }
 
         // Open add modal (simple form)
@@ -1120,169 +1143,167 @@
         }
 
         // Create new process
-        async function createProcess() {
+        function createProcess() {
             const processName = $('#new_process').val().trim();
             const processDescription = $('#new_process_description').val().trim();
             const activeStatus = $('#new_active').val();
 
             if (!processName) {
                 showToast('Process name is required', 'error');
-                $('#processError').show();
                 return;
             }
 
-            try {
-                const processData = {
+            showLoading(true);
+
+            // Simulate API call to create process
+            setTimeout(() => {
+                const newProcess = {
+                    sno: processesData.length + 1,
                     process: processName,
                     process_description: processDescription,
+                    process_type: 'inbound',
                     active: activeStatus,
-                    process_type: 'inbound', // Default type
-                    channels: 30, // Default value
-                    inbound_did: '101', // Default value
-                    // Add other default values as needed
+                    channels: 30,
+                    inbound_did: (100 + processesData.length + 1).toString(),
+                    crm_id: "1001",
+                    webform_type: "SHOW",
+                    dial_prefix: "3301",
+                    callerid: "1234",
+                    buffer_level: 1,
+                    lead_order: "leads_by_asc",
+                    greeting_file: "welcome",
+                    greeting_accept: "N",
+                    time_out: 1,
+                    retries: 2,
+                    auto_wp: true,
+                    wp_time: 10,
+                    auto_mp: true,
+                    mp_time: 10,
+                    auto_op: true,
+                    op_time: 15,
+                    auto_fp: true,
+                    fp_time: 15,
+                    dnc_enable: "Y",
+                    num_masking: "N",
+                    agent_wise_dialing: "N",
+                    list_select: "SERIAL"
                 };
 
-                const data = await apiCall(`${API_BASE_URL}?action=create`, {
-                    method: 'POST',
-                    body: JSON.stringify(processData)
-                });
-
+                processesData.unshift(newProcess);
+                populateProcessesTable(processesData);
+                updateStatistics(processesData);
+                
                 $('#addProcessModal').modal('hide');
                 showToast('Process created successfully!', 'success');
-                
-                // Reload data
-                await loadProcesses();
-                await loadStatistics();
+                showLoading(false);
 
-            } catch (error) {
-                console.error('Error creating process:', error);
-            }
+                // Auto-open modify modal for the new process
+                setTimeout(() => {
+                    openModifyModal(newProcess.sno);
+                }, 500);
+            }, 1000);
         }
 
         // Open modify modal (rich form)
-        async function openModifyModal(processId) {
-            try {
-                const data = await apiCall(`${API_BASE_URL}?action=get&id=${processId}`);
-                const process = data.data;
-                
-                if (!process) {
-                    showToast('Process not found', 'error');
-                    return;
-                }
+        function openModifyModal(processId) {
+            const process = processesData.find(p => p.sno === processId);
+            if (!process) return;
 
-                currentEditingId = processId;
+            currentEditingId = processId;
 
-                // Fill the modify form with process data
-                $('#modify_process').val(process.process);
-                $('#modify_inbound_did').val(process.sno);
-                $('#modify_active').val(process.active || 'Y');
-                $('#modify_process_description').val(process.process_description || '');
-                
-                // Map process_type to the select options
-                let processTypeValue = 'Inbound';
-                if (process.process_type === 'outbound') {
-                    processTypeValue = 'O_Predictive'; // Default outbound type
-                } else if (process.process_type === 'blended') {
-                    processTypeValue = 'B_Progressive'; // Default blended type
-                }
-                $('#modify_process_type').val(processTypeValue);
+            // Fill the modify form with process data
+            $('#modify_process').val(process.process);
+            $('#modify_inbound_did').val(process.inbound_did);
+            $('#modify_active').val(process.active);
+            $('#modify_process_description').val(process.process_description);
+            $('#modify_process_type').val(process.process_type === 'inbound' ? 'Inbound' : 
+                                         process.process_type === 'outbound' ? 'O_Predictive' : 'B_Progressive');
+            $('#modify_channels').val(process.channels);
+            $('#modify_crm_id').val(process.crm_id);
+            $('#modify_webform_type').val(process.webform_type);
+            $('#modify_dial_prefix').val(process.dial_prefix);
+            $('#modify_callerid').val(process.callerid);
+            $('#modify_buffer_level').val(process.buffer_level);
+            $('#modify_lead_order').val(process.lead_order);
+            $('#modify_greeting_file').val(process.greeting_file);
+            $('#modify_greeting_accept').val(process.greeting_accept);
+            $('#modify_time_out').val(process.time_out);
+            $('#modify_retries').val(process.retries);
+            $('#modify_auto_wp').prop('checked', process.auto_wp);
+            $('#modify_wp_time').val(process.wp_time);
+            $('#modify_auto_mp').prop('checked', process.auto_mp);
+            $('#modify_mp_time').val(process.mp_time);
+            $('#modify_auto_op').prop('checked', process.auto_op);
+            $('#modify_op_time').val(process.op_time);
+            $('#modify_auto_fp').prop('checked', process.auto_fp);
+            $('#modify_fp_time').val(process.fp_time);
+            $('#modify_dnc_enable').val(process.dnc_enable);
+            $('#modify_num_masking').val(process.num_masking);
+            $('#modify_agent_wise_dialing').val(process.agent_wise_dialing);
+            $('#modify_list_select').val(process.list_select);
 
-                $('#modify_channels').val(process.channels || 30);
-                $('#modify_crm_id').val(process.crm_id || '');
-                $('#modify_webform_type').val(process.webform_type || 'SHOW');
-                $('#modify_dial_prefix').val(process.dial_prefix || '3301');
-                $('#modify_callerid').val(process.callerid || '1234');
-                $('#modify_buffer_level').val(process.buffer_level || 1);
-                $('#modify_lead_order').val(process.lead_order || 'leads_by_asc');
-                $('#modify_greeting_file').val(process.greeting_file || '');
-                $('#modify_greeting_accept').val(process.accept_input || 'N');
-                $('#modify_time_out').val(process.timeout || 1);
-                $('#modify_retries').val(process.retries || 0);
-                $('#modify_auto_wp').prop('checked', process.auto_wrapup === 'Y');
-                $('#modify_wp_time').val(process.auto_wrapup_time || 10);
-                $('#modify_auto_mp').prop('checked', process.auto_missed === 'Y');
-                $('#modify_mp_time').val(process.auto_missed_time || 10);
-                $('#modify_auto_op').prop('checked', process.auto_outbound === 'Y');
-                $('#modify_op_time').val(process.auto_outbound_time || 15);
-                $('#modify_auto_fp').prop('checked', process.auto_firstlogin === 'Y');
-                $('#modify_fp_time').val(process.auto_firstlogin_time || 15);
-                $('#modify_dnc_enable').val(process.dnc_check || 'Y');
-                $('#modify_num_masking').val(process.number_masking || 'N');
-                $('#modify_agent_wise_dialing').val(process.agent_wise_dialing || 'Y');
-                $('#modify_list_select').val(process.list_selection || 'SERIAL');
+            // Reset to first tab
+            $('#modifyTabs a:first').tab('show');
 
-                // Reset to first tab
-                $('#modifyTabs a:first').tab('show');
-                $('#modifyProcessModal').modal('show');
-
-            } catch (error) {
-                console.error('Error loading process details:', error);
-            }
+            $('#modifyProcessModal').modal('show');
         }
 
         // Save modified process
-        async function saveModifiedProcess() {
+        function saveModifiedProcess() {
             if (!currentEditingId) return;
 
-            try {
-                const processData = {
-                    sno: currentEditingId,
-                    process: $('#modify_process').val(),
-                    process_description: $('#modify_process_description').val(),
-                    active: $('#modify_active').val(),
-                    inbound_did: $('#modify_inbound_did').val(),
-                    channels: parseInt($('#modify_channels').val()) || 0,
-                    crm_id: $('#modify_crm_id').val(),
-                    webform_type: $('#modify_webform_type').val(),
-                    dial_prefix: $('#modify_dial_prefix').val(),
-                    callerid: $('#modify_callerid').val(),
-                    buffer_level: parseInt($('#modify_buffer_level').val()) || 0,
-                    lead_order: $('#modify_lead_order').val(),
-                    greeting_file: $('#modify_greeting_file').val(),
-                    accept_input: $('#modify_greeting_accept').val(),
-                    timeout: $('#modify_time_out').val(),
-                    retries: $('#modify_retries').val(),
-                    auto_wrapup: $('#modify_auto_wp').is(':checked') ? 'Y' : 'N',
-                    auto_wrapup_time: parseInt($('#modify_wp_time').val()) || 10,
-                    auto_missed: $('#modify_auto_mp').is(':checked') ? 'Y' : 'N',
-                    auto_missed_time: parseInt($('#modify_mp_time').val()) || 10,
-                    auto_outbound: $('#modify_auto_op').is(':checked') ? 'Y' : 'N',
-                    auto_outbound_time: parseInt($('#modify_op_time').val()) || 15,
-                    auto_firstlogin: $('#modify_auto_fp').is(':checked') ? 'Y' : 'N',
-                    auto_firstlogin_time: parseInt($('#modify_fp_time').val()) || 15,
-                    dnc_check: $('#modify_dnc_enable').val(),
-                    number_masking: $('#modify_num_masking').val(),
-                    agent_wise_dialing: $('#modify_agent_wise_dialing').val(),
-                    list_selection: $('#modify_list_select').val()
-                };
+            showLoading(true);
 
-                // Map process type from select to database values
-                const processType = $('#modify_process_type').val();
-                if (processType === 'Inbound') {
-                    processData.process_type = 'inbound';
-                } else if (processType.startsWith('O_')) {
-                    processData.process_type = 'outbound';
-                    processData.outbound_type = processType.substring(2).toLowerCase();
-                } else if (processType.startsWith('B_')) {
-                    processData.process_type = 'blended';
-                    processData.outbound_type = processType.substring(2).toLowerCase();
+            // Simulate API call to update process
+            setTimeout(() => {
+                const processIndex = processesData.findIndex(p => p.sno === currentEditingId);
+                if (processIndex !== -1) {
+                    // Update process data with all form values
+                    processesData[processIndex].process_description = $('#modify_process_description').val();
+                    processesData[processIndex].active = $('#modify_active').val();
+                    processesData[processIndex].channels = parseInt($('#modify_channels').val()) || 0;
+                    processesData[processIndex].inbound_did = $('#modify_inbound_did').val();
+                    processesData[processIndex].crm_id = $('#modify_crm_id').val();
+                    processesData[processIndex].webform_type = $('#modify_webform_type').val();
+                    processesData[processIndex].dial_prefix = $('#modify_dial_prefix').val();
+                    processesData[processIndex].callerid = $('#modify_callerid').val();
+                    processesData[processIndex].buffer_level = parseInt($('#modify_buffer_level').val()) || 0;
+                    processesData[processIndex].lead_order = $('#modify_lead_order').val();
+                    processesData[processIndex].greeting_file = $('#modify_greeting_file').val();
+                    processesData[processIndex].greeting_accept = $('#modify_greeting_accept').val();
+                    processesData[processIndex].time_out = parseInt($('#modify_time_out').val()) || 1;
+                    processesData[processIndex].retries = $('#modify_retries').val();
+                    processesData[processIndex].auto_wp = $('#modify_auto_wp').is(':checked');
+                    processesData[processIndex].wp_time = parseInt($('#modify_wp_time').val()) || 10;
+                    processesData[processIndex].auto_mp = $('#modify_auto_mp').is(':checked');
+                    processesData[processIndex].mp_time = parseInt($('#modify_mp_time').val()) || 10;
+                    processesData[processIndex].auto_op = $('#modify_auto_op').is(':checked');
+                    processesData[processIndex].op_time = parseInt($('#modify_op_time').val()) || 15;
+                    processesData[processIndex].auto_fp = $('#modify_auto_fp').is(':checked');
+                    processesData[processIndex].fp_time = parseInt($('#modify_fp_time').val()) || 15;
+                    processesData[processIndex].dnc_enable = $('#modify_dnc_enable').val();
+                    processesData[processIndex].num_masking = $('#modify_num_masking').val();
+                    processesData[processIndex].agent_wise_dialing = $('#modify_agent_wise_dialing').val();
+                    processesData[processIndex].list_select = $('#modify_list_select').val();
+
+                    // Update process type based on selection
+                    const processType = $('#modify_process_type').val();
+                    if (processType === 'Inbound') {
+                        processesData[processIndex].process_type = 'inbound';
+                    } else if (processType.startsWith('O_')) {
+                        processesData[processIndex].process_type = 'outbound';
+                    } else if (processType.startsWith('B_')) {
+                        processesData[processIndex].process_type = 'blended';
+                    }
+
+                    populateProcessesTable(processesData);
+                    updateStatistics(processesData);
+                    
+                    $('#modifyProcessModal').modal('hide');
+                    showToast('Process updated successfully!', 'success');
                 }
-
-                const data = await apiCall(`${API_BASE_URL}?action=update`, {
-                    method: 'POST',
-                    body: JSON.stringify(processData)
-                });
-
-                $('#modifyProcessModal').modal('hide');
-                showToast('Process updated successfully!', 'success');
-                
-                // Reload data
-                await loadProcesses();
-                await loadStatistics();
-
-            } catch (error) {
-                console.error('Error updating process:', error);
-            }
+                showLoading(false);
+            }, 1000);
         }
 
         // Confirm delete
@@ -1295,30 +1316,24 @@
         }
 
         // Delete process
-        async function deleteProcess(processId) {
+        function deleteProcess(processId) {
             $('#deleteConfirmModal').modal('hide');
-            
-            try {
-                const data = await apiCall(`${API_BASE_URL}?action=delete`, {
-                    method: 'POST',
-                    body: JSON.stringify({ sno: processId })
-                });
+            showLoading(true);
 
+            // Simulate API call to delete process
+            setTimeout(() => {
+                processesData = processesData.filter(p => p.sno !== processId);
+                populateProcessesTable(processesData);
+                updateStatistics(processesData);
                 showToast('Process deleted successfully!', 'success');
-                
-                // Reload data
-                await loadProcesses();
-                await loadStatistics();
-
-            } catch (error) {
-                console.error('Error deleting process:', error);
-            }
+                showLoading(false);
+            }, 1000);
         }
 
         // Test process
-        async function testProcess(processId) {
+        function testProcess(processId) {
             showLoading(true);
-            // Simulate process testing - you can implement actual test logic here
+            // Simulate process testing
             setTimeout(() => {
                 showLoading(false);
                 showToast('Process test completed successfully!', 'success');
@@ -1374,21 +1389,6 @@
         function showLoading(show) {
             document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
         }
-
-        // Add event listeners for real-time filtering
-        $(document).ready(function() {
-            $('#searchInput').on('keyup', function() {
-                processesTable.search(this.value).draw();
-            });
-
-            $('#typeFilter').on('change', function() {
-                processesTable.column(3).search(this.value).draw();
-            });
-
-            $('#statusFilter').on('change', function() {
-                processesTable.column(4).search(this.value).draw();
-            });
-        });
     </script>
 </body>
 </html>

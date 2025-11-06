@@ -222,10 +222,10 @@
         
         .notification-container {
             position: fixed;
+            top: 20px;
             right: 20px;
             z-index: 1050;
             max-width: 350px;
-            bottom: 20px;
         }
         
         .notification {
@@ -804,16 +804,12 @@
         function moveSelectionToPosition(selectId, direction) {
             const select = document.getElementById(selectId);
             const selectedOptions = Array.from(select.selectedOptions);
+            const selectedValues = selectedOptions.map(opt => opt.value);
             
             if (selectedOptions.length === 0) return;
             
             // Store the current scroll position
             const scrollTop = select.scrollTop;
-            
-            // Get the indices of selected options before removal
-            const selectedIndices = selectedOptions.map(option => 
-                Array.from(select.options).indexOf(option)
-            ).sort((a, b) => a - b);
             
             // Remove selected options temporarily
             selectedOptions.forEach(option => option.remove());
@@ -821,54 +817,68 @@
             // Reinsert at new position
             switch (direction) {
                 case 'top':
-                    // Insert at the beginning
                     selectedOptions.forEach((option, index) => {
                         select.insertBefore(option, select.options[index]);
                     });
                     break;
-                    
                 case 'up':
-                    // Move each selected option up by one position
-                    selectedOptions.forEach((option, index) => {
-                        const originalIndex = selectedIndices[index];
-                        if (originalIndex > 0) {
-                            select.insertBefore(option, select.options[originalIndex - 1]);
+                    if (selectedOptions.length > 0) {
+                        const firstSelectedIndex = findFirstSelectedIndex(select, selectedValues);
+                        if (firstSelectedIndex > 0) {
+                            selectedOptions.forEach(option => {
+                                select.insertBefore(option, select.options[firstSelectedIndex - 1]);
+                            });
                         } else {
-                            // If already at top, insert at top
-                            select.insertBefore(option, select.options[0]);
-                        }
-                    });
-                    break;
-                    
-                case 'down':
-                    // Move each selected option down by one position
-                    // Process in reverse to maintain order
-                    for (let i = selectedOptions.length - 1; i >= 0; i--) {
-                        const option = selectedOptions[i];
-                        const originalIndex = selectedIndices[i];
-                        if (originalIndex < select.options.length - 1) {
-                            // If not at bottom, insert after the next element
-                            select.insertBefore(option, select.options[originalIndex + 2] || null);
-                        } else {
-                            // If at bottom, append to end
-                            select.appendChild(option);
+                            selectedOptions.forEach(option => {
+                                select.insertBefore(option, select.options[0]);
+                            });
                         }
                     }
                     break;
-                    
+                case 'down':
+                    if (selectedOptions.length > 0) {
+                        const lastSelectedIndex = findLastSelectedIndex(select, selectedValues);
+                        selectedOptions.reverse().forEach(option => {
+                            if (lastSelectedIndex < select.options.length - 1) {
+                                select.insertBefore(option, select.options[lastSelectedIndex + 1].nextSibling);
+                            } else {
+                                select.appendChild(option);
+                            }
+                        });
+                    }
+                    break;
                 case 'bottom':
-                    // Append to the end
                     selectedOptions.forEach(option => {
                         select.appendChild(option);
                     });
                     break;
             }
             
-            // Restore scroll position
+            // Restore selection and scroll position
+            Array.from(select.options).forEach(option => {
+                if (selectedValues.includes(option.value)) {
+                    option.selected = true;
+                }
+            });
             select.scrollTop = scrollTop;
-            
-            // Keep options selected
-            selectedOptions.forEach(option => option.selected = true);
+        }
+
+        function findFirstSelectedIndex(select, selectedValues) {
+            for (let i = 0; i < select.options.length; i++) {
+                if (selectedValues.includes(select.options[i].value)) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        function findLastSelectedIndex(select, selectedValues) {
+            for (let i = select.options.length - 1; i >= 0; i--) {
+                if (selectedValues.includes(select.options[i].value)) {
+                    return i;
+                }
+            }
+            return -1;
         }
 
         // Edit route

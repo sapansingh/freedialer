@@ -431,7 +431,6 @@
                             <tr>
                                 <th>ID</th> 
                                 <th>File Name</th>
-                                <th>File Type</th>
                                 <th>File Size</th>
                                 <th>Preview</th>
                                 <th>Location</th>
@@ -728,43 +727,6 @@
             }
         }
 
-        // Get file type badge
-        function getFileTypeBadge(filename) {
-            const ext = filename.split('.').pop().toLowerCase();
-            let badgeClass = '';
-            let icon = '';
-            
-            switch(ext) {
-                case 'wav':
-                    badgeClass = 'type-wav';
-                    icon = 'fa-wave-square';
-                    break;
-                case 'mp3':
-                    badgeClass = 'type-mp3';
-                    icon = 'fa-music';
-                    break;
-                case 'gsm':
-                    badgeClass = 'type-gsm';
-                    icon = 'fa-file-audio';
-                    break;
-                case 'ulaw':
-                    badgeClass = 'type-ulaw';
-                    icon = 'fa-file-audio';
-                    break;
-                case 'alaw':
-                    badgeClass = 'type-alaw';
-                    icon = 'fa-file-audio';
-                    break;
-                default:
-                    badgeClass = 'bg-secondary';
-                    icon = 'fa-file';
-            }
-            
-            return `<span class="file-type-badge ${badgeClass}">
-                <i class="fas ${icon} me-1"></i>${ext.toUpperCase()}
-            </span>`;
-        }
-
         // Initialize DataTable
         function initializeDataTable() {
             filesTable = $('#filesTable').DataTable({
@@ -784,13 +746,6 @@
                                 <i class="fas fa-file-audio text-primary me-2"></i>
                                 <strong>${data || 'N/A'}</strong>
                             </div>`;
-                        }
-                    },
-                    { 
-                        data: 'File_Location',
-                        render: function(data) {
-                            const filename = data.split('/').pop() || data;
-                            return getFileTypeBadge(filename);
                         }
                     },
                     { 

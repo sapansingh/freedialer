@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Disposition Management - Call Center</title>
+    <title>Disposition Management</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
-    <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    
     <style>
         :root {
             --primary-color: #4361ee;
@@ -19,1028 +18,940 @@
             --success-color: #4cc9f0;
             --info-color: #4895ef;
             --warning-color: #f72585;
-            --danger-color: #e63946;
-            --executive-color: #7209b7;
-            --verifier-color: #f72585;
-            --light-bg: #f8f9fa;
-            --dark-bg: #212529;
-            --glass-bg: rgba(255, 255, 255, 0.95);
-            --glass-border: rgba(255, 255, 255, 0.2);
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --hover-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
         }
         
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding-bottom: 2rem;
+            margin: 0;
+            padding: 20px;
         }
         
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--glass-border);
-            padding: 30px;
-            margin-bottom: 25px;
-            transition: all 0.3s ease;
-            position: relative;
+        .main-container {
+            background-color: #FFF;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
             overflow: hidden;
+            height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
         }
         
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--success-color));
-        }
-        
-        .glass-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-        
-        .page-header {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 25px 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--glass-border);
-        }
-        
-        .nav-tabs {
-            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-            margin-bottom: 25px;
-        }
-        
-        .nav-tabs .nav-link {
-            border: none;
-            padding: 12px 25px;
-            font-weight: 600;
-            color: #6c757d;
-            border-radius: 10px 10px 0 0;
-            margin-right: 5px;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-tabs .nav-link.active {
+        .header-section {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
-        }
-        
-        .nav-tabs .nav-link:hover:not(.active) {
-            background: rgba(67, 97, 238, 0.1);
-            color: var(--primary-color);
-        }
-        
-        .form-section {
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        }
-        
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid rgba(67, 97, 238, 0.2);
+            padding: 20px 25px;
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 10px;
             align-items: center;
         }
         
-        .section-title i {
-            margin-right: 10px;
-            font-size: 1.3rem;
+        .content-section {
+            flex: 1;
+            overflow: auto;
+            padding: 25px;
+            background-color: #f8fafc;
         }
         
-        .form-label {
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 8px;
+        .footer-section {
+            padding: 15px 25px;
+            background-color: #f1f5f9;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #64748b;
         }
         
-        .form-control, .form-select {
-            border-radius: 10px;
-            padding: 12px 15px;
-            border: 1px solid #e1e5e9;
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
             transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
         
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+        .table-container:hover {
+            box-shadow: var(--hover-shadow);
         }
         
-        .required-field::after {
-            content: ' *';
-            color: var(--warning-color);
+        /* DataTables Custom Styling */
+        .dataTables_wrapper {
+            padding: 0;
         }
         
-        .btn {
-            border-radius: 10px;
-            padding: 12px 25px;
-            font-weight: 600;
-            transition: all 0.3s ease;
+        table.dataTable thead th {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
             border: none;
+            padding: 16px 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        
+        table.dataTable tbody td {
+            padding: 14px 12px;
+            vertical-align: middle;
+            border-color: #f1f3f4;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        
+        .action-buttons .btn {
+            padding: 6px 10px;
+            margin: 0 2px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
         
         .btn-primary {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
-        }
-        
-        .btn-action {
-            padding: 8px 12px;
+            border: none;
             border-radius: 8px;
-            margin: 0 3px;
-            transition: all 0.2s ease;
-        }
-        
-        .btn-action:hover {
-            transform: scale(1.1);
-        }
-        
-        .status-badge {
-            padding: 8px 15px;
-            border-radius: 20px;
+            padding: 10px 20px;
             font-weight: 600;
-            font-size: 0.85rem;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+        
+        .form-section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            display: none;
-        }
-        
-        .stat-card {
-            text-align: center;
-            padding: 25px 20px;
-            border-radius: 15px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--glass-border);
-            transition: all 0.3s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-        }
-        
-        .stat-icon {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            font-size: 1.8rem;
-            color: white;
-        }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            font-size: 0.9rem;
-            color: #6c757d;
-            font-weight: 600;
-        }
-        
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-        }
-        
-        .search-box {
-            position: relative;
-        }
-        
-        .search-box .input-group-text {
-            background: white;
-            border-right: none;
-            border-radius: 10px 0 0 10px;
-        }
-        
-        .search-box .form-control {
-            border-left: none;
-            border-radius: 0 10px 10px 0;
-        }
-        
-        .filter-section {
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 10px;
-            padding: 15px;
-        }
-        
-        .table-responsive {
-            border-radius: 15px;
-            overflow: hidden;
-        }
-        
-        .table {
-            margin-bottom: 0;
-        }
-        
-        .table thead th {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border: none;
-            padding: 15px 12px;
-            font-weight: 600;
-        }
-        
-        .table tbody td {
-            padding: 12px;
-            vertical-align: middle;
-            border-color: #f1f3f4;
-        }
-        
-        .table-hover tbody tr:hover {
-            background-color: rgba(67, 97, 238, 0.05);
-        }
-        
-        .disposition-visual {
-            height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 15px;
-            margin-bottom: 20px;
-            color: white;
-            font-weight: 700;
-            font-size: 1.2rem;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .disposition-visual::before {
-            content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
-            background-size: cover;
-        }
-        
-        .feature-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border-left: 4px solid var(--primary-color);
-        }
-        
-        .feature-toggle label {
-            margin-bottom: 0;
-            font-weight: 600;
-        }
-        
-        .config-preview {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
-            border-left: 4px solid var(--primary-color);
-        }
-        
-        .preview-title {
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-        }
-        
-        .preview-content {
-            font-family: 'Courier New', monospace;
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .drop-action-config {
-            background: #e9ecef;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 10px;
-            border-left: 4px solid var(--info-color);
-        }
-        
-        .call-flow-diagram {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-top: 20px;
-            border: 2px solid var(--primary-color);
-        }
-        
-        .flow-step {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            border-left: 4px solid var(--info-color);
-        }
-        
-        .flow-number {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            color: white;
+            background: rgba(255, 255, 255, 0.8);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            margin-right: 15px;
+            z-index: 1000;
+            border-radius: 12px;
         }
         
-        @media (max-width: 768px) {
-            .glass-card {
-                padding: 20px;
-            }
-            
-            .btn-action {
-                margin-bottom: 5px;
-                display: block;
-                width: 100%;
-            }
-            
-            .table-responsive {
-                font-size: 0.85rem;
-            }
-        }
-        
-        .select2-container--default .select2-selection--single {
-            border-radius: 10px;
-            padding: 10px;
-            border: 1px solid #e1e5e9;
-            height: auto;
-        }
-        
-        .connection-line {
-            position: relative;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary-color), var(--success-color));
-            margin: 30px 0;
-            border-radius: 2px;
-        }
-        
-        .connection-line::before, .connection-line::after {
-            content: '';
-            position: absolute;
-            width: 12px;
-            height: 12px;
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
             border-radius: 50%;
-            background: var(--primary-color);
-            top: -5px;
+            animation: spin 1s linear infinite;
         }
         
-        .connection-line::before {
-            left: 0;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
-        .connection-line::after {
-            right: 0;
-            background: var(--success-color);
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            max-width: 350px;
         }
         
-        .file-upload-box {
-            border: 2px dashed #dee2e6;
+        .notification {
+            background: white;
             border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            background: #f8f9fa;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .file-upload-box:hover {
-            border-color: var(--primary-color);
-            background: #e9ecef;
-        }
-        
-        .file-upload-box i {
-            font-size: 2rem;
-            color: #6c757d;
-            margin-bottom: 10px;
-        }
-        
-        .disposition-health {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            padding: 15px 20px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
+            gap: 12px;
+            transform: translateX(400px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            border-left: 4px solid;
         }
         
-        .health-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 10px;
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
         }
         
-        .health-good { background: var(--success-color); }
-        .health-warning { background: var(--warning-color); }
-        .health-critical { background: var(--danger-color); }
+        .notification.success {
+            border-left-color: #10b981;
+        }
         
-        .real-time-stats {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        .notification.error {
+            border-left-color: #ef4444;
+        }
+        
+        .notification.info {
+            border-left-color: #3b82f6;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
             color: white;
-            border-radius: 15px;
+        }
+        
+        .stat-info h3 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        
+        .stat-info p {
+            margin: 0;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        .filter-section {
+            background: white;
+            border-radius: 12px;
             padding: 20px;
             margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
         }
         
-        .stat-item {
-            text-align: center;
-            padding: 15px;
-        }
-        
-        .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label-small {
-            font-size: 0.85rem;
-            opacity: 0.9;
-        }
-        
-        .time-input-group {
-            display: flex;
-            align-items: center;
-        }
-        
-        .time-input-group .form-control {
-            flex: 1;
-        }
-        
-        .time-input-group .input-group-text {
-            background: #f8f9fa;
-            border: 1px solid #e1e5e9;
-            border-left: none;
-            border-radius: 0 10px 10px 0;
-        }
-        
-        .selectable-badge {
-            width: 80px;
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
         }
     </style>
 </head>
 <body>
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-    </div>
-
-    <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
-
-    <!-- Disposition Modal -->
-    <div class="modal fade" id="dispositionModal" tabindex="-1" aria-labelledby="dispositionModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content glass-card" style="background: var(--glass-bg);">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="dispositionModalLabel">Add New Disposition</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="dispositionForm">
-                        <input type="hidden" id="sno">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label for="status" class="form-label required-field">Status Code</label>
-                                    <input type="text" class="form-control" id="status" required maxlength="20" placeholder="e.g., SUCCESS, PENDING">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label for="statusName" class="form-label required-field">Status Name</label>
-                                    <input type="text" class="form-control" id="statusName" required maxlength="30" placeholder="e.g., Call Successful">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label for="selectable" class="form-label required-field">Selectable</label>
-                                    <select class="form-select" id="selectable" required>
-                                        <option value="Y">Yes</option>
-                                        <option value="N">No</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label for="process" class="form-label required-field">Process</label>
-                                    <select class="form-select" id="process" required>
-                                        <option value="">Select Process</option>
-                                        <option value="Sales">Sales</option>
-                                        <option value="Support">Support</option>
-                                        <option value="Verification">Verification</option>
-                                        <option value="Collections">Collections</option>
-                                        <option value="General">General</option>
-                                        <option value="All">All Processes</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="saveDispositionBtn">Save Disposition</button>
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+    
+    <div class="main-container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="header-title">
+                <i class="fas fa-tags"></i>
+                <span>DISPOSITION MANAGEMENT</span>
+            </div>
+            
+            <div class="header-actions">
+                <div class="header-buttons">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDispositionModal">
+                        <i class="fas fa-plus me-1"></i> Add Disposition
+                    </button>
+                    <button class="btn btn-outline-secondary" id="refreshBtn">
+                        <i class="fas fa-sync-alt me-1"></i> Refresh
+                    </button>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="container-fluid py-4">
-        <!-- Header -->
-        <div class="page-header">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
-                <div>
-                    <h1 class="h3 mb-1"><i class="fas fa-tags me-2 text-primary"></i>Disposition Management</h1>
-                    <p class="text-muted mb-0">Manage call dispositions and status tracking</p>
-                </div>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dispositionModal">
-                    <i class="fas fa-plus me-1"></i> Add New Disposition
-                </button>
-            </div>
-        </div>
-
-        <!-- Real-time Statistics -->
-        <div class="real-time-stats">
-            <div class="row text-center">
-                <div class="col-md-3">
-                    <div class="stat-item">
-                        <div class="stat-value" id="totalDispositions">0</div>
-                        <div class="stat-label-small">Total Dispositions</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-item">
-                        <div class="stat-value" id="selectableDispositions">0</div>
-                        <div class="stat-label-small">Selectable</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-item">
-                        <div class="stat-value" id="nonSelectableDispositions">0</div>
-                        <div class="stat-label-small">Non-Selectable</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-item">
-                        <div class="stat-value" id="processCount">5</div>
-                        <div class="stat-label-small">Process Types</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Statistics Cards -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #4361ee, #3a0ca3);">
-                        <i class="fas fa-shopping-cart"></i>
-                    </div>
-                    <div class="stat-number text-primary" id="salesDispositions">0</div>
-                    <div class="stat-label">Sales Dispositions</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #4cc9f0, #4895ef);">
-                        <i class="fas fa-headset"></i>
-                    </div>
-                    <div class="stat-number text-info" id="supportDispositions">0</div>
-                    <div class="stat-label">Support Dispositions</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #f72585, #b5179e);">
-                        <i class="fas fa-user-check"></i>
-                    </div>
-                    <div class="stat-number text-warning" id="verificationDispositions">0</div>
-                    <div class="stat-label">Verification</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #7209b7, #560bad);">
-                        <i class="fas fa-money-bill-wave"></i>
-                    </div>
-                    <div class="stat-number text-secondary" id="collectionsDispositions">0</div>
-                    <div class="stat-label">Collections</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Search and Filters -->
-        <div class="glass-card">
-            <div class="row g-3 align-items-center">
+        
+        <!-- Content Section -->
+        <div class="content-section">
+            <!-- Stats Cards -->
+            <div class="row mb-4">
                 <div class="col-md-4">
-                    <div class="search-box">
-                        <div class="input-group">
-                            <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
-                            <input type="text" id="searchInput" class="form-control border-start-0" placeholder="Search dispositions...">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #4cc9f0, #4895ef);">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalDispositions">0</h3>
+                            <p>Total Dispositions</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="filter-section">
-                        <label class="form-label small fw-bold">Process</label>
-                        <select id="processFilter" class="form-select form-select-sm">
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #4ade80, #22c55e);">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="selectableDispositions">0</h3>
+                            <p>Selectable Dispositions</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #f97316, #ea580c);">
+                            <i class="fas fa-layer-group"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalProcesses">0</h3>
+                            <p>Total Processes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="processFilter" class="form-label"><strong>Filter by Process</strong></label>
+                        <select class="form-select" id="processFilter">
                             <option value="">All Processes</option>
-                            <option value="Sales">Sales</option>
-                            <option value="Support">Support</option>
-                            <option value="Verification">Verification</option>
-                            <option value="Collections">Collections</option>
-                            <option value="General">General</option>
-                            <option value="All">All</option>
+                            <!-- Processes will be loaded dynamically -->
                         </select>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="filter-section">
-                        <label class="form-label small fw-bold">Selectable</label>
-                        <select id="selectableFilter" class="form-select form-select-sm">
-                            <option value="">All</option>
+                    <div class="col-md-6">
+                        <label for="selectableFilter" class="form-label"><strong>Filter by Selectable Status</strong></label>
+                        <select class="form-select" id="selectableFilter">
+                            <option value="">All Status</option>
                             <option value="Y">Selectable</option>
                             <option value="N">Non-Selectable</option>
                         </select>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <button class="btn btn-outline-secondary w-100 mt-4" onclick="resetFilters()">
-                        <i class="fas fa-redo me-1"></i> Reset
-                    </button>
+            </div>
+            
+            <!-- Dispositions Table -->
+            <div class="table-container" style="position: relative;">
+                <div class="loading-overlay" id="tableLoading" style="display: none;">
+                    <div class="spinner"></div>
+                </div>
+                <div class="table-responsive">
+                    <table id="dispositionsTable" class="table table-hover display nowrap" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>ID</th> 
+                                <th>Status Code</th>
+                                <th>Status Name</th>
+                                <th>Process</th>
+                                <th>Selectable</th>
+                                <th>Actions</th> 
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data will be populated by DataTable -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-
-        <!-- DataTable -->
-        <div class="glass-card">
-            <div class="table-responsive">
-                <table id="dispositionsTable" class="table table-sm table-hover w-100">
-                    <thead class="table-light">
-                        <tr>
-                            <th>ID</th>
-                            <th>Status Code</th>
-                            <th>Status Name</th>
-                            <th>Selectable</th>
-                            <th>Process</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dispositionsTableBody">
-                        <!-- Data will be populated by JavaScript -->
-                    </tbody>
-                </table>
+        
+        <!-- Footer Section -->
+        <div class="footer-section">
+            <div>
+                ConVox CCS v2.0 | Disposition Management
+            </div>
+            <div>
+                <span id="lastUpdated">Last updated: Just now</span>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
-    <!-- Select2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-    <script>
-        // Sample data - in a real application, this would come from your database
-        let dispositions = [
-            { sno: 1, status: "SUCCESS", status_name: "Call Successful", selectable: "Y", process: "Sales" },
-            { sno: 2, status: "NOANSWER", status_name: "No Answer", selectable: "Y", process: "Sales" },
-            { sno: 3, status: "BUSY", status_name: "Line Busy", selectable: "Y", process: "Sales" },
-            { sno: 4, status: "FAILED", status_name: "Call Failed", selectable: "Y", process: "Sales" },
-            { sno: 5, status: "RESOLVED", status_name: "Issue Resolved", selectable: "Y", process: "Support" },
-            { sno: 6, status: "ESCALATED", status_name: "Escalated to L2", selectable: "Y", process: "Support" },
-            { sno: 7, status: "VERIFIED", status_name: "Customer Verified", selectable: "Y", process: "Verification" },
-            { sno: 8, status: "NOTVERIFIED", status_name: "Not Verified", selectable: "Y", process: "Verification" },
-            { sno: 9, status: "PAYMENT", status_name: "Payment Received", selectable: "Y", process: "Collections" },
-            { sno: 10, status: "PROMISE", status_name: "Payment Promise", selectable: "Y", process: "Collections" },
-            { sno: 11, status: "REFUSED", status_name: "Payment Refused", selectable: "Y", process: "Collections" },
-            { sno: 12, status: "SYSTEM", status_name: "System Status", selectable: "N", process: "General" }
-        ];
-
-        // DOM Elements
-        const dispositionModal = document.getElementById('dispositionModal');
-        const dispositionForm = document.getElementById('dispositionForm');
-        const snoInput = document.getElementById('sno');
-        const statusInput = document.getElementById('status');
-        const statusNameInput = document.getElementById('statusName');
-        const selectableInput = document.getElementById('selectable');
-        const processInput = document.getElementById('process');
-        const saveDispositionBtn = document.getElementById('saveDispositionBtn');
-        const dispositionsTableBody = document.getElementById('dispositionsTableBody');
-        const searchInput = document.getElementById('searchInput');
-        const processFilter = document.getElementById('processFilter');
-        const selectableFilter = document.getElementById('selectableFilter');
-        const toastContainer = document.getElementById('toastContainer');
-        const loadingOverlay = document.getElementById('loadingOverlay');
-
-        // Statistics elements
-        const totalDispositionsEl = document.getElementById('totalDispositions');
-        const selectableDispositionsEl = document.getElementById('selectableDispositions');
-        const nonSelectableDispositionsEl = document.getElementById('nonSelectableDispositions');
-        const processCountEl = document.getElementById('processCount');
-        const salesDispositionsEl = document.getElementById('salesDispositions');
-        const supportDispositionsEl = document.getElementById('supportDispositions');
-        const verificationDispositionsEl = document.getElementById('verificationDispositions');
-        const collectionsDispositionsEl = document.getElementById('collectionsDispositions');
-
-        // Initialize the page
-        document.addEventListener('DOMContentLoaded', function() {
-            renderDispositionsTable();
-            updateStatistics();
-            setupEventListeners();
-        });
-
-        function setupEventListeners() {
-            // Save disposition button
-            saveDispositionBtn.addEventListener('click', function() {
-                saveDisposition();
-            });
-
-            // Search input
-            searchInput.addEventListener('input', function() {
-                renderDispositionsTable();
-            });
-
-            // Process filter
-            processFilter.addEventListener('change', function() {
-                renderDispositionsTable();
-            });
-
-            // Selectable filter
-            selectableFilter.addEventListener('change', function() {
-                renderDispositionsTable();
-            });
-        }
-
-        function renderDispositionsTable() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const selectedProcess = processFilter.value;
-            const selectedSelectable = selectableFilter.value;
-            
-            let filteredDispositions = dispositions.filter(disposition => {
-                const matchesSearch = 
-                    disposition.status.toLowerCase().includes(searchTerm) ||
-                    disposition.status_name.toLowerCase().includes(searchTerm) ||
-                    disposition.process.toLowerCase().includes(searchTerm);
-                
-                const matchesProcess = selectedProcess === '' || disposition.process === selectedProcess;
-                const matchesSelectable = selectedSelectable === '' || disposition.selectable === selectedSelectable;
-                
-                return matchesSearch && matchesProcess && matchesSelectable;
-            });
-
-            dispositionsTableBody.innerHTML = '';
-
-            if (filteredDispositions.length === 0) {
-                dispositionsTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No dispositions found</td></tr>';
-                return;
-            }
-
-            filteredDispositions.forEach(disposition => {
-                const row = document.createElement('tr');
-                
-                // Determine badge class for selectable status
-                let selectableBadgeClass = 'bg-success';
-                let selectableText = 'Yes';
-                if (disposition.selectable === 'N') {
-                    selectableBadgeClass = 'bg-secondary';
-                    selectableText = 'No';
-                }
-                
-                row.innerHTML = `
-                    <td>${disposition.sno}</td>
-                    <td><strong>${disposition.status}</strong></td>
-                    <td>${disposition.status_name}</td>
-                    <td><span class="badge ${selectableBadgeClass} selectable-badge">${selectableText}</span></td>
-                    <td><span class="badge bg-primary">${disposition.process}</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-warning btn-action" onclick="editDisposition(${disposition.sno})">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger btn-action" onclick="deleteDisposition(${disposition.sno})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                `;
-                
-                dispositionsTableBody.appendChild(row);
-            });
-        }
-
-        function updateStatistics() {
-            // Update main statistics
-            totalDispositionsEl.textContent = dispositions.length;
-            
-            // Calculate selectable dispositions
-            const selectableDispositions = dispositions.filter(d => d.selectable === 'Y');
-            selectableDispositionsEl.textContent = selectableDispositions.length;
-            
-            // Calculate non-selectable dispositions
-            const nonSelectableDispositions = dispositions.filter(d => d.selectable === 'N');
-            nonSelectableDispositionsEl.textContent = nonSelectableDispositions.length;
-            
-            // Calculate process-specific statistics
-            const salesDispositions = dispositions.filter(d => d.process === 'Sales');
-            salesDispositionsEl.textContent = salesDispositions.length;
-            
-            const supportDispositions = dispositions.filter(d => d.process === 'Support');
-            supportDispositionsEl.textContent = supportDispositions.length;
-            
-            const verificationDispositions = dispositions.filter(d => d.process === 'Verification');
-            verificationDispositionsEl.textContent = verificationDispositions.length;
-            
-            const collectionsDispositions = dispositions.filter(d => d.process === 'Collections');
-            collectionsDispositionsEl.textContent = collectionsDispositions.length;
-            
-            // Calculate unique process count
-            const uniqueProcesses = [...new Set(dispositions.map(d => d.process))];
-            processCountEl.textContent = uniqueProcesses.length;
-        }
-
-        function saveDisposition() {
-            const id = snoInput.value ? parseInt(snoInput.value) : null;
-            const status = statusInput.value.trim();
-            const statusName = statusNameInput.value.trim();
-            const selectable = selectableInput.value;
-            const process = processInput.value;
-            
-            if (!status || !statusName || !selectable || !process) {
-                showToast('Please fill in all required fields!', 'danger');
-                return;
-            }
-            
-            if (id) {
-                // Update existing disposition
-                const index = dispositions.findIndex(d => d.sno === id);
-                if (index !== -1) {
-                    dispositions[index] = {
-                        sno: id,
-                        status: status,
-                        status_name: statusName,
-                        selectable: selectable,
-                        process: process
-                    };
-                    showToast('Disposition updated successfully!', 'success');
-                }
-            } else {
-                // Add new disposition
-                const newId = dispositions.length > 0 ? Math.max(...dispositions.map(d => d.sno)) + 1 : 1;
-                dispositions.push({
-                    sno: newId,
-                    status: status,
-                    status_name: statusName,
-                    selectable: selectable,
-                    process: process
-                });
-                showToast('Disposition added successfully!', 'success');
-            }
-            
-            // Close modal and reset form
-            const modal = bootstrap.Modal.getInstance(dispositionModal);
-            modal.hide();
-            resetForm();
-            
-            // Update UI
-            renderDispositionsTable();
-            updateStatistics();
-        }
-
-        function editDisposition(id) {
-            const disposition = dispositions.find(d => d.sno === id);
-            if (!disposition) return;
-            
-            snoInput.value = disposition.sno;
-            statusInput.value = disposition.status;
-            statusNameInput.value = disposition.status_name;
-            selectableInput.value = disposition.selectable;
-            processInput.value = disposition.process;
-            
-            // Update modal title
-            document.getElementById('dispositionModalLabel').textContent = 'Edit Disposition';
-            
-            // Show modal
-            const modal = new bootstrap.Modal(dispositionModal);
-            modal.show();
-        }
-
-        function deleteDisposition(id) {
-            if (confirm('Are you sure you want to delete this disposition?')) {
-                dispositions = dispositions.filter(d => d.sno !== id);
-                renderDispositionsTable();
-                updateStatistics();
-                showToast('Disposition deleted successfully!', 'success');
-            }
-        }
-
-        function resetForm() {
-            dispositionForm.reset();
-            snoInput.value = '';
-            document.getElementById('dispositionModalLabel').textContent = 'Add New Disposition';
-        }
-
-        function resetFilters() {
-            searchInput.value = '';
-            processFilter.value = '';
-            selectableFilter.value = '';
-            renderDispositionsTable();
-        }
-
-        function showToast(message, type) {
-            const toast = document.createElement('div');
-            toast.className = `toast align-items-center text-bg-${type} border-0`;
-            toast.setAttribute('role', 'alert');
-            toast.setAttribute('aria-live', 'assertive');
-            toast.setAttribute('aria-atomic', 'true');
-            
-            toast.innerHTML = `
-                <div class="d-flex">
-                    <div class="toast-body">
-                        ${message}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    <!-- Add/Edit Disposition Modal -->
+    <div class="modal fade" id="addDispositionModal" tabindex="-1" aria-labelledby="addDispositionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addDispositionModalLabel">
+                        <i class="fas fa-plus-circle me-2"></i>Add New Disposition
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-            `;
+                <div class="modal-body">
+                    <form id="dispositionForm">
+                        <input type="hidden" id="sno" name="sno">
+                        
+                        <div class="mb-3">
+                            <label for="status" class="form-label required">Status Code *</label>
+                            <input type="text" class="form-control" id="status" name="status" required maxlength="20">
+                            <div class="form-text">Unique code for the disposition (max 20 characters)</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="status_name" class="form-label required">Status Name *</label>
+                            <input type="text" class="form-control" id="status_name" name="status_name" required maxlength="30">
+                            <div class="form-text">Display name for the disposition (max 30 characters)</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="process" class="form-label required">Process *</label>
+                            <select class="form-select" id="process" name="process" required>
+                                <option value="">Select Process</option>
+                                <!-- Processes will be loaded dynamically -->
+                            </select>
+                            <div class="form-text">Select the process this disposition belongs to</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="selectable" class="form-label required">Selectable *</label>
+                            <select class="form-select" id="selectable" name="selectable" required>
+                                <option value="Y">Yes</option>
+                                <option value="N">No</option>
+                            </select>
+                            <div class="form-text">Whether this disposition can be selected by agents</div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveDispositionBtn">
+                        <i class="fas fa-save me-1"></i> Save Disposition
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Confirm Deletion
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-trash-alt fa-3x text-danger"></i>
+                    </div>
+                    <h5 class="mb-3">Delete Disposition</h5>
+                    <p>Are you sure you want to delete the disposition <strong id="dispositionToDeleteName">[Disposition Name]</strong>?</p>
+                    <p class="text-danger"><small>This action cannot be undone.</small></p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                        <i class="fas fa-trash me-1"></i> Delete Disposition
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+  <script>
+    // API Configuration
+    const API_BASE_URL = '.././api/disposition_api.php';
+    const PROCESS_API_URL = '.././api/indiapi/process_api_dropdown.php';
+    
+    let dispositionsTable;
+    let dispositionToDelete = null;
+
+    // Initialize the application when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Initializing Disposition Management...');
+        initializeDataTable();
+        loadProcesses();
+        updateLastUpdatedTime();
+        
+        // Set up event listeners
+        document.getElementById('refreshBtn').addEventListener('click', refreshData);
+        document.getElementById('saveDispositionBtn').addEventListener('click', saveDisposition);
+        document.getElementById('confirmDeleteBtn').addEventListener('click', confirmDelete);
+        document.getElementById('processFilter').addEventListener('change', applyFilters);
+        document.getElementById('selectableFilter').addEventListener('change', applyFilters);
+        
+        // Reset form when modal is hidden
+        document.getElementById('addDispositionModal').addEventListener('hidden.bs.modal', resetForm);
+    });
+
+    // API Functions
+    async function apiCall(endpoint, method = 'GET', data = null) {
+        const options = {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        };
+        
+        if (data && (method === 'POST' || method === 'DELETE')) {
+            options.body = JSON.stringify(data);
+        }
+        
+        try {
+            console.log('API Call:', endpoint, method, data);
+            const response = await fetch(endpoint, options);
             
-            toastContainer.appendChild(toast);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             
-            const bsToast = new bootstrap.Toast(toast);
-            bsToast.show();
+            const result = await response.json();
+            console.log('API Response:', result);
+            return result;
+        } catch (error) {
+            console.error('API call failed:', error);
+            return {
+                success: false,
+                message: 'Network error: ' + error.message
+            };
+        }
+    }
+
+    // Load processes for both filter and modal dropdowns
+    async function loadProcesses() {
+        try {
+            console.log('Loading processes from:', PROCESS_API_URL);
+            showTableLoading(true);
             
-            // Remove toast from DOM after it's hidden
-            toast.addEventListener('hidden.bs.toast', function() {
-                toast.remove();
+            const result = await fetch(PROCESS_API_URL);
+            
+            if (!result.ok) {
+                throw new Error(`HTTP error! status: ${result.status}`);
+            }
+            
+            const data = await result.json();
+            console.log('Processes API Response:', data);
+            
+            if (data.success && data.data) {
+                populateProcessDropdowns(data.data);
+                showNotification('success', 'Processes Loaded', `Loaded ${data.data.length} processes`);
+            } else {
+                throw new Error(data.message || 'Failed to load processes');
+            }
+        } catch (error) {
+            console.error('Error loading processes:', error);
+            showNotification('error', 'Error', 'Failed to load processes: ' + error.message);
+            // Set default options on error
+            populateProcessDropdowns([]);
+        } finally {
+            showTableLoading(false);
+        }
+    }
+
+    // Populate both filter and modal dropdowns with processes
+    function populateProcessDropdowns(processes) {
+        const processFilter = document.getElementById('processFilter');
+        const processModal = document.getElementById('process');
+        
+        // Clear existing options
+        processFilter.innerHTML = '<option value="">All Processes</option>';
+        processModal.innerHTML = '<option value="">Select Process</option>';
+        
+        // Add process options
+        if (processes && processes.length > 0) {
+            processes.forEach(process => {
+                // For filter dropdown
+                const filterOption = document.createElement('option');
+                filterOption.value = process;
+                filterOption.textContent = process;
+                processFilter.appendChild(filterOption);
+                
+                // For modal dropdown
+                const modalOption = document.createElement('option');
+                modalOption.value = process;
+                modalOption.textContent = process;
+                processModal.appendChild(modalOption);
             });
+            
+            console.log(`Populated ${processes.length} processes in dropdowns`);
+        } else {
+            console.log('No processes found to populate');
+            // Add a default option if no processes
+            const noProcessOption = document.createElement('option');
+            noProcessOption.value = '';
+            noProcessOption.textContent = 'No processes available';
+            noProcessOption.disabled = true;
+            processModal.appendChild(noProcessOption);
+        }
+    }
+
+    // Initialize DataTable
+    function initializeDataTable() {
+        console.log('Initializing DataTable...');
+        
+        dispositionsTable = $('#dispositionsTable').DataTable({
+            dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+                 "<'row'<'col-sm-12'tr>>" +
+                 "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            responsive: true,
+            pageLength: 10,
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            order: [[0, 'desc']],
+            columns: [
+                { data: 'sno' },
+                { 
+                    data: 'status',
+                    render: function(data) {
+                        return `<span class="badge bg-primary">${data || 'N/A'}</span>`;
+                    }
+                },
+                { 
+                    data: 'status_name',
+                    render: function(data) {
+                        return `<strong>${data || 'N/A'}</strong>`;
+                    }
+                },
+                { 
+                    data: 'process',
+                    render: function(data) {
+                        return data ? `<span class="badge bg-info">${data}</span>` : 'N/A';
+                    }
+                },
+                { 
+                    data: 'selectable',
+                    render: function(data) {
+                        const isSelectable = data === 'Y';
+                        return `<span class="status-badge ${isSelectable ? 'bg-success' : 'bg-secondary'}">
+                            <i class="fas ${isSelectable ? 'fa-check' : 'fa-times'}"></i> ${isSelectable ? 'Selectable' : 'Non-Selectable'}
+                        </span>`;
+                    }
+                },
+                { 
+                    data: null,
+                    render: function(data, type, row) {
+                        return `<div class="action-buttons">
+                            <button onclick="editDisposition(${row.sno})" title="Edit Disposition" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button onclick="deleteDisposition(${row.sno}, '${(row.status_name || '').replace(/'/g, "\\'")}')" title="Delete Disposition" class="btn btn-outline-danger btn-sm">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>`;
+                    },
+                    orderable: false
+                }
+            ],
+            data: [],
+            language: {
+                emptyTable: "No dispositions found",
+                info: "Showing _START_ to _END_ of _TOTAL_ dispositions",
+                search: "Search dispositions...",
+                zeroRecords: "No matching dispositions found"
+            },
+            initComplete: function() {
+                console.log('DataTable initialization complete');
+                loadDispositionsData();
+            }
+        });
+    }
+
+    // Load dispositions data
+    async function loadDispositionsData() {
+        try {
+            console.log('Loading dispositions data...');
+            showTableLoading(true);
+            
+            const result = await apiCall(API_BASE_URL);
+            
+            if (result.success) {
+                dispositionsTable.clear().rows.add(result.data).draw();
+                updateStats(result.data);
+                console.log(`Loaded ${result.data.length} dispositions`);
+                showNotification('success', 'Data Loaded', `Loaded ${result.data.length} dispositions`);
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            console.error('Error loading dispositions:', error);
+            showNotification('error', 'Error', 'Failed to load dispositions data: ' + error.message);
+        } finally {
+            showTableLoading(false);
+        }
+    }
+
+    // Update statistics
+    function updateStats(data) {
+        const totalDispositions = data.length;
+        const selectableDispositions = data.filter(d => d.selectable === 'Y').length;
+        const uniqueProcesses = [...new Set(data.map(d => d.process).filter(Boolean))].length;
+        
+        document.getElementById('totalDispositions').textContent = totalDispositions;
+        document.getElementById('selectableDispositions').textContent = selectableDispositions;
+        document.getElementById('totalProcesses').textContent = uniqueProcesses;
+        
+        console.log(`Stats updated: ${totalDispositions} dispositions, ${selectableDispositions} selectable, ${uniqueProcesses} processes`);
+    }
+
+    // Apply filters
+    function applyFilters() {
+        const processFilter = document.getElementById('processFilter').value;
+        const selectableFilter = document.getElementById('selectableFilter').value;
+        
+        dispositionsTable.column(3).search(processFilter);
+        dispositionsTable.column(4).search(selectableFilter);
+        dispositionsTable.draw();
+        
+        console.log(`Filters applied - Process: ${processFilter}, Selectable: ${selectableFilter}`);
+    }
+
+    // Edit disposition
+    async function editDisposition(id) {
+        try {
+            console.log(`Editing disposition ID: ${id}`);
+            showTableLoading(true);
+            
+            const result = await apiCall(API_BASE_URL + '?id=' + id);
+            
+            if (result.success) {
+                const disposition = result.data;
+                
+                // Populate form
+                document.getElementById('sno').value = disposition.sno;
+                document.getElementById('status').value = disposition.status;
+                document.getElementById('status_name').value = disposition.status_name;
+                document.getElementById('process').value = disposition.process;
+                document.getElementById('selectable').value = disposition.selectable;
+                
+                // Update modal title
+                document.getElementById('addDispositionModalLabel').innerHTML = '<i class="fas fa-edit me-2"></i>Edit Disposition';
+                
+                // Show modal
+                const modal = new bootstrap.Modal(document.getElementById('addDispositionModal'));
+                modal.show();
+                
+                console.log('Disposition form populated for editing');
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            console.error('Error loading disposition:', error);
+            showNotification('error', 'Error', 'Failed to load disposition data: ' + error.message);
+        } finally {
+            showTableLoading(false);
+        }
+    }
+
+    // Delete disposition
+    function deleteDisposition(id, name) {
+        dispositionToDelete = id;
+        document.getElementById('dispositionToDeleteName').textContent = name;
+        new bootstrap.Modal(document.getElementById('deleteConfirmationModal')).show();
+        console.log(`Delete confirmation requested for disposition: ${name}`);
+    }
+
+    // Confirm delete
+    async function confirmDelete() {
+        if (!dispositionToDelete) return;
+        
+        try {
+            console.log(`Deleting disposition ID: ${dispositionToDelete}`);
+            showTableLoading(true);
+            
+            const result = await apiCall(API_BASE_URL, 'DELETE', { id: dispositionToDelete });
+            
+            if (result.success) {
+                showNotification('success', 'Disposition Deleted', 'Disposition deleted successfully!');
+                bootstrap.Modal.getInstance(document.getElementById('deleteConfirmationModal')).hide();
+                await refreshData();
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            console.error('Error deleting disposition:', error);
+            showNotification('error', 'Error', 'Failed to delete disposition: ' + error.message);
+        } finally {
+            showTableLoading(false);
+            dispositionToDelete = null;
+        }
+    }
+
+    // Save disposition
+    async function saveDisposition() {
+        const formData = {
+            status: document.getElementById('status').value.trim(),
+            status_name: document.getElementById('status_name').value.trim(),
+            process: document.getElementById('process').value,
+            selectable: document.getElementById('selectable').value
+        };
+
+        console.log('Saving disposition:', formData);
+
+        // Validation
+        if (!formData.status) {
+            showNotification('error', 'Validation Error', 'Status Code is required');
+            document.getElementById('status').focus();
+            return;
         }
 
-        // Initialize DataTables
-        $(document).ready(function() {
-            $('#dispositionsTable').DataTable({
-                pageLength: 10,
-                lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
-                responsive: true,
-                autoWidth: false,
-                order: [[0, 'asc']]
-            });
-        });
-    </script>
+        if (!formData.status_name) {
+            showNotification('error', 'Validation Error', 'Status Name is required');
+            document.getElementById('status_name').focus();
+            return;
+        }
+
+        if (!formData.process) {
+            showNotification('error', 'Validation Error', 'Please select a process');
+            document.getElementById('process').focus();
+            return;
+        }
+
+        const sno = document.getElementById('sno').value;
+        if (sno) {
+            formData.sno = parseInt(sno);
+        }
+
+        try {
+            showTableLoading(true);
+            const result = await apiCall(API_BASE_URL, 'POST', formData);
+            
+            if (result.success) {
+                const action = sno ? 'updated' : 'created';
+                showNotification('success', 'Disposition Saved', `Disposition ${action} successfully!`);
+                bootstrap.Modal.getInstance(document.getElementById('addDispositionModal')).hide();
+                resetForm();
+                await refreshData();
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            console.error('Error saving disposition:', error);
+            showNotification('error', 'Error', 'Failed to save disposition: ' + error.message);
+        } finally {
+            showTableLoading(false);
+        }
+    }
+
+    // Reset form
+    function resetForm() {
+        document.getElementById('dispositionForm').reset();
+        document.getElementById('sno').value = '';
+        document.getElementById('addDispositionModalLabel').innerHTML = '<i class="fas fa-plus-circle me-2"></i>Add New Disposition';
+        console.log('Disposition form reset');
+    }
+
+    // Refresh data
+    async function refreshData() {
+        console.log('Refreshing all data...');
+        showTableLoading(true);
+        
+        try {
+            await Promise.all([
+                loadDispositionsData(),
+                loadProcesses()
+            ]);
+            updateLastUpdatedTime();
+            showNotification('info', 'Refreshed', 'Data refreshed successfully');
+        } catch (error) {
+            console.error('Error refreshing data:', error);
+            showNotification('error', 'Error', 'Failed to refresh data: ' + error.message);
+        } finally {
+            showTableLoading(false);
+        }
+    }
+
+    // Update last updated time
+    function updateLastUpdatedTime() {
+        document.getElementById('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+    }
+
+    // Show/hide table loading
+    function showTableLoading(show) {
+        document.getElementById('tableLoading').style.display = show ? 'flex' : 'none';
+    }
+
+    // Notification system
+    function showNotification(type, title, message, duration = 5000) {
+        const container = document.getElementById('notificationContainer');
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        
+        let iconClass;
+        switch(type) {
+            case 'success':
+                iconClass = 'fa-check-circle';
+                break;
+            case 'error':
+                iconClass = 'fa-exclamation-circle';
+                break;
+            case 'info':
+                iconClass = 'fa-info-circle';
+                break;
+            default:
+                iconClass = 'fa-bell';
+        }
+        
+        notification.innerHTML = `
+            <div class="notification-icon">
+                <i class="fas ${iconClass}"></i>
+            </div>
+            <div class="notification-content">
+                <div class="notification-title">${title}</div>
+                <div class="notification-message">${message}</div>
+            </div>
+            <button class="btn-close" onclick="this.parentElement.remove()"></button>
+        `;
+        
+        container.appendChild(notification);
+        setTimeout(() => notification.classList.add('show'), 10);
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 400);
+        }, duration);
+        
+        console.log(`Notification: ${type} - ${title} - ${message}`);
+    }
+</script>
 </body>
 </html>
